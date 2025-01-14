@@ -30,7 +30,25 @@ pdf_date = str(pdf_metadata.metadata.creation_date)
 pdf_year = pdf_date[:4]
 pdf_month = pdf_date[5:7]
 
+#page=4
 # %%
+#create new dict
+pdf_info = {}
+pdf_info["id"] = " "
+pdf_info["url"] = f"https://www.knbs.or.ke/wp-content/uploads/{pdf_year}/{pdf_month}/" + file_name
+pdf_info["release_date"] = pdf_date[:10] #date only
+pdf_info["release_type"] = " "
+# pdf_info["latest"] = " "
+pdf_info["url_keywords"] = " "
+pdf_info["title"] = str(pdf_metadata.metadata.title)
+    
+# if pdf title metadata blank
+if pdf_info["title"] == "None":
+    title_from_filename = file_name.replace(".pdf", "")
+    pdf_info["title"] = title_from_filename
+else:
+    pdf_info["title"] = str(pdf_metadata.metadata.title)
+    
 # create list to store
 pages_text = []
 
@@ -48,25 +66,11 @@ with open(file_path, 'rb') as pdf_file:
         # extract data from page to text
         text = page.extract_text().split('\n')
         
+        # get page link
+        page_link = pdf_info["url"]
+        
         # add text of page to array
-        pages_text.append({"page_number": page_num + 1, "text": text})
-    
-    #create new dict
-    pdf_info = {}
-    pdf_info["id"] = " "
-    pdf_info["url"] = f"https://www.knbs.or.ke/wp-content/uploads/{pdf_year}/{pdf_month}/" + file_name
-    pdf_info["release_date"] = pdf_date[:10] #date only
-    pdf_info["release_type"] = " "
-    # pdf_info["latest"] = " "
-    pdf_info["url_keywords"] = " "
-    pdf_info["title"] = str(pdf_metadata.metadata.title)
-    
-    # if pdf title metadata blank
-    if pdf_info["title"] == "None":
-        title_from_filename = file_name.replace(".pdf", "")
-        pdf_info["title"] = title_from_filename
-    else:
-        pdf_info["title"] = str(pdf_metadata.metadata.title)
+        pages_text.append({"page_number": page_num + 1, "text": text, "page_link": page_link + "#page=" + str(page_num + 1)})
     
     # create nested dictionary
     pdf_info["contents"] = pages_text
