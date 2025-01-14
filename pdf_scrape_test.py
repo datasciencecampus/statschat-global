@@ -39,7 +39,7 @@ for pdf in pdf_links:
     actual_pdf_file_name = pdf_name[28:]
 
     response = requests.get(url)
-    file_path = DATA_DIR / f"{actual_pdf_file_name}.pdf"
+    file_path = DATA_DIR / actual_pdf_file_name
 
     if response.status_code == 200:
         with open(file_path, "wb") as file:
