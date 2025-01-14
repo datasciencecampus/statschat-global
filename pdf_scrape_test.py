@@ -44,34 +44,6 @@ for pdf in pdf_links:
     if response.status_code == 200:
         with open(file_path, "wb") as file:
             file.write(response.content)
-        print("File downloaded successfully")
+        print(f"File {actual_pdf_file_name} downloaded successfully")
     else:
-        print("Failed to download file")
-
-# %%
-for pdf in pdf_links:
-    url = pdf
-    parsed_url = urlparse(url)
-    pdf_name = parsed_url.path
-    actual_pdf_file_name = pdf_name[28:]
-    actual_pdf_file_name = actual_pdf_file_name.replace(".pdf", "")
-
-    response = requests.get(url)
-    file_path = DATA_DIR / f"{actual_pdf_file_name}.json"
-
-    if response.status_code == 200:
-        with open(file_path, "wb") as file:
-            file.write(response.content)
-        print("File downloaded successfully")
-    else:
-        print("Failed to download file")
-
-# %% [markdown]
-# comes out in horrible format
-
-
-# %%
-def download_pdf(url, filename):
-    response = requests.get(url)
-    with open(filename, "wb") as f:
-        f.write(response.content)
+        print(f"Failed to download file {actual_pdf_file_name}")
