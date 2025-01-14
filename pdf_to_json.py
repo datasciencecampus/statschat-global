@@ -47,7 +47,7 @@ for pdf_file_path in DATA_DIR.glob('*.pdf'):
     # create list to store
     pages_text = []
 
-    with open(file_path, 'rb') as pdf_file:
+    with open(pdf_file_path, 'rb') as pdf_file:
         
         # read file
         pdf_reader = PyPDF2.PdfReader(pdf_file)
@@ -75,7 +75,7 @@ for pdf_file_path in DATA_DIR.glob('*.pdf'):
         #pdf_info
 
         #with open(TEST_DATA_DIR / "pdf_info.json", "w") as json_file:
-        with open(TEST_DATA_DIR / f"{file_path.stem}.json", "w") as json_file:
+        with open(TEST_DATA_DIR / f"{pdf_file_path.stem}.json", "w") as json_file:
             json.dump([pdf_info], json_file, indent=4)
             
         # print JSON
