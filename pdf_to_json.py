@@ -54,12 +54,19 @@ with open(file_path, 'rb') as pdf_file:
     #create new dict
     pdf_info = {}
     pdf_info["id"] = " "
-    pdf_info["title"] = str(pdf_metadata.metadata.title)
     pdf_info["url"] = f"https://www.knbs.or.ke/wp-content/uploads/{pdf_year}/{pdf_month}/" + file_name
     pdf_info["release_date"] = pdf_date[:10] #date only
     pdf_info["release_type"] = " "
     # pdf_info["latest"] = " "
     pdf_info["url_keywords"] = " "
+    pdf_info["title"] = str(pdf_metadata.metadata.title)
+    
+    # if pdf title metadata blank
+    if pdf_info["title"] == "None":
+        title_from_filename = file_name.replace(".pdf", "")
+        pdf_info["title"] = title_from_filename
+    else:
+        pdf_info["title"] = str(pdf_metadata.metadata.title)
     
     # create nested dictionary
     pdf_info["contents"] = pages_text
