@@ -14,12 +14,14 @@ TEST_DATA_DIR = TEST_DIR.joinpath("data")
 for pdf_file_path in DATA_DIR.glob('*.pdf'):
     #print(pdf_file_path)
 
-    # pdf file name
+    # pdf file name in case can't get title from metadata
     file_name = pdf_file_path.name
-    #print(file_name)
-
+    
+    # file path for pdf
+    file_path = pdf_file_path
+    
     # pdf metadata
-    pdf_metadata = PyPDF2.PdfReader(pdf_file_path)
+    pdf_metadata = PyPDF2.PdfReader(file_path)
     #print(str(pdf_metadata.metadata))
 
     # pdf date, time and year
@@ -47,7 +49,7 @@ for pdf_file_path in DATA_DIR.glob('*.pdf'):
     # create list to store
     pages_text = []
 
-    with open(pdf_file_path, 'rb') as pdf_file:
+    with open(file_path, 'rb') as pdf_file:
         
         # read file
         pdf_reader = PyPDF2.PdfReader(pdf_file)
@@ -65,21 +67,17 @@ for pdf_file_path in DATA_DIR.glob('*.pdf'):
             page_link = pdf_info["url"]
             
             # add text of page to array
-            pages_text.append({"page_number": page_num + 1, 
-                               "page_link": page_link + "#page=" + str(page_num + 1), 
-                               "text": text})
+            pages_text.append({"page_number": page_num + 1, "page_link": page_link + "#page=" + str(page_num + 1), "text": text})
         
         # create nested dictionary
         pdf_info["contents"] = pages_text
 
         #pdf_info
 
-        #with open(TEST_DATA_DIR / "pdf_info.json", "w") as json_file:
-        with open(TEST_DATA_DIR / f"{pdf_file_path.stem}.json", "w") as json_file:
+        with open(TEST_DATA_DIR / f"{file_path.stem}.json", "w") as json_file:
             json.dump([pdf_info], json_file, indent=4)
             
         # print JSON
         print(json.dumps([pdf_info], indent=4))
-        
-        print(f"{pdf_info['title']} has been converted to a json")
+
 
