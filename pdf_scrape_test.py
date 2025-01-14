@@ -12,7 +12,7 @@ from urllib.parse import *
 DATA_DIR = Path.cwd().joinpath("data")
 
 # %%
-url = "https://www.knbs.or.ke/publications/"
+url = "https://www.knbs.or.ke/publications/page/2/"
 response = requests.get(url)
 soup = BeautifulSoup(response.text, "html.parser")
 
@@ -39,7 +39,7 @@ for pdf in pdf_links:
     actual_pdf_file_name = pdf_name[28:]
 
     response = requests.get(url)
-    file_path = DATA_DIR / f"{actual_pdf_file_name}.json"
+    file_path = DATA_DIR / f"{actual_pdf_file_name}.pdf"
 
     if response.status_code == 200:
         with open(file_path, "wb") as file:
@@ -75,13 +75,3 @@ def download_pdf(url, filename):
     response = requests.get(url)
     with open(filename, "wb") as f:
         f.write(response.content)
-
-
-# %%
-download_pdf(
-    url="https://www.knbs.or.ke/wp-content/uploads/2024/12/Analytical-Report-on-ICTBased-on-2022-KDHS.pdf",
-    filename="test",
-)
-
-# %%
-# https://www.youtube.com/watch?v=DQdU2Pj5AC8
