@@ -70,7 +70,7 @@ with open(file_path, 'rb') as pdf_file:
         page_link = pdf_info["url"]
         
         # add text of page to array
-        pages_text.append({"page_number": page_num + 1, "text": text, "page_link": page_link + "#page=" + str(page_num + 1)})
+        pages_text.append({"page_number": page_num + 1, "page_link": page_link + "#page=" + str(page_num + 1), "text": text})
     
     # create nested dictionary
     pdf_info["contents"] = pages_text
