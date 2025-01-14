@@ -25,8 +25,10 @@ print(str(pdf_metadata.metadata))
 #print(str(pdf_metadata.metadata.producer))
 
 # %%
-# pdf date and time
+# pdf date, time and year
 pdf_date = str(pdf_metadata.metadata.creation_date)
+pdf_year = pdf_date[:4]
+pdf_month = pdf_date[5:7]
 
 # %%
 # create list to store
@@ -53,7 +55,7 @@ with open(file_path, 'rb') as pdf_file:
     pdf_info = {}
     pdf_info["id"] = " "
     pdf_info["title"] = str(pdf_metadata.metadata.title)
-    pdf_info["url"] = " "
+    pdf_info["url"] = f"https://www.knbs.or.ke/wp-content/uploads/{pdf_year}/{pdf_month}/" + file_name
     pdf_info["release_date"] = pdf_date[:10] #date only
     pdf_info["release_type"] = " "
     # pdf_info["latest"] = " "
@@ -66,45 +68,10 @@ with open(file_path, 'rb') as pdf_file:
 pdf_info
 
 # %%
-# For figures
-figures_info = []
-
-with open(file_path, 'rb') as pdf_file:
-    
-    # read file
-    pdf_reader = PyPDF2.PdfReader(pdf_file)
-    
-    # read every page
-    for page_num in range(len(pdf_reader.pages)):
-        
-        # read page wise data from pdf file
-        page = pdf_reader.pages[page_num]
-        
-        # extract data from page to text
-        text = page.extract_text().split('\n')
-        
-        for fig in text:
-            # for title
-            if "Figure" in fig and ":" in fig and ".." in fig:
-            
-                # add fig head to array
-                figures_info.append({"page_number": page_num + 1,"figure_title": fig})
-    
-    figures_dict = {}
-    figures_dict["figure_title"] = figures_info   
-
-# %%
-# want to add this to pdf_info["contents"]
-
-# %%
-# write list to json file
-
 #with open(TEST_DATA_DIR / "pdf_info.json", "w") as json_file:
 with open(TEST_DATA_DIR / f"{file_path.stem}.json", "w") as json_file:
     json.dump([pdf_info], json_file, indent=4)
     
 # print JSON
 print(json.dumps([pdf_info], indent=4))
-
-
 
