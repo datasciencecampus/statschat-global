@@ -24,11 +24,7 @@ for pdf_file_path in DATA_DIR.glob('*.pdf'):
     
 
     # pdf date, time and year
-    # for if datetime in wrong format
-    if len(pdf_creation_date) == 16:
-        pdf_creation_date = pdf_creation_date + "+02'00'"
-        pdf_creation_date = str(pdf_metadata.metadata.creation_date)
-    
+    pdf_creation_date = str(pdf_metadata.metadata.creation_date)
     pdf_creation_year = pdf_creation_date[:4]
     pdf_creation_month = pdf_creation_date[5:7]
         
