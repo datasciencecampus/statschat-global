@@ -20,18 +20,27 @@ for pdf_file_path in DATA_DIR.glob('*.pdf'):
     
     # pdf metadata
     pdf_metadata = PyPDF2.PdfReader(pdf_file_path)
-    #print(str(pdf_metadata.metadata))
+    print(str(pdf_metadata.metadata))
+    
 
     # pdf date, time and year
-    pdf_date = str(pdf_metadata.metadata.creation_date)
-    pdf_year = pdf_date[:4]
-    pdf_month = pdf_date[5:7]
+    pdf_creation_date = str(pdf_metadata.metadata.creation_date)
+    pdf_year = pdf_creation_date[:4]
+    pdf_creation_month = pdf_creation_date[5:7]
+    pdf_modification_date = str(pdf_metadata.metadata.modification_date)
+    pdf_modification_month = pdf_modification_date[5:7]
+    
+    # if months below for pdf creation and modification are different will get error in pdf hyperlink
+    if int(pdf_creation_month) < int(pdf_modification_month):
+        pdf_month = pdf_modification_month
+    else:
+        pdf_month = pdf_creation_month
 
     #create new dict
     pdf_info = {}
     pdf_info["id"] = " "
     pdf_info["url"] = f"https://www.knbs.or.ke/wp-content/uploads/{pdf_year}/{pdf_month}/" + file_name
-    pdf_info["release_date"] = pdf_date[:10] #date only
+    pdf_info["release_date"] = pdf_creation_date[:10] #date only
     pdf_info["release_type"] = " "
     # pdf_info["latest"] = " "
     pdf_info["url_keywords"] = " "
@@ -79,3 +88,5 @@ for pdf_file_path in DATA_DIR.glob('*.pdf'):
         print(json.dumps([pdf_info], indent=4))
 
 
+
+# %%
