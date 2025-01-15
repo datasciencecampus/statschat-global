@@ -1,6 +1,5 @@
 # %% [markdown]
-# Download all pdfs from certain page comes out in horrible format though
-
+# Download all pdfs from certain webpage
 # %%
 import requests
 from bs4 import BeautifulSoup
