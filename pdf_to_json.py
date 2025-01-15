@@ -12,7 +12,7 @@ TEST_DATA_DIR = TEST_DIR.joinpath("data")
 
 # %%
 for pdf_file_path in DATA_DIR.glob('*.pdf'):
-    print(pdf_file_path)
+    #print(pdf_file_path)
     # loop through folder to get filepaths
 
     # pdf file name in case can't get title from metadata
@@ -24,7 +24,11 @@ for pdf_file_path in DATA_DIR.glob('*.pdf'):
     
 
     # pdf date, time and year
-    pdf_creation_date = str(pdf_metadata.metadata.creation_date)
+    # for if datetime in wrong format
+    if len(pdf_creation_date) == 16:
+        pdf_creation_date = pdf_creation_date + "+02'00'"
+        pdf_creation_date = str(pdf_metadata.metadata.creation_date)
+    
     pdf_creation_year = pdf_creation_date[:4]
     pdf_creation_month = pdf_creation_date[5:7]
         
