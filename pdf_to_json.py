@@ -12,7 +12,7 @@ TEST_DATA_DIR = TEST_DIR.joinpath("data")
 
 # %%
 for pdf_file_path in DATA_DIR.glob('*.pdf'):
-    #print(pdf_file_path)
+    print(pdf_file_path)
     # loop through folder to get filepaths
 
     # pdf file name in case can't get title from metadata
@@ -25,21 +25,43 @@ for pdf_file_path in DATA_DIR.glob('*.pdf'):
 
     # pdf date, time and year
     pdf_creation_date = str(pdf_metadata.metadata.creation_date)
-    pdf_year = pdf_creation_date[:4]
+    pdf_creation_year = pdf_creation_date[:4]
     pdf_creation_month = pdf_creation_date[5:7]
+        
     pdf_modification_date = str(pdf_metadata.metadata.modification_date)
     pdf_modification_month = pdf_modification_date[5:7]
+    pdf_modification_year = pdf_modification_date[:4]
+    
+    # incase creation date empty
+    if pdf_creation_year == "None":
+        pdf_creation_year = pdf_modification_year
+    if pdf_creation_month == '':
+        pdf_creation_month = pdf_modification_month
+    
+    print(pdf_creation_year)
+    print(pdf_creation_month)
+    print(pdf_modification_year)
+    print(pdf_modification_month)
+    
     
     # if months below for pdf creation and modification are different will get error in pdf hyperlink
-    if int(pdf_creation_month) < int(pdf_modification_month):
+    if int(pdf_creation_month) < int(pdf_modification_month) and int(pdf_creation_year) == int(pdf_modification_year):
+        pdf_month = pdf_modification_month
+        pdf_year = pdf_creation_year
+    # if years below for pdf creation year and modification year are different will get error in pdf hyperlink
+    elif int(pdf_creation_year) < int(pdf_modification_year) and int(pdf_creation_month) > int(pdf_modification_month):
+        pdf_year = pdf_modification_year
         pdf_month = pdf_modification_month
     else:
-        pdf_month = pdf_creation_month
-
+        pdf_year = pdf_modification_year
+        pdf_month = pdf_modification_month
+    
+    
     #create new dict
     pdf_info = {}
     pdf_info["id"] = " "
     pdf_info["url"] = f"https://www.knbs.or.ke/wp-content/uploads/{pdf_year}/{pdf_month}/" + file_name
+    #pdf_info["url_option_two"] = f"https://www.knbs.or.ke/wp-content/uploads/{pdf_year}/{pdf_month}/" + file_name
     pdf_info["release_date"] = pdf_creation_date[:10] #date only
     pdf_info["release_type"] = " "
     # pdf_info["latest"] = " "
@@ -86,7 +108,3 @@ for pdf_file_path in DATA_DIR.glob('*.pdf'):
             
         # print JSON
         print(json.dumps([pdf_info], indent=4))
-
-
-
-# %%
