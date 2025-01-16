@@ -6,9 +6,19 @@ from pathlib import Path
 
 # %%
 # set relative paths
-DATA_DIR = Path.cwd().joinpath("data")
-TEST_DIR = Path.cwd().joinpath("tests")
+
+DATA_DIR = Path.cwd().parent.parent.joinpath("data")
+TEST_DIR = Path.cwd().parent.parent.joinpath("tests")
 TEST_DATA_DIR = TEST_DIR.joinpath("data")
+#DATA_DIR = Path.cwd().joinpath("data")
+
+print(DATA_DIR)
+
+#TEST_DIR = Path.cwd().joinpath("tests")
+print(TEST_DIR)
+
+#TEST_DATA_DIR = TEST_DIR.joinpath("data")
+print(TEST_DATA_DIR)
 
 # %%
 for pdf_file_path in DATA_DIR.glob('*.pdf'):

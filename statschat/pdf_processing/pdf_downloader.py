@@ -8,7 +8,7 @@ from urllib.parse import *
 
 # %%
 # Set relative paths
-DATA_DIR = Path.cwd().joinpath("data")
+DATA_DIR = DATA_DIR = Path.cwd().parent.parent.joinpath("data")
 
 # %%
 url = "https://www.knbs.or.ke/publications/page/2/"
