@@ -1,6 +1,5 @@
-<img src="https://github.com/datasciencecampus/awesome-campus/blob/master/ons_dsc_logo.png">
+# `KNBS StatsChat`
 
-# `StatsChat`
 [![Stability](https://img.shields.io/badge/stability-experimental-orange.svg)](https://github.com/mkenney/software-guides/blob/master/STABILITY-BADGES.md#experimental)
 [![Shared under the MIT License](https://img.shields.io/badge/license-MIT-green)](https://github.com/datasciencecampus/Statschat/blob/main/LICENSE)
 [![Mac-OS compatible](https://shields.io/badge/MacOS--9cf?logo=Apple&style=social)]()
@@ -258,9 +257,4 @@ answer.  The current values are initial guesses:
 
 The code, unless otherwise stated, is released under [the MIT License][mit].
 
-The documentation for this work is subject to [© Crown copyright][copyright]
-and is available under the terms of the [Open Government 3.0][ogl] licence.
-
 [mit]: LICENSE
-[copyright]: http://www.nationalarchives.gov.uk/information-management/re-using-public-sector-information/uk-government-licensing-framework/crown-copyright/
-[ogl]: http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/
