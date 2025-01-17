@@ -3,6 +3,7 @@
 import PyPDF2
 import json
 from pathlib import Path
+import datetime
 
 # %%
 # set relative paths
@@ -10,15 +11,6 @@ from pathlib import Path
 DATA_DIR = Path.cwd().parent.parent.joinpath("data")
 TEST_DIR = Path.cwd().parent.parent.joinpath("tests")
 TEST_DATA_DIR = TEST_DIR.joinpath("data")
-#DATA_DIR = Path.cwd().joinpath("data")
-
-print(DATA_DIR)
-
-#TEST_DIR = Path.cwd().joinpath("tests")
-print(TEST_DIR)
-
-#TEST_DATA_DIR = TEST_DIR.joinpath("data")
-print(TEST_DATA_DIR)
 
 # %%
 for pdf_file_path in DATA_DIR.glob('*.pdf'):
@@ -30,11 +22,20 @@ for pdf_file_path in DATA_DIR.glob('*.pdf'):
     
     # pdf metadata
     pdf_metadata = PyPDF2.PdfReader(pdf_file_path)
-    print(str(pdf_metadata.metadata))
-    
+    #print(str(pdf_metadata.metadata))
+
 
     # pdf date, time and year
-    pdf_creation_date = str(pdf_metadata.metadata.creation_date)
+    
+    try: 
+        pdf_creation_date = str(pdf_metadata.metadata.creation_date)
+        print(f"no issue with metadata for {pdf_file_path.name}")
+            
+    except ValueError:
+        pass
+        pdf_creation_date = (datetime.datetime.now().strftime("%Y%m%d%H%M%S%z"))
+        print(f"File {pdf_file_path.name} has issue with creation date metadata")
+        
     pdf_creation_year = pdf_creation_date[:4]
     pdf_creation_month = pdf_creation_date[5:7]
         
@@ -48,16 +49,10 @@ for pdf_file_path in DATA_DIR.glob('*.pdf'):
     if pdf_creation_month == '':
         pdf_creation_month = pdf_modification_month
     
-    print(pdf_creation_year)
-    print(pdf_creation_month)
-    print(pdf_modification_year)
-    print(pdf_modification_month)
-    
-    
     # if months below for pdf creation and modification are different will get error in pdf hyperlink
     if int(pdf_creation_month) < int(pdf_modification_month) and int(pdf_creation_year) == int(pdf_modification_year):
         pdf_month = pdf_modification_month
-        pdf_year = pdf_creation_year
+        pdf_year = pdf_modification_year
     # if years below for pdf creation year and modification year are different will get error in pdf hyperlink
     elif int(pdf_creation_year) < int(pdf_modification_year) and int(pdf_creation_month) > int(pdf_modification_month):
         pdf_year = pdf_modification_year
