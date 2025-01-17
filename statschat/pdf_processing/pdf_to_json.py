@@ -13,9 +13,12 @@ TEST_DIR = Path.cwd().parent.parent.joinpath("tests")
 TEST_DATA_DIR = TEST_DIR.joinpath("data")
 
 # %%
+# create counter
+count = 0
+
+# loop through folder to get filepaths
 for pdf_file_path in DATA_DIR.glob('*.pdf'):
     #print(pdf_file_path)
-    # loop through folder to get filepaths
 
     # pdf file name in case can't get title from metadata
     file_name = pdf_file_path.name
@@ -25,16 +28,16 @@ for pdf_file_path in DATA_DIR.glob('*.pdf'):
     #print(str(pdf_metadata.metadata))
 
 
-    # pdf date, time and year
-    
+    # pdf date, time and year (may need to add for modification date)
     try: 
         pdf_creation_date = str(pdf_metadata.metadata.creation_date)
         print(f"no issue with metadata for {pdf_file_path.name}")
             
-    except ValueError:
-        pass
+    except Exception as e:
+        count += 1
         pdf_creation_date = (datetime.datetime.now().strftime("%Y%m%d%H%M%S%z"))
-        print(f"File {pdf_file_path.name} has issue with creation date metadata")
+        print(f"An error occurred for file {pdf_file_path.name}: {e}")  
+        print(f"Total number of files with errors: {count}")
         
     pdf_creation_year = pdf_creation_date[:4]
     pdf_creation_month = pdf_creation_date[5:7]
@@ -43,7 +46,7 @@ for pdf_file_path in DATA_DIR.glob('*.pdf'):
     pdf_modification_month = pdf_modification_date[5:7]
     pdf_modification_year = pdf_modification_date[:4]
     
-    # incase creation date empty
+    # in case creation date empty
     if pdf_creation_year == "None":
         pdf_creation_year = pdf_modification_year
     if pdf_creation_month == '':
@@ -66,10 +69,8 @@ for pdf_file_path in DATA_DIR.glob('*.pdf'):
     pdf_info = {}
     pdf_info["id"] = " "
     pdf_info["url"] = f"https://www.knbs.or.ke/wp-content/uploads/{pdf_year}/{pdf_month}/" + file_name
-    #pdf_info["url_option_two"] = f"https://www.knbs.or.ke/wp-content/uploads/{pdf_year}/{pdf_month}/" + file_name
     pdf_info["release_date"] = pdf_creation_date[:10] #date only
     pdf_info["release_type"] = " "
-    # pdf_info["latest"] = " "
     pdf_info["url_keywords"] = " "
     pdf_info["title"] = str(pdf_metadata.metadata.title)
         
