@@ -6,7 +6,7 @@ import os
 from pathlib import Path
 from datetime import datetime
 from langchain.document_loaders import DirectoryLoader, JSONLoader
-from langchain.embeddings import HuggingFaceEmbeddings, VertexAIEmbeddings
+from sentence_transformers import SentenceTransformer
 from langchain_community.vectorstores import FAISS
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.document_transformers import EmbeddingsRedundantFilter
@@ -55,12 +55,12 @@ class PrepareVectorStore(DirectoryLoader, JSONLoader):
             self._json_splitter()
             self.logger.info("Load section JSONs to memory")
             self._load_json_to_memory()
-            self.logger.info("Instantiate embeddings")
-            self._instantiate_embeddings()
             self.logger.info("Filtering out duplicate docs")
             self._drop_redundant_documents()
             self.logger.info("Chunk documents")
             self._split_documents()
+            self.logger.info("Instantiate embeddings")
+            self._instantiate_embeddings()
             self.logger.info("Vectorise docs and commit to physical vector store")
             self._embed_documents()
 
@@ -163,12 +163,12 @@ class PrepareVectorStore(DirectoryLoader, JSONLoader):
         Loads embedding model to memory
         """
         if self.embedding_model_name == "textembedding-gecko@001":
-            self.embeddings = VertexAIEmbeddings()
+            model = SentenceTransformer("sentence-transformers/all-mpnet-base-v2")
+            self.embeddings = model.encode(self.chunks)
 
         else:
-            self.embeddings = HuggingFaceEmbeddings(
-                model_name=self.embedding_model_name
-            )
+            model = SentenceTransformer("sentence-transformers/all-mpnet-base-v2")
+            self.embeddings = model.encode(self.chunks)
 
         return None
 
@@ -225,7 +225,7 @@ if __name__ == "__main__":
     logging.basicConfig(
         level=logging.INFO,
         format=log_fmt,
-        filename=f"log/{session_name}.log",
+        filename=f"statschat-ke/log/{session_name}.log",
         filemode="a",
     )
     # initiate Statschat AI and start the app
