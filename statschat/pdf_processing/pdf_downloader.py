@@ -4,11 +4,11 @@
 import requests
 from bs4 import BeautifulSoup
 from pathlib import Path
-from urllib.parse import *
+from urllib.parse import urlparse
 
 # %%
 # Set relative paths
-DATA_DIR = DATA_DIR = Path.cwd().parent.parent.joinpath("data")
+DATA_DIR = Path.cwd().joinpath("data/pdf_downloads")
 
 # %%
 url = "https://www.knbs.or.ke/publications/page/2/"
@@ -38,7 +38,7 @@ for pdf in pdf_links:
     actual_pdf_file_name = pdf_name[28:]
 
     response = requests.get(url)
-    file_path = DATA_DIR / actual_pdf_file_name
+    file_path = f"{DATA_DIR}/{actual_pdf_file_name}"
 
     if response.status_code == 200:
         with open(file_path, "wb") as file:
