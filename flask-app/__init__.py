@@ -1,3 +1,3 @@
-"""StatsChat APP: Frontend for RAG of ONS statistical publications."""
+"""StatsChat APP: Frontend for RAG of KNBS statistical publications."""
 
 __version__ = "0.0.1"

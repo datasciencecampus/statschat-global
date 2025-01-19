@@ -4,6 +4,7 @@ import PyPDF2
 import json
 from pathlib import Path
 import datetime
+import numpy as np
 
 # %%
 # set relative paths
@@ -74,14 +75,16 @@ def build_json(
 ):
     # create new dict
     pdf_info = {}
-    pdf_info["id"] = " "
-    pdf_info["latest"] = ""
+    pdf_info["id"] = str(np.random.randint(1000000000, 9999999999))
+    pdf_info["latest"] = True
     pdf_info["url"] = (
         f"https://www.knbs.or.ke/wp-content/uploads/{pdf_year}/{pdf_month}/" + file_name
     )
     pdf_info["release_date"] = pdf_creation_date[:10]  # date only
-    pdf_info["release_type"] = " "
-    pdf_info["url_keywords"] = " "
+    pdf_info["release_type"] = "pdf_publication"
+    pdf_info["url_keywords"] = ["test", "bulletin"]
+    pdf_info["contact_name"] = "Joe Bloggs"
+    pdf_info["contact_link"] = "mailto:test@knbs.com"
     pdf_info["title"] = str(pdf_metadata.title)
 
     # if pdf title metadata blank
@@ -105,6 +108,8 @@ def build_json(
 
             # extract data from page to text
             text = page.extract_text().split("\n")
+            # convert list of strings into one large string
+            text = "".join(text)
 
             # get page link
             page_link = pdf_info["url"]
@@ -113,13 +118,13 @@ def build_json(
             pages_text.append(
                 {
                     "page_number": page_num + 1,
-                    "page_link": page_link + "#page=" + str(page_num + 1),
-                    "text": text,
+                    "page_url": page_link + "#page=" + str(page_num + 1),
+                    "page_text": text,
                 }
             )
 
         # create nested dictionary
-        pdf_info["contents"] = pages_text
+        pdf_info["content"] = pages_text
 
         with open(JSON_DIR / f"{pdf_file_path.stem}.json", "w") as json_file:
             json.dump(pdf_info, json_file, indent=4)

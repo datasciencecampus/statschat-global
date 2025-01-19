@@ -6,7 +6,7 @@ import os
 from pathlib import Path
 from datetime import datetime
 from langchain.document_loaders import DirectoryLoader, JSONLoader
-from sentence_transformers import SentenceTransformer
+from langchain_huggingface.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.document_transformers import EmbeddingsRedundantFilter
@@ -90,7 +90,7 @@ class PrepareVectorStore(DirectoryLoader, JSONLoader):
                 with open(filename) as file:
                     json_file = json.load(file)
                     if (not (self.latest_only)) or json_file["latest"]:
-                        id = json_file["id"][:60]
+                        id = json_file["id"]
 
                         publication_meta = {
                             i: json_file[i] for i in json_file if i != "content"
@@ -99,7 +99,7 @@ class PrepareVectorStore(DirectoryLoader, JSONLoader):
                             section_json = {**section, **publication_meta}
 
                             # Check that there's text extracted for this section
-                            if len(section["section_text"]) > 5:
+                            if len(section["page_text"]) > 5:
                                 with open(
                                     f"{self.split_directory}/{id}_{num}.json", "w"
                                 ) as new_file:
@@ -130,10 +130,9 @@ class PrepareVectorStore(DirectoryLoader, JSONLoader):
 
             # Rename a few things
             metadata["source"] = metadata.pop("id")
-            metadata["section"] = metadata.pop("section_header")
 
             # Remove the text from metadata
-            metadata.pop("section_text")
+            metadata.pop("page_text")
 
             return metadata
 
@@ -141,7 +140,7 @@ class PrepareVectorStore(DirectoryLoader, JSONLoader):
         # text element required
         json_loader_kwargs = {
             "jq_schema": ".",
-            "content_key": "section_text",
+            "content_key": "page_text",
             "metadata_func": metadata_func,
         }
         self.logger.info(f"Loading data from {self.split_directory}")
@@ -163,12 +162,11 @@ class PrepareVectorStore(DirectoryLoader, JSONLoader):
         Loads embedding model to memory
         """
         if self.embedding_model_name == "textembedding-gecko@001":
-            model = SentenceTransformer("sentence-transformers/all-mpnet-base-v2")
-            self.embeddings = model.encode(self.chunks)
-
+            model = "sentence-transformers/all-mpnet-base-v2"
+            self.embeddings = HuggingFaceEmbeddings(model_name=model)
         else:
-            model = SentenceTransformer("sentence-transformers/all-mpnet-base-v2")
-            self.embeddings = model.encode(self.chunks)
+            model = "sentence-transformers/all-mpnet-base-v2"
+            self.embeddings = HuggingFaceEmbeddings(model_name=model)
 
         return None
 
@@ -183,7 +181,7 @@ class PrepareVectorStore(DirectoryLoader, JSONLoader):
         )
         self.docs = redundant_filter.transform_documents(self.docs)
         self.logger.info(f"{len(self.docs)} article sections remain in memory")
-        self.logger.info([x.metadata["section_url"] for x in self.docs])
+        self.logger.info([x.metadata["page_url"] for x in self.docs])
 
         return None
 
