@@ -7,7 +7,7 @@ from pathlib import Path
 from datetime import datetime
 from langchain.document_loaders import DirectoryLoader, JSONLoader
 from langchain.embeddings import HuggingFaceEmbeddings, VertexAIEmbeddings
-from langchain.vectorstores import FAISS
+from langchain_community.vectorstores import FAISS
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.document_transformers import EmbeddingsRedundantFilter
 
