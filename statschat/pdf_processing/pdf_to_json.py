@@ -75,6 +75,7 @@ def build_json(
     # create new dict
     pdf_info = {}
     pdf_info["id"] = " "
+    pdf_info["latest"] = ""
     pdf_info["url"] = (
         f"https://www.knbs.or.ke/wp-content/uploads/{pdf_year}/{pdf_month}/" + file_name
     )
@@ -121,7 +122,7 @@ def build_json(
         pdf_info["contents"] = pages_text
 
         with open(JSON_DIR / f"{pdf_file_path.stem}.json", "w") as json_file:
-            json.dump([pdf_info], json_file, indent=4)
+            json.dump(pdf_info, json_file, indent=4)
 
         # print JSON
         # print(json.dumps([pdf_info], indent=4))

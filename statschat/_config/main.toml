@@ -3,10 +3,10 @@ faiss_db_root = "data/db_langchain"
 embedding_model_name = "sentence-transformers/all-mpnet-base-v2"  # "textembedding-gecko@001" "sentence-transformers/paraphrase-MiniLM-L3-v2"
 
 [preprocess]
-directory = "data/bulletins"
-split_directory = "data/bulletins_split"
+directory = "data/json_conversions"
+split_directory = "data/json_split"
 split_length = 1000
-split_overlap = 50
+split_overlap = 100
 latest_only = true
 
 [search]
