@@ -10,9 +10,9 @@ split_overlap = 100
 latest_only = true
 
 [search]
-generative_model_name = "gemini-1.0-pro"   # "text-unicorn" "text-bison@001" "google/flan-t5-large" "lmsys/fastchat-t5-3b-v1.0" "google/flan-t5-large" "google/flan-ul2"
-k_docs = 10
-k_contexts = 3
+generative_model_name = "mistralai/Mistral-7B-Instruct-v0.3"  # "text-unicorn" "text-bison@001" "google/flan-t5-large" "lmsys/fastchat-t5-3b-v1.0" "google/flan-t5-large" "google/flan-ul2"
+k_docs = 1
+k_contexts = 1
 similarity_threshold = 2.0     # Threshold score below which a document is returned in a search
 llm_temperature = 0.0
 

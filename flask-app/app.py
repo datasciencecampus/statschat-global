@@ -9,7 +9,7 @@ import requests
 # %%
 
 # statschat-api endpoint
-endpoint = "http://localhost:8000/"  # TODO: add to some params/secrets file
+endpoint = "http://localhost:5000/"  # TODO: add to some params/secrets file
 
 # define session_id that will be used for log file and feedback
 SESSION_NAME = f"statschat_app_{format(datetime.now(), '%Y_%m_%d_%H:%M')}"

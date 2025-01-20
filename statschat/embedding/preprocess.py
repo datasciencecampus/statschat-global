@@ -226,6 +226,7 @@ if __name__ == "__main__":
         filename=f"log/{session_name}.log",
         filemode="a",
     )
+
     # initiate Statschat AI and start the app
     config_path = Path(__file__).resolve().parent.parent / "_config" / "main.toml"
     config = toml.load(config_path)
