@@ -227,9 +227,8 @@ if __name__ == "__main__":
         filemode="a",
     )
     # initiate Statschat AI and start the app
-    config = toml.load(
-        "/Users/diegolaradeandres/project_knbs/statschat-ke/statschat/_config/main.toml"
-    )
+    config_path = Path(__file__).resolve().parent.parent / "_config" / "main.toml"
+    config = toml.load(config_path)
 
     prepper = PrepareVectorStore(**config["db"], **config["preprocess"])
     logger.info("setup of docstore should be complete.")
