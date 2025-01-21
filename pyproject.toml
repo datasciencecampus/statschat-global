@@ -14,6 +14,7 @@ dependencies = [
     "langchain-openai==0.2.12",
     "langchain==0.3.12",
     "langchain-core==0.3.25",
+    "langchain-huggingface==0.1.2",
     "pandas==2.0.2",
     "pydantic==2.10.3",
     "PyPDF2==3.0.1",

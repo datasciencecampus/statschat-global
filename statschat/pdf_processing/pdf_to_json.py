@@ -85,14 +85,13 @@ def build_json(
     pdf_info["url_keywords"] = ["test", "bulletin"]
     pdf_info["contact_name"] = "Joe Bloggs"
     pdf_info["contact_link"] = "mailto:test@knbs.com"
-    pdf_info["title"] = str(pdf_metadata.title)
 
-    # if pdf title metadata blank
-    if pdf_info["title"] == "None":
+    try:
+        pdf_info["title"] = str(pdf_metadata.title)
+    except Exception as e:
         title_from_filename = file_name.replace(".pdf", "")
         pdf_info["title"] = title_from_filename
-    else:
-        pdf_info["title"] = str(pdf_metadata.title)
+        print(f"An error occurred for file {file_name}: {e}")
 
     # create list to store
     pages_text = []

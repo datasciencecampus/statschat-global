@@ -233,3 +233,4 @@ if __name__ == "__main__":
 
     prepper = PrepareVectorStore(**config["db"], **config["preprocess"])
     logger.info("setup of docstore should be complete.")
+    print("setup of docstore should be complete.")
