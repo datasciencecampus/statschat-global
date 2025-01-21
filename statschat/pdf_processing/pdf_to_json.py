@@ -75,7 +75,7 @@ def build_json(
 ):
     # create new dict
     pdf_info = {}
-    pdf_info["id"] = str(np.random.randint(1000000000, 9999999999))
+    pdf_info["id"] = str(np.random.randint(1000000, 9999999))
     pdf_info["latest"] = True
     pdf_info["url"] = (
         f"https://www.knbs.or.ke/wp-content/uploads/{pdf_year}/{pdf_month}/" + file_name
