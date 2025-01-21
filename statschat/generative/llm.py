@@ -77,10 +77,14 @@ class Inquirer:
         embeddings = HuggingFaceEmbeddings(model_name=embedding_model_name)
 
         # Load FAISS databases
-        self.db = FAISS.load_local(faiss_db_root, embeddings)
+        self.db = FAISS.load_local(
+            faiss_db_root, embeddings, allow_dangerous_deserialization=True
+        )
         if faiss_db_root_latest is None:
             faiss_db_root_latest = faiss_db_root + "_latest"
-        self.db_latest = FAISS.load_local(faiss_db_root_latest, embeddings)
+        self.db_latest = FAISS.load_local(
+            faiss_db_root_latest, embeddings, allow_dangerous_deserialization=True
+        )
 
         return None
 
@@ -287,7 +291,7 @@ if __name__ == "__main__":
     # initiate Statschat AI and start the app
     inquirer = Inquirer(**CONFIG["db"], **CONFIG["search"], logger=logger)
 
-    question = "What was the value of output for transport in 2021"
+    question = "What was the poverty rate in 2021?"
 
     docs, answer, response = inquirer.make_query(
         question,
