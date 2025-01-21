@@ -1,6 +1,6 @@
 <h1>Explore the API</h1>
 
-<p>The ONS StatsChat API lets you retrieve ONS publications based on search question.</p>
+<p>The KNBS StatsChat API lets you retrieve KNBS publications based on search question.</p>
 
 <h2>Principle Endpoints</h2>
 

@@ -17,6 +17,7 @@ __pycache__/
 *.parquet
 *.bin
 *.faiss
+*.pdf
 
 
 # Distribution / packaging

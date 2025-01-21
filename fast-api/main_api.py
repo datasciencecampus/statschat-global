@@ -31,7 +31,7 @@ logging.basicConfig(
 inquirer = Inquirer(**CONFIG["db"], **CONFIG["search"], logger=logger)
 
 app = FastAPI(
-    title="ONS StatsChat API",
+    title="KNBS StatsChat API",
     description=(
         "Read more in [blog post]"
         + "(https://datasciencecampus.ons.gov.uk/using-large-language-models-llms-to-improve-website-search-experience-with-statschat/)"  # noqa: E501
@@ -40,12 +40,12 @@ app = FastAPI(
         + "Frontend UI available internally [here]"
         + "(http://localhost:5000)."
     ),
-    summary="""Experimental search of Office for National Statistics web publications.
+    summary="""Experimental search of Kenya National Bureau of Statistics publications.
         Using retrieval augmented generation (RAG).""",
     version="0.0.2",
     contact={
-        "name": "ONS Data Science Campus",
-        "email": "dsc.projects@ons.gov.uk",
+        "name": "Kenya National Bureau of Statistics",
+        "email": "test@knbs.com",
     },
 )
 
@@ -67,10 +67,10 @@ async def search(
     content_type: Union[str, None] = "latest",
     debug: bool = True,
 ):
-    """Search ONS articles and bulletins for a question.
+    """Search KNBS articles and bulletins for a question.
 
     Args:
-        q (str): Question to be answered based on ONS articles and bulletins.
+        q (str): Question to be answered based on KNBS articles and bulletins.
         content_type (Union[str, None], optional): Type of content to be searched.
             Currently accepted values: 'latest' to search the latest bulletins only
             or 'all' to search any articles and bulletins.

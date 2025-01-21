@@ -1,11 +1,12 @@
 import logging
-from langchain_community.llms.huggingface_pipeline import HuggingFacePipeline
+import os
+from dotenv import load_dotenv
+from langchain_huggingface import HuggingFaceEndpoint
 from langchain_community.vectorstores import FAISS
-from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_huggingface.embeddings import HuggingFaceEmbeddings
 from langchain.docstore.document import Document
 from langchain.chains.qa_with_sources import load_qa_with_sources_chain
 from langchain.output_parsers import PydanticOutputParser
-from langchain_google_vertexai import VertexAI, VertexAIEmbeddings
 from statschat.generative.response_model import LlmResponse
 from statschat.generative.prompts import (
     EXTRACTIVE_PROMPT_PYDANTIC,
@@ -24,13 +25,13 @@ class Inquirer:
 
     def __init__(
         self,
-        generative_model_name: str = "google/flan-t5-large",
+        generative_model_name: str = "mistralai/Mistral-7B-Instruct-v0.3",
         faiss_db_root: str = "data/db_langchain",
         faiss_db_root_latest: str = None,
-        embedding_model_name: str = "sentence-transformers/all-mpnet-base-v2",
+        embedding_model_name: str = "sentence-transformers/all-MiniLM-L6-v2",
         k_docs: int = 10,
         k_contexts: int = 3,
-        similarity_threshold: float = 2.0,  # noqa: E501 # higher threshold for smaller corpus! Reduce below 1.0 with larger corpus
+        similarity_threshold: float = 2.0,  # higher threshold for smaller corpus
         logger: logging.Logger = None,
         llm_temperature: float = 0.0,
         llm_max_tokens: int = 1024,
@@ -38,10 +39,10 @@ class Inquirer:
     ):
         """
         Args:
-            generative_model_name (str, optional): Hugging Face model id.
-                Defaults to "google/flan-t5-large".
-            prompt_text (str, optional): Alternative prompt text.
-                Defaults to None.
+            generative_model_name (str, optional): HuggingFace model id.
+                Defaults to "mistralai/Mistral-7B-Instruct-v0.3".
+            embedding_model_name (str, optional): HuggingFace embedding model id.
+                Defaults to "sentence-transformers/all-MiniLM-L6-v2".
         """
 
         # Initialise logger
@@ -58,32 +59,24 @@ class Inquirer:
         self.extractive_prompt = EXTRACTIVE_PROMPT_PYDANTIC
         self.stuff_document_prompt = STUFF_DOCUMENT_PROMPT
 
-        # Answer generation LLM
-        if generative_model_name.startswith(
-            "text-"
-        ) or generative_model_name.startswith("gemini"):
-            self.llm = VertexAI(
-                model_name=generative_model_name,
-                temperature=llm_temperature,
-                max_output_tokens=llm_max_tokens,
-            )
+        # Load the token for Hugging Face
+        load_dotenv()
+        sec_key = os.getenv("HF_TOKEN")
 
-        else:
-            # Load LLM with text2text-generation specifications
-            self.llm = HuggingFacePipeline.from_model_id(
-                model_id=generative_model_name,
-                task="text2text-generation",
-                model_kwargs={
-                    "temperature": llm_temperature,
-                    "max_length": llm_max_tokens,
-                },
-            )
+        # Load LLM with text2text-generation specifications
+        self.llm = HuggingFaceEndpoint(
+            repo_id=generative_model_name,
+            model_kwargs={
+                "max_length": 512,
+            },
+            temperature=0.1,
+            token=sec_key,
+        )
 
-        if embedding_model_name.startswith("textembedding-"):
-            embeddings = VertexAIEmbeddings(model_name=embedding_model_name)
-        else:
-            embeddings = HuggingFaceEmbeddings(model_name=embedding_model_name)
+        # Embeddings
+        embeddings = HuggingFaceEmbeddings(model_name=embedding_model_name)
 
+        # Load FAISS databases
         self.db = FAISS.load_local(faiss_db_root, embeddings)
         if faiss_db_root_latest is None:
             faiss_db_root_latest = faiss_db_root + "_latest"
@@ -234,12 +227,12 @@ class Inquirer:
         """
         self.logger.info(f"Search query: {question}")
         docs1 = self.similarity_search(
-            question, latest_filter=latest_filter in ["On", "on", "true", "True", True]
+            question, latest_filter=latest_filter in ["On", "on", "true", "True", False]
         )
 
         if len(docs1) == 0:
             return docs1, ""
-        docs = deduplicator(docs1, keys=["section", "title", "date"])
+        docs = deduplicator(docs1, keys=["title", "date"])
 
         if latest_weight > 0:
             for doc in docs:
@@ -283,3 +276,27 @@ class Inquirer:
             )
 
         return docs, answer_str, validated_response
+
+
+if __name__ == "__main__":
+    from statschat import load_config
+
+    logger = logging.getLogger(__name__)
+    # Config file to load
+    CONFIG = load_config(name="main")
+    # initiate Statschat AI and start the app
+    inquirer = Inquirer(**CONFIG["db"], **CONFIG["search"], logger=logger)
+
+    question = "What was the value of output for transport in 2021"
+
+    docs, answer, response = inquirer.make_query(
+        question,
+        latest_filter="off",
+    )
+
+    print("-------------------ANSWER-------------------")
+    print(answer)
+    print("-------------------DOCUMENTS-------------------")
+    print(docs)
+    print("-------------------FULL RESPONSE-------------------")
+    print(response)
