@@ -15,7 +15,7 @@ dependencies = [
     "langchain-google-vertexai==0.0.1",
     "langchain-openai==0.2.12",
     "langchain==0.3.12",
-    "langchain-core==0.3.25"
+    "langchain-core==0.3.25",
     "pandas==2.0.2",
     "pydantic==1.10.10",
     "PyPDF2==3.0.1",
