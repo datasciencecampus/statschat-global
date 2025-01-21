@@ -291,7 +291,7 @@ if __name__ == "__main__":
     # initiate Statschat AI and start the app
     inquirer = Inquirer(**CONFIG["db"], **CONFIG["search"], logger=logger)
 
-    question = "What was the poverty rate in 2021?"
+    question = "What is the fastest growing sector?"
 
     docs, answer, response = inquirer.make_query(
         question,
@@ -300,6 +300,15 @@ if __name__ == "__main__":
 
     print("-------------------ANSWER-------------------")
     print(answer)
+    page_url = docs[0]["page_url"]
+    # Extract document name from URL
+    document_url = docs[0]["url"]
+    split_url = document_url.split("/")
+    doc_id = split_url[-1]
+    document_name = doc_id[:-4]
+    print(f"The document name is {document_name}.")
+    print(f"You can read more from the document at {page_url}.")
+
     print("-------------------DOCUMENTS-------------------")
     print(docs)
     print("-------------------FULL RESPONSE-------------------")
