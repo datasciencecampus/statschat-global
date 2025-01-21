@@ -103,15 +103,15 @@ The codebase is meant to also run as a python library, in order to install this
 you will then need to run:
 
 ```bash
-python -m pip install --upgrade pip
-python -m pip install .
+pip install --upgrade pip
+pip install .
 ```
 
 > [!NOTE]
 > If you are doing development work on `statschat`, you should install the
 > package locally as editable with our optional `dev` dependencies:
 > ```shell
-> python -m pip install -e ".[dev]"
+> pip install -e .
 > ```
 
 ## 3) Pre-commit actions
