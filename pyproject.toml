@@ -13,14 +13,15 @@ dependencies = [
     "jq==1.4.1",
     "langchain-community==0.0.13",
     "langchain-google-vertexai==0.0.1",
-    "langchain-openai==0.0.2",
-    "langchain==0.1.0",
+    "langchain-openai==0.2.12",
+    "langchain==0.3.12",
+    "langchain-core==0.3.25"
     "pandas==2.0.2",
     "pydantic==1.10.10",
     "PyPDF2==3.0.1",
     "rapidfuzz==3.1.1",
     "requests==2.31.0",
-    "sentence_transformers==2.2.2",
+    "sentence_transformers==3.3.1",
     "toml==0.10.2",
     "typing==3.7.4.3",
 ]
@@ -37,7 +38,6 @@ backend = [
 frontend = [
     "Flask==2.3.2",
     "gunicorn==21.2.0",
-    "requests==2.31.0",
 ]
 dev = [
     "ipykernel==6.23.2",
