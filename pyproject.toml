@@ -1,5 +1,5 @@
 [project]
-name = "statschat-ke"
+name = "statschat"
 description = "An app for RAG-based search of KNBS statistical publications"
 authors = [{name = "Kenya National Bureau of Statistics", email = "info@knbs.or.ke"}]
 readme = "README.md"
@@ -8,14 +8,14 @@ requires-python = ">=3.10"
 dynamic = ["version"]
 dependencies = [
     "bs4==0.0.1",
-    "faiss-cpu==1.7.4",
+    "faiss-cpu==1.9.0.post1",
     "google-cloud-aiplatform==1.38.1",
-    "jq==1.4.1",
+    "jq==1.8.0",
     "langchain-openai==0.2.12",
-    "langchain==0.3.12",
-    "langchain-core==0.3.25",
+    "langchain==0.3.15",
+    "langchain-core==0.3.31",
     "langchain-huggingface==0.1.2",
-    "pandas==2.0.2",
+    "pandas==2.2.2",
     "pydantic==2.10.3",
     "PyPDF2==3.0.1",
     "rapidfuzz==3.1.1",
