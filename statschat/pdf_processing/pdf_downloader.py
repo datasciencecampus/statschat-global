@@ -15,7 +15,7 @@ if not DATA_DIR.exists():
     DATA_DIR.mkdir(parents=True, exist_ok=True)
 
 # %%
-url = "https://www.knbs.or.ke/publications/page/2/"
+url = "https://www.knbs.or.ke/all-reports/"
 response = requests.get(url)
 soup = BeautifulSoup(response.text, "html.parser")
 

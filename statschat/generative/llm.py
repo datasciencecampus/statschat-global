@@ -291,14 +291,17 @@ if __name__ == "__main__":
     # initiate Statschat AI and start the app
     inquirer = Inquirer(**CONFIG["db"], **CONFIG["search"], logger=logger)
 
-    question = "What is the fastest growing sector?"
+    question = "Give me the registered births by age of mother and county"
+    # question = "What is the sample size of the Real Estate Survey?"
+    # question = "How is core inflation calculated?"
+    # question = "What was inflation in Kenya in December 2024?"
 
     docs, answer, response = inquirer.make_query(
         question,
         latest_filter="off",
     )
 
-    print("-------------------ANSWER-------------------")
+    print("-------------------- ANSWER --------------------")
     print(answer)
     page_url = docs[0]["page_url"]
     # Extract document name from URL
@@ -306,10 +309,14 @@ if __name__ == "__main__":
     split_url = document_url.split("/")
     doc_id = split_url[-1]
     document_name = doc_id[:-4]
-    print(f"The document name is {document_name}.")
+    document_title = docs[0]["title"]
+
+    print("-------------------- DOCUMENT -------------------")
+    print(f"The document title is {document_title}.")
+    print(f"The file name is {document_name}.")
     print(f"You can read more from the document at {page_url}.")
 
-    print("-------------------DOCUMENTS-------------------")
+    print("------------------ CONTEXT INFO ------------------")
     print(docs)
-    print("-------------------FULL RESPONSE-------------------")
+    print("------------------ FULL RESPONSE -----------------")
     print(response)
