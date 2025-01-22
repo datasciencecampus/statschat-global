@@ -1,6 +1,6 @@
-"""StatsChat: Semantic search of ONS statistical publications."""
+"""StatsChat: Semantic search of KNBS statistical publications."""
 
-__version__ = "0.0.1"
+__version__ = "0.0.2"
 
 from ._config.main import load_config
 
