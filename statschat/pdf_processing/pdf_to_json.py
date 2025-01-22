@@ -29,7 +29,7 @@ def get_date(metadata, name, counter):
 
     except Exception as e:
         counter += 1
-        pdf_creation_date = datetime.datetime.now().strftime("%Y%m%d%H%M%S%z")
+        pdf_creation_date = datetime.datetime.now().strftime("%Y-%m-%d")
         print(f"An error occurred for file {name}: {e}")
         print(f"Total number of files with errors: {count}")
 
