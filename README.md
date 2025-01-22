@@ -60,9 +60,9 @@ set up a virtual environment.
 
 Before you download the `statschat-ke` repo you should have the following:
 
-- Python (version >=3.10,<3.12)
+- Python (version 3.11)
 
-Python version 3.11 will be implemented when all packages that are used by the project have been updated to work with the newer version.
+For now, we can only guarantee the project will work with Python 3.11.
 
 
 ### Getting Python
@@ -190,11 +190,24 @@ gcloud auth application-default login
 
 ## 5) Example endpoint commands
 
-1. #### Webscraping the source documents (not included in the public repository, only examples in `data/bulletins`)
+1. #### Webscraping the source documents
+
+Before running `pdf_downloader.py` you should make sure that the url path in line 18
+is the desired one.
 
     ```shell
-    python statschat/webscraping/main.py
+    python statschat/pdf_processing/pdf_downloader.py
     ```
+
+Convert the downloaded pdfs into JSON formats:
+
+    ```shell
+    python statschat/pdf_processing/pdf_to_json.py
+    ```
+
+> [!NOTE]
+> The second script my flag some files that don't have compliant metadata.
+> For now the guidance is to delete those PDFs, the produced JSONS and re-run the script.
 
 2. #### Creating a local document store
 
@@ -202,10 +215,10 @@ gcloud auth application-default login
     python statschat/embedding/preprocess.py
     ```
 
-3. #### Updating an existing local document store with new articles
+3. #### Run the sample questions manually
 
     ```shell
-    python statschat/embedding/preprocess_update_db.py
+    python statschat/generative/llm.py
     ```
 
 4. #### Run the interactive Statschat API
