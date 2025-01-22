@@ -10,6 +10,10 @@ from urllib.parse import urlparse
 # Set relative paths
 DATA_DIR = Path.cwd().joinpath("data/pdf_downloads")
 
+# Check if DATA_DIR exists, if not, create the folder
+if not DATA_DIR.exists():
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
+
 # %%
 url = "https://www.knbs.or.ke/publications/page/2/"
 response = requests.get(url)

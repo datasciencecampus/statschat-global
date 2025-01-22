@@ -125,6 +125,10 @@ def build_json(
         # create nested dictionary
         pdf_info["content"] = pages_text
 
+        # Check if JSON_DIR exists, if not, create the folder
+        if not JSON_DIR.exists():
+            JSON_DIR.mkdir(parents=True, exist_ok=True)
+
         with open(JSON_DIR / f"{pdf_file_path.stem}.json", "w") as json_file:
             json.dump(pdf_info, json_file, indent=4)
 
