@@ -33,13 +33,13 @@ while continue_search:
     ]
     
     if len(pdf_links) == 0:
-        print('I HAVE GOT WEBPAGES')
+        print('HAVE STOPPED GETTING WEBPAGES')
         continue_search = False
     
     page += 1
     all_pdf_links.append(url)
 
-print('I HAVE FINISHED')
+print('HAVE FINISHED COMPILING THEM AND WILL NOW START DOWNLOADING')
 
 # %%
 # print counter
