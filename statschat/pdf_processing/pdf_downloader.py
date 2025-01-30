@@ -39,7 +39,7 @@ while continue_search:
     page += 1
     all_pdf_links.append(url)
 
-print('HAVE FINISHED COMPILING THEM AND WILL NOW START DOWNLOADING')
+print('FINISHED COMPILING LINKS AND WILL NOW START DOWNLOADING PDFs')
 
 # %%
 # print counter
@@ -75,6 +75,8 @@ pdf_page_range = len(all_knbs_pdf_file_links)
 # %%
 # downloads PDFs to relevant folder
 
+counter = 0 
+
 for i in range(pdf_page_range):
     for pdf in all_knbs_pdf_file_links[i]:
         url = pdf
@@ -89,7 +91,12 @@ for i in range(pdf_page_range):
             with open(file_path, "wb") as file:
                 file.write(response.content)
             print(f"File {actual_pdf_file_name} downloaded successfully")
+            
+            counter += 1
+        
         else:
             print(f"Failed to download file {actual_pdf_file_name}")
+            
+        
 
 
