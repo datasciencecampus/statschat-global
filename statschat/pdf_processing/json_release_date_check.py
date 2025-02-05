@@ -32,8 +32,11 @@ for json_file in JSON_DIR.glob("*.json"):
 #         data = json.load(file)
 #         
 #         if len(data["release_date"]) < 10:
-#             #print(data["url"])
 #             json_file.unlink()
+#             print(f"""The json file {json_file.name} 
+#                       has been removed from the 
+#                       json_conversion directory""")
+
 
 
 
