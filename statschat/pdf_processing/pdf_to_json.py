@@ -14,6 +14,9 @@ JSON_DIR = Path.cwd().joinpath("data/json_conversions")
 
 
 def get_name_and_meta(file_path):
+    """
+    Extracts file name and metadata from PDF
+    """
     file_name = pdf_file_path.name
     pdf_metadata = PyPDF2.PdfReader(pdf_file_path)
     pdf_metadata = pdf_metadata.metadata
@@ -22,6 +25,10 @@ def get_name_and_meta(file_path):
 
 
 def get_date(metadata, name, counter):
+    """
+    Extracts creation date from PDF metadata
+    Assigns current date if creation date is unavailable
+    """
     # pdf date, time and year (may need to add for modification date)
     try:
         pdf_creation_date = str(metadata.creation_date)
@@ -37,6 +44,9 @@ def get_date(metadata, name, counter):
 
 
 def determine_dates(pdf_creation_date, pdf_modification_date):
+    """
+    Determines the correct year and month based on creation and modification date
+    """
     pdf_creation_year = pdf_creation_date[:4]
     pdf_creation_month = pdf_creation_date[5:7]
 
@@ -73,6 +83,10 @@ def determine_dates(pdf_creation_date, pdf_modification_date):
 def build_json(
     pdf_year, pdf_month, pdf_creation_date, pdf_file_path, pdf_metadata, file_name
 ):
+    """
+    Constructs a JSON representation of the PDF file
+    Saves it to a file
+    """
     # create new dict
     pdf_info = {}
     pdf_info["id"] = str(np.random.randint(1000000, 9999999))
