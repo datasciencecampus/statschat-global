@@ -15,6 +15,8 @@ if not DATA_DIR.exists():
     DATA_DIR.mkdir(parents=True, exist_ok=True)
 
 # %%
+# Extract and Parse HTML content from website
+# for ease during navigation and extraction of elements
 url = "https://www.knbs.or.ke/all-reports/"
 response = requests.get(url)
 soup = BeautifulSoup(response.text, "html.parser")
@@ -35,15 +37,19 @@ print(webpage_list_pdf_links)
 len(pdf_links)
 
 # %%
+# Iterate over each PDF URL extracted from the webpage,
 for pdf in pdf_links:
     url = pdf
     parsed_url = urlparse(url)
     pdf_name = parsed_url.path
     actual_pdf_file_name = pdf_name[28:]
 
+    # Download PDF and save to a local file path.
     response = requests.get(url)
     file_path = f"{DATA_DIR}/{actual_pdf_file_name}"
 
+    # Save file in binary mode if request is successful,
+    # return error message if request fails.
     if response.status_code == 200:
         with open(file_path, "wb") as file:
             file.write(response.content)
