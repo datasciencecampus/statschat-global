@@ -217,17 +217,52 @@ Convert the downloaded pdfs into JSON formats:
 
 3. #### Run the sample questions manually
 
+    Make sure that you're terminall is running from `statschat-ke`.
+    Then run the `llm.py` script using:
+
     ```shell
     python statschat/generative/llm.py
     ```
 
 4. #### Run the interactive Statschat API
 
+    In order to run the interactive Statschat API you will need to make sure you have:
+
+        - `uvicorn`: This is a bit of software to locally replicate a server.
+        - `fastapi`: This is a Python library to generate the API functionality.
+
+    To get these in your machine simply run `pip install fastapi uvicorn`.
+
+    Then you will need to make sure your terminal is on the `statschat-ke` folder.
+    From there, you can generate the synthetic "server" locally from your terminal:
+
     ```shell
-    uvicorn fast-api.main_api:app
+    uvicorn fast-api.main_api:app --reload
     ```
 
-    The fastapi is set to respond to http requests on port 8000. When running, you can see docs at http://localhost:8000/docs.
+    The fastapi is set to respond to http requests on a particular port.
+    You will see this in your terminal line, something like:
+
+    ```shell
+    Uvicorn running on http://127.0.0.1:8000
+    ```
+
+    Your port might be slightly different to 127.0.0.1:8000
+
+    After a few seconds you should be able to go to your browser and ask questions.
+    On the search bar type something like:
+
+    ```
+    http://127.0.0.1:8000/search?q=what+was+inflation+in+december+2023
+    ```
+
+    This should produce a response text that is displayed on your browser.
+
+    The generic formula to ask a question is:
+
+    ```
+    <API_URL>/search?q=<your_question>
+    ```
 
 5. #### Run the flask web interface
 
