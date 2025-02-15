@@ -291,7 +291,7 @@ if __name__ == "__main__":
     # initiate Statschat AI and start the app
     inquirer = Inquirer(**CONFIG["db"], **CONFIG["search"], logger=logger)
 
-    question = "Give me the registered births by age of mother and county"
+    question = "Where can I find the registered births by age of mother and county?"
     # question = "What is the sample size of the Real Estate Survey?"
     # question = "How is core inflation calculated?"
     # question = "What was inflation in Kenya in December 2024?"
