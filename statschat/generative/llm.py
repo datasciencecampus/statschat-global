@@ -36,6 +36,8 @@ class Inquirer:
         llm_temperature: float = 0.0,
         llm_max_tokens: int = 1024,
         verbose: bool = False,
+        answer_threshold: float = 0.5,
+        document_threshold: float = 0.9,
     ):
         """
         Args:
@@ -55,6 +57,8 @@ class Inquirer:
         self.k_docs = k_docs
         self.k_contexts = k_contexts
         self.similarity_threshold = similarity_threshold
+        self.answer_threshold = answer_threshold
+        self.document_threshold = document_threshold
         self.verbose = verbose
         self.extractive_prompt = EXTRACTIVE_PROMPT_PYDANTIC
         self.stuff_document_prompt = STUFF_DOCUMENT_PROMPT
