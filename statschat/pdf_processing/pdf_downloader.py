@@ -5,6 +5,7 @@ import requests
 from bs4 import BeautifulSoup
 from pathlib import Path
 from urllib.parse import urlparse
+import json
 
 # %%
 # Set relative paths
@@ -30,12 +31,14 @@ pdf_links = [
 # %%
 # on separate lines
 webpage_list_pdf_links = "\n".join(pdf_links)
-print(webpage_list_pdf_links)
 
 # %%
 # number of pdf's
 len(pdf_links)
 
+# %%
+# Initalise empty dict to store url and download links
+url_dict = {}
 # %%
 # Iterate over each PDF URL extracted from the webpage,
 for pdf in pdf_links:
@@ -48,6 +51,10 @@ for pdf in pdf_links:
     response = requests.get(url)
     file_path = f"{DATA_DIR}/{actual_pdf_file_name}"
 
+    # update dictionary
+    url_dict[actual_pdf_file_name] = url
+    print(url_dict[actual_pdf_file_name])
+
     # Save file in binary mode if request is successful,
     # return error message if request fails.
     if response.status_code == 200:
@@ -56,3 +63,8 @@ for pdf in pdf_links:
         print(f"File {actual_pdf_file_name} downloaded successfully")
     else:
         print(f"Failed to download file {actual_pdf_file_name}")
+
+# Export url link dictionary to json file
+with open(f"{DATA_DIR}/url_dict.json", "w") as json_file:
+    json.dump(url_dict, json_file, indent=4)
+    print("url_dict saved to url_dict.json")
