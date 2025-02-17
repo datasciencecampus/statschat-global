@@ -288,11 +288,13 @@ class Inquirer:
                
         if docs[0]['score'] > self.document_threshold:
             
-            del docs[:]
+            doc_string = "No suitable PDFs found. Please refer to response"
             
-            doc_string = "No suitable PDFs found. Please refer to context info"
+            docs.clear()
             
-            docs = docs.append(doc_string)
+            docs.append(doc_string)
+            
+            #print("No suitable PDFs found. Please refer to Full Response")
             
         #else:
             #docs = docs
@@ -312,16 +314,16 @@ if __name__ == "__main__":
 
     # question = "Give me the registered births by age of mother and county"
     # question = "What is the sample size of the Real Estate Survey?"
-    question = "How is core inflation calculated?"
+    # question = "How is core inflation calculated?"
     # question = "What was inflation in Kenya in December 2021?"
-    # question = "What is football?"
+    question = "What is football?"
 
     docs, answer, response = inquirer.make_query(
         question,
         latest_filter="off",
     )
     
-    test_thresholds = "NO"
+    test_thresholds = "YES"
     
     print("-------------------- ANSWER --------------------")
     
@@ -340,7 +342,7 @@ if __name__ == "__main__":
 
     print("-------------------- DOCUMENT -------------------")
     if test_thresholds == "YES":
-        print("Should not give a document!")
+        print(docs)
         
     elif test_thresholds == "NO":
         print(f"The document title is {document_title}.")
