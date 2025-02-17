@@ -1,5 +1,6 @@
 # %%
 # import modules
+import os
 import PyPDF2
 import json
 from pathlib import Path
@@ -94,8 +95,8 @@ def extract_pdf_creation_date(metadata, filename: str, counter: int) -> tuple[st
         counter (int): A running count of files that lack reliable date information.
 
     Returns:
-        tuple[str, int]: The extracted or fallback PDF creation date in 'YYYY-MM-DD' format,
-        and an updated counter for files missing an explicit creation date.
+        tuple[str, int]: The extracted or fallback PDF creation date in 'YYYY-MM-DD'
+        format, and an updated counter for files missing an explicit creation date.
     """
 
     pdf_creation_date = None  # Initialize variable to store the extracted date.
@@ -127,15 +128,6 @@ def extract_pdf_creation_date(metadata, filename: str, counter: int) -> tuple[st
             pdf_creation_date = (
                 f"{max(years_in_filename)}-01-01"  # Assign start-of-year date.
             )
-
-    # Use modification date from metadata if no valid creation date or filename year is found.
-    if metadata:
-        raw_mod_date = metadata.get("/ModDate") if isinstance(metadata, dict) else None
-        cleaned_mod_date = preprocess_date(str(raw_mod_date)) if raw_mod_date else None
-
-        if not pdf_creation_date and cleaned_mod_date:
-            pdf_creation_date = f"{cleaned_mod_date[:4]}-{cleaned_mod_date[4:6]}-{cleaned_mod_date[6:8]}"
-            counter += 1  # Increment counter since modification date is being used.
 
     # Assign the current system date if no valid date is found.
     if not pdf_creation_date:
@@ -183,16 +175,6 @@ def extract_pdf_modification_date(
     return pdf_modification_date
 
 
-def determine_dates(pdf_creation_date, pdf_modification_date):
-    """
-    Determines the correct year and month based on creation and modification date
-    """
-    pdf_year = pdf_creation_date[:4]
-    pdf_month = pdf_creation_date[5:7]
-
-    return pdf_year, pdf_month
-
-
 def extract_pdf_metadata(pdf_file_path: Path, counter: int) -> tuple:
     """
     Extracts metadata from a given PDF file.
@@ -202,24 +184,18 @@ def extract_pdf_metadata(pdf_file_path: Path, counter: int) -> tuple:
         counter (int): A running count of files missing reliable date information.
 
     Returns:
-        tuple: (file_name, pdf_year, pdf_month, pdf_creation_date, pdf_metadata, updated_counter)
+        tuple: (file_name, pdf_year, pdf_month,
+                pdf_creation_date, pdf_metadata, updated_counter)
     """
 
     # Extract filename and metadata
     file_name, pdf_metadata = get_name_and_meta(pdf_file_path)
-    print(pdf_metadata, "metadata")
     # Extract creation and modification dates
     pdf_creation_date, counter = extract_pdf_creation_date(
         pdf_metadata, file_name, counter
     )
-    pdf_modification_date = extract_pdf_modification_date(
-        pdf_metadata, file_name, pdf_creation_date
-    )
 
-    # Determine document date-based folder structure
-    pdf_year, pdf_month = determine_dates(pdf_creation_date, pdf_modification_date)
-
-    return file_name, pdf_year, pdf_month, pdf_creation_date, pdf_metadata, counter
+    return file_name, pdf_creation_date, pdf_metadata, counter
 
 
 def extract_pdf_text(pdf_file_path: Path, pdf_url: str) -> list:
@@ -255,7 +231,7 @@ def extract_pdf_text(pdf_file_path: Path, pdf_url: str) -> list:
     return pages_text
 
 
-def build_json(pdf_file_path: Path, counter: int) -> int:
+def build_json(pdf_file_path: Path, pdf_website_url: str, counter: int) -> int:
     """
     Processes a PDF file, extracts metadata and content, then saves it as JSON.
 
@@ -271,14 +247,12 @@ def build_json(pdf_file_path: Path, counter: int) -> int:
     print(f"Processing: {pdf_file_path.name}")
 
     # Extract Metadata & Pre-Process
-    file_name, pdf_year, pdf_month, pdf_creation_date, pdf_metadata, counter = (
-        extract_pdf_metadata(pdf_file_path, counter)
+    file_name, pdf_creation_date, pdf_metadata, counter = extract_pdf_metadata(
+        pdf_file_path, counter
     )
 
     # Construct the document's URL
-    pdf_url = (
-        f"https://www.knbs.or.ke/wp-content/uploads/{pdf_year}/{pdf_month}/{file_name}"
-    )
+    pdf_url = pdf_website_url
 
     # Construct Ordered Metadata Dictionary
     pdf_info = {
@@ -314,107 +288,35 @@ def build_json(pdf_file_path: Path, counter: int) -> int:
     return counter  # Return updated counter
 
 
+def normalize_dict_keys(file_dict: dict) -> dict:
+    """
+    Normalizes dictionary keys by converting mixed slashes ('/' and '\\')
+    into Windows-compatible backslashes ('\\').
+
+    Args:
+        file_dict (dict): Dictionary with file paths as keys.
+
+    Returns:
+        dict: Dictionary with normalized file paths as keys.
+    """
+    return {os.path.normpath(k): v for k, v in file_dict.items()}
+
+
 # Initialize counter
 count = 0  # Initialize counter
 
+# Load in url dict
+dict_filepath = f"{DATA_DIR}/url_dict.json"
+if os.path.exists(dict_filepath):
+    with open(dict_filepath, "r") as json_file:
+        url_dict = json.load(json_file)
+
+# noralize keys
+normalize_dict_keys(url_dict)
 # Loop through all PDF files and process them
 for pdf_file_path in DATA_DIR.glob("*.pdf"):
-    count = build_json(pdf_file_path, count)
+    pdf_url = url_dict[os.path.basename(pdf_file_path)]
+    count = build_json(pdf_file_path, pdf_url, count)
 
 # Print final count of files with metadata (date) errors
 print(f"Total number of files with errors: {count}")
-
-'''
-def build_json(
-    file_name, pdf_year, pdf_month, pdf_creation_date, pdf_file_path, pdf_metadata
-):
-    """
-    Constructs a JSON representation of the PDF file
-    Saves it to a file
-    """
-
-    # create new dict
-    pdf_info = {}
-    pdf_info["id"] = str(np.random.randint(1000000, 9999999))
-    pdf_info["latest"] = True
-    pdf_info["url"] = (
-        f"https://www.knbs.or.ke/wp-content/uploads/{pdf_year}/{pdf_month}/" + file_name
-    )
-    pdf_info["release_date"] = pdf_creation_date
-    pdf_info["release_type"] = determine_document_type_from_filename(file_name)
-    pdf_info["url_keywords"] = extract_url_keywords_from_filename(file_name)
-    pdf_info["contact_name"] = "Joe Bloggs"
-    pdf_info["contact_link"] = "mailto:test@knbs.com"
-    print(pdf_info)
-    # Extract a meaningful title from the filename (best practice)
-    clean_title = file_name.replace(".pdf", "").replace("-", " ")
-    print(pdf_metadata.title)
-    # Store extracted title in JSON
-    pdf_info["title"] = clean_title if clean_title else pdf_metadata.title
-
-    print(f"DEBUG: pdf_file_path = {pdf_file_path}, type = {type(pdf_file_path)}")
-    # create list to store
-    pages_text = []
-    with open(pdf_file_path, "rb") as pdf_file:
-        # read file
-        pdf_reader = PyPDF2.PdfReader(pdf_file)
-
-        # read every page
-        for page_num in range(len(pdf_reader.pages)):
-            # read page wise data from pdf file
-            page = pdf_reader.pages[page_num]
-
-            # extract data from page to text
-            text = page.extract_text().split("\n")
-            # convert list of strings into one large string
-            text = "".join(text)
-
-            # get page link
-            page_link = pdf_info["url"]
-
-            # add text of page to array
-            pages_text.append(
-                {
-                    "page_number": page_num + 1,
-                    "page_url": page_link + "#page=" + str(page_num + 1),
-                    "page_text": text,
-                }
-            )
-
-        # create nested dictionary
-        pdf_info["content"] = pages_text
-
-        # Check if JSON_DIR exists, if not, create the folder
-        if not JSON_DIR.exists():
-            JSON_DIR.mkdir(parents=True, exist_ok=True)
-
-        with open(JSON_DIR / f"{pdf_file_path.stem}.json", "w") as json_file:
-            json.dump(pdf_info, json_file, indent=4)
-
-        # print JSON
-        # print(json.dumps([pdf_info], indent=4))
-
-
-# %%
-# create counter
-count = 0
-
-pdf_list = DATA_DIR.glob("*.pdf")
-# loop through folder to get filepaths
-for pdf_file_path in DATA_DIR.glob("*.pdf"):
-    # extract filename and metadata
-    file_name, pdf_metadata = get_name_and_meta(pdf_file_path)
-    # extract creation date
-    pdf_creation_date, count = extract_pdf_creation_date(pdf_metadata,
-                                                         file_name,
-                                                         count)
-    pdf_modification_date = extract_pdf_modification_date(pdf_metadata,
-                                                          file_name,
-                                                          pdf_creation_date)
-    pdf_year, pdf_month = determine_dates(pdf_creation_date, pdf_modification_date) #change this to be the default url in future - also then no need to reimpute?
-    build_json(
-        file_name, pdf_year, pdf_month, pdf_creation_date, pdf_file_path, pdf_metadata
-    )
-
-print(f"Total number of files with errors: {count}")
-'''
