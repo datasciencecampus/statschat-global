@@ -284,20 +284,23 @@ class Inquirer:
             )
         
         if docs[0]['score'] > self.answer_threshold:
-            answer_str = "No suitable answer found however relevant information may be found in this PDF"
+            answer_str = "No suitable answer found however relevant information may be found in a PDF. Please check the link(s) provided"
+            
+        else:
+            answer_str = answer_str
                
         if docs[0]['score'] > self.document_threshold:
             
-            doc_string = "No suitable PDFs found. Please refer to response"
+            document_string = "No suitable PDFs found. Please refer to context"
+            
+            context_string = "No context available. Please refer to response"
             
             docs.clear()
             
-            docs.append(doc_string)
+            docs.extend([document_string, context_string])
             
-            #print("No suitable PDFs found. Please refer to Full Response")
-            
-        #else:
-            #docs = docs
+        else:
+            docs = docs
         
                  
         return docs, answer_str, validated_response
@@ -315,15 +318,15 @@ if __name__ == "__main__":
     # question = "Give me the registered births by age of mother and county"
     # question = "What is the sample size of the Real Estate Survey?"
     # question = "How is core inflation calculated?"
-    # question = "What was inflation in Kenya in December 2021?"
-    question = "What is football?"
+    question = "What was inflation in Kenya in December 2021?"
+    # question = "What is football?"
 
     docs, answer, response = inquirer.make_query(
         question,
         latest_filter="off",
     )
     
-    test_thresholds = "YES"
+    test_thresholds = "NO"
     
     print("-------------------- ANSWER --------------------")
     
@@ -342,7 +345,7 @@ if __name__ == "__main__":
 
     print("-------------------- DOCUMENT -------------------")
     if test_thresholds == "YES":
-        print(docs)
+        print(docs[0])
         
     elif test_thresholds == "NO":
         print(f"The document title is {document_title}.")
@@ -350,7 +353,11 @@ if __name__ == "__main__":
         print(f"You can read more from the document at {page_url}.")
 
     print("------------------ CONTEXT INFO ------------------")
-    print(docs)
+    if test_thresholds == "YES":
+        print(docs[1])
+        
+    elif test_thresholds == "NO":
+        print(docs)
     
     print("------------------ FULL RESPONSE -----------------")
     print(response)
