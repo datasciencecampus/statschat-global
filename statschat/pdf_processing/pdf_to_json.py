@@ -14,8 +14,14 @@ JSON_DIR = Path.cwd().joinpath("data/json_conversions")
 
 
 def get_name_and_meta(file_path):
-    """
-    Extracts file name and metadata from PDF
+    """Extracts file name and metadata from PDF
+
+    Args:
+        file_path (path): file path for PDF file
+
+    Returns:
+        file_name: file for PDF file
+        pdf_metadata: metadata for PDF (dates etc)
     """
     file_name = pdf_file_path.name
     pdf_metadata = PyPDF2.PdfReader(pdf_file_path)
@@ -25,10 +31,19 @@ def get_name_and_meta(file_path):
 
 
 def get_date(metadata, name, counter):
+    """Extracts creation date from PDF metadata
+       Assigns current date if creation date is unavailable
+
+    Args:
+        metadata (_type_): metadata for PDF file
+        name (str): PDF file name
+        counter (int): counts numbers
+
+    Returns:
+        pdf_creation_date: date PDF file was created
+        counter: number of PDF files with metadata issues
     """
-    Extracts creation date from PDF metadata
-    Assigns current date if creation date is unavailable
-    """
+
     # pdf date, time and year (may need to add for modification date)
     try:
         pdf_creation_date = str(metadata.creation_date)
@@ -44,9 +59,17 @@ def get_date(metadata, name, counter):
 
 
 def determine_dates(pdf_creation_date, pdf_modification_date):
+    """Determines the correct year and month based on creation and modification date
+
+    Args:
+        pdf_creation_date (datetime): date pdf created
+        pdf_modification_date (datetime): date pdf modified
+
+    Returns:
+        pdf_date: date for PDF to go into URL
+        pdf_month: month for PDF to go into URL
     """
-    Determines the correct year and month based on creation and modification date
-    """
+
     pdf_creation_year = pdf_creation_date[:4]
     pdf_creation_month = pdf_creation_date[5:7]
 
@@ -83,10 +106,18 @@ def determine_dates(pdf_creation_date, pdf_modification_date):
 def build_json(
     pdf_year, pdf_month, pdf_creation_date, pdf_file_path, pdf_metadata, file_name
 ):
+    """Constructs a JSON representation of the PDF file
+       Saves it to a file
+
+    Args:
+        pdf_year (int): year for PDF
+        pdf_month (int): month for PDF
+        pdf_creation_date (datetime): date PDF created
+        pdf_file_path (path): PDF file path
+        pdf_metadata: PDF metadata
+        file_name (name): PDF name
     """
-    Constructs a JSON representation of the PDF file
-    Saves it to a file
-    """
+
     # create new dict
     pdf_info = {}
     pdf_info["id"] = str(np.random.randint(1000000, 9999999))
