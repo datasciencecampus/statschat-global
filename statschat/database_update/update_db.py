@@ -40,8 +40,14 @@ pdf_list = sorted(pdf_list)
 print(f"There are currently {len(pdf_list)} pdf files in the {DATA_DIR.stem} folder")
 
 # %%
+new_pdfs_to_convert = []
+
 for json, pdf in zip(json_list, pdf_list):
     #print(f"json: {json} pdf: {pdf}")
     if pdf not in json_list:
         print(f"The pdf file: {pdf} not in database")
+        #print(pdf + ".pdf")
+        new_pdfs_to_convert.append(pdf + ".pdf")
+        
+#print(new_pdfs_to_convert)
     
