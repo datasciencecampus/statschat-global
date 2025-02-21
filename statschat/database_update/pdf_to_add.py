@@ -5,12 +5,12 @@ import json
 from pathlib import Path
 import datetime
 import numpy as np
-
 # %%
 # set relative paths
 
 DATA_DIR = Path.cwd().joinpath("data/pdf_downloads")
 JSON_DIR = Path.cwd().joinpath("data/json_conversions")
+LATEST_JSON_DIR = Path.cwd().joinpath("data/json_conversions_latest")
 
 # %%
 json_list = []
