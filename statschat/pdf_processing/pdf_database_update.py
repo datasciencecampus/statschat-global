@@ -54,9 +54,9 @@ for new_pdf in new_pdf_list:
 # print(new_pdfs_to_convert)
 
 # %%
-#for pdf in new_pdfs_to_convert:
+for pdf in new_pdfs_to_convert:
     #print(DATA_DIR.joinpath(pdf))
-    #pdf_file_path = DATA_DIR.joinpath(pdf)
-    #print(pdf_file_path)
+    pdf_file_path = LATEST_DATA_DIR.joinpath(pdf)
+    print(pdf_file_path)
     
     
