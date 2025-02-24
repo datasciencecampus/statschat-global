@@ -3,6 +3,7 @@ import requests
 from bs4 import BeautifulSoup
 from pathlib import Path
 from urllib.parse import urlparse
+import json
 
 # %%
 # Set relative paths
@@ -17,13 +18,24 @@ if not DATA_DIR.exists():
 
 all_pdf_links = []
 
-page = 1
-base_url = f'https://www.knbs.or.ke/all-reports/page'
+# %%
+# on separate lines
+webpage_list_pdf_links = "\n".join(pdf_links)
 
 continue_search = True
 
-while continue_search:
-    url = base_url + str(page) + '/'
+# %%
+# Initalise empty dict to store url and download links
+url_dict = {}
+# %%
+# Iterate over each PDF URL extracted from the webpage,
+for pdf in pdf_links:
+    url = pdf
+    parsed_url = urlparse(url)
+    pdf_name = parsed_url.path
+    actual_pdf_file_name = pdf_name[28:]
+
+    # Download PDF and save to a local file path.
     response = requests.get(url)
     soup = BeautifulSoup(response.content, 'html.parser')
 
@@ -100,3 +112,20 @@ for i in range(pdf_page_range):
         
 
 
+    # update dictionary
+    url_dict[actual_pdf_file_name] = url
+    print(url_dict[actual_pdf_file_name])
+
+    # Save file in binary mode if request is successful,
+    # return error message if request fails.
+    if response.status_code == 200:
+        with open(file_path, "wb") as file:
+            file.write(response.content)
+        print(f"File {actual_pdf_file_name} downloaded successfully")
+    else:
+        print(f"Failed to download file {actual_pdf_file_name}")
+
+# Export url link dictionary to json file
+with open(f"{DATA_DIR}/url_dict.json", "w") as json_file:
+    json.dump(url_dict, json_file, indent=4)
+    print("url_dict saved to url_dict.json")
