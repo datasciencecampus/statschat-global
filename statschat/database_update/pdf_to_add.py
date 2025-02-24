@@ -5,6 +5,9 @@ import json
 from pathlib import Path
 import datetime
 import numpy as np
+#from statschat.pdf_processing.pdf_to_json import get_name_and_meta, get_date, determine_dates, build_json
+from statschat.pdf_processing.pdf_to_json import get_name_and_meta
+
 # %%
 # set relative paths
 
@@ -50,4 +53,12 @@ for json, pdf in zip(json_list, pdf_list):
         new_pdfs_to_convert.append(pdf + ".pdf")
         
 #print(new_pdfs_to_convert)
+
+# %%
+convert_pdf_paths = []
+
+# convert pdf files to paths
+for pdf in new_pdfs_to_convert:
+    print(DATA_DIR.joinpath(pdf))
+    
     
