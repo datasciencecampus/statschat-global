@@ -6,8 +6,17 @@ from urllib.parse import urlparse
 import json
 
 # %%
+
+# Update for latest PDFs or setup when using for first time
+PDF_FILES = "UPDATE"
+
 # Set relative paths
-DATA_DIR = Path.cwd().joinpath("data/pdf_downloads")
+if PDF_FILES == "SETUP":
+    DATA_DIR = Path.cwd().joinpath("data/pdf_downloads")
+    
+elif PDF_FILES == "UPDATE":
+    DATA_DIR = Path.cwd().joinpath("data/latest_pdf_downloads")
+
 
 # Check if DATA_DIR exists, if not, create the folder
 if not DATA_DIR.exists():

@@ -10,10 +10,18 @@ import re
 
 # %%
 # set relative paths
+# Update for latest PDFs or setup when using for first time
+JSON_CONVERSION_FILES = "UPDATE"
 
-DATA_DIR = Path.cwd().joinpath("data/pdf_downloads")
-JSON_DIR = Path.cwd().joinpath("data/json_conversions")
-
+# Set relative paths
+if JSON_CONVERSION_FILES == "SETUP":
+    DATA_DIR = Path.cwd().joinpath("data/pdf_downloads")
+    JSON_DIR = Path.cwd().joinpath("data/json_conversions")
+    
+elif JSON_CONVERSION_FILES == "UPDATE":
+    DATA_DIR = Path.cwd().joinpath("data/latest_pdf_downloads")
+    JSON_DIR = Path.cwd().joinpath("data/latest_json_conversions")
+    
 
 def get_name_and_meta(file_path):
     """Extracts file name and metadata from PDF
