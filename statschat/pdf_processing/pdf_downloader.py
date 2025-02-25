@@ -8,21 +8,22 @@ import json
 # %%
 
 # Update for latest PDFs or setup when using for first time
-PDF_FILES = "SETUP"
+PDF_FILES = "UPDATE"
 
 # Set relative paths
 if PDF_FILES == "SETUP":
     DATA_DIR = Path.cwd().joinpath("data/pdf_downloads")
+    print("STARTING DATABASE SETUP")
     
 elif PDF_FILES == "UPDATE":
     DATA_DIR = Path.cwd().joinpath("data/latest_pdf_downloads")
+    print("STARTING DATABASE UPDATE")
 
 # Check if DATA_DIR exists, if not, create the folder
 if not DATA_DIR.exists():
     DATA_DIR.mkdir(parents=True, exist_ok=True)
     
 # %%
-# Initialise empty dict to store url and download links
 print("STARTING PROCESS")
 
 # %%
