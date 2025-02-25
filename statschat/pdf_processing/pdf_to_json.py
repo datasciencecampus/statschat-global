@@ -331,3 +331,4 @@ for pdf_file_path in DATA_DIR.glob("*.pdf"):
 
 # Print final count of files with metadata (date) errors
 print(f"Total number of files with errors: {count}")
+print("FINISHED PDF TO JSON CONVERSION")
