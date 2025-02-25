@@ -241,13 +241,14 @@ def extract_pdf_text(pdf_file_path: Path, pdf_url: str) -> list:
     return pages_text
 
 
-def build_json(pdf_file_path: Path, pdf_website_url: str, counter: int) -> int:
+def build_json(pdf_file_path: Path, pdf_website_url: str, counter: int, JSON_DIR: Path) -> int:
     """
     Processes a PDF file, extracts metadata and content, then saves it as JSON.
 
     Args:
         pdf_file_path (Path): The path to the PDF file.
         counter (int): A running count of files missing reliable date information.
+        JSON_DIR (Path): The path to the chosen json folder - latest or old
 
     Returns:
         int: Updated counter for files missing an explicit creation date.
@@ -321,7 +322,7 @@ if os.path.exists(dict_filepath):
     with open(dict_filepath, "r") as json_file:
         url_dict = json.load(json_file)
 
-# noralize keys
+# normalize keys
 normalize_dict_keys(url_dict)
 # Loop through all PDF files and process them
 for pdf_file_path in DATA_DIR.glob("*.pdf"):
