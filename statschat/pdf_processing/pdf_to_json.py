@@ -11,6 +11,14 @@ import re
 # %%
 # set relative paths
 # Update for latest PDFs or setup when using for first time
+
+# Set relative paths
+DATA_DIR = Path.cwd().joinpath("data/pdf_downloads")
+JSON_DIR = Path.cwd().joinpath("data/json_conversions")
+print("DATABASE SETUP PROCESS")
+    
+    
+
 def get_name_and_meta(file_path):
     """Extracts file name and metadata from PDF
 
