@@ -253,7 +253,7 @@ def build_json(pdf_file_path: Path, pdf_website_url: str, counter: int, JSON_DIR
     Returns:
         int: Updated counter for files missing an explicit creation date.
     """
-
+    
     # Notify which file is being processed
     print(f"Processing: {pdf_file_path.name}")
 
@@ -327,7 +327,7 @@ normalize_dict_keys(url_dict)
 # Loop through all PDF files and process them
 for pdf_file_path in DATA_DIR.glob("*.pdf"):
     pdf_url = url_dict[os.path.basename(pdf_file_path)]
-    count = build_json(pdf_file_path, pdf_url, count)
+    count = build_json(pdf_file_path, pdf_url, count, JSON_DIR)
 
 # Print final count of files with metadata (date) errors
 print(f"Total number of files with errors: {count}")
