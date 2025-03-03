@@ -19,7 +19,7 @@ print("DATABASE SETUP PROCESS")
     
     
 
-def get_name_and_meta(file_path):
+def get_name_and_meta(pdf_file_path):
     """Extracts file name and metadata from PDF
 
     Args:
@@ -312,23 +312,23 @@ def normalize_dict_keys(file_dict: dict) -> dict:
     """
     return {os.path.normpath(k): v for k, v in file_dict.items()}
 
+if __name__ == "__main__":
+    # Initialize counter
+    count = 0  # Initialize counter
 
-# Initialize counter
-count = 0  # Initialize counter
+    # Load in url dict
+    dict_filepath = f"{DATA_DIR}/url_dict.json"
+    if os.path.exists(dict_filepath):
+        with open(dict_filepath, "r") as json_file:
+            url_dict = json.load(json_file)
 
-# Load in url dict
-dict_filepath = f"{DATA_DIR}/url_dict.json"
-if os.path.exists(dict_filepath):
-    with open(dict_filepath, "r") as json_file:
-        url_dict = json.load(json_file)
+    # normalize keys
+    normalize_dict_keys(url_dict)
+    # Loop through all PDF files and process them
+    for pdf_file_path in DATA_DIR.glob("*.pdf"):
+        pdf_url = url_dict[os.path.basename(pdf_file_path)]
+        count = build_json(pdf_file_path, pdf_url, count, JSON_DIR)
 
-# normalize keys
-normalize_dict_keys(url_dict)
-# Loop through all PDF files and process them
-for pdf_file_path in DATA_DIR.glob("*.pdf"):
-    pdf_url = url_dict[os.path.basename(pdf_file_path)]
-    count = build_json(pdf_file_path, pdf_url, count, JSON_DIR)
-
-# Print final count of files with metadata (date) errors
-print(f"Total number of files with errors: {count}")
-print("FINISHED PDF TO JSON CONVERSION")
+    # Print final count of files with metadata (date) errors
+    print(f"Total number of files with errors: {count}")
+    print("FINISHED PDF TO JSON CONVERSION")
