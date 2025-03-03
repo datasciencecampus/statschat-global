@@ -5,11 +5,11 @@ import os
 from pathlib import Path
 from datetime import datetime
 
-from langchain.document_loaders import DirectoryLoader, JSONLoader
-from langchain.embeddings import HuggingFaceEmbeddings, VertexAIEmbeddings
-from langchain.vectorstores import FAISS
+from langchain_community.document_loaders import JSONLoader, DirectoryLoader
+from langchain_community.embeddings import HuggingFaceEmbeddings, VertexAIEmbeddings
+from langchain_community.vectorstores import FAISS
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.document_transformers import EmbeddingsRedundantFilter
+from langchain_community.document_transformers import EmbeddingsRedundantFilter
 import shutil
 
 from statschat import load_config
@@ -31,26 +31,26 @@ class UpdateVectorStore(DirectoryLoader, JSONLoader):
 
     def __init__(
         self,
-        directory: Path = "data/latest_json_conversions",
-        split_directory: Path = "data/latest_json_split",
+        latest_directory: Path = "data/latest_json_conversions",
+        latest_split_directory: Path = "data/latest_json_split",
         split_length: int = 1000,
         split_overlap: int = 100,
-        embedding_model: str = "sentence-transformers/all-mpnet-base-v2",
+        embedding_model_name: str = "sentence-transformers/all-mpnet-base-v2",
         redundant_similarity_threshold: float = 0.99,
-        faiss_db_root: str = "db_lc",
+        faiss_db_root: str = "data/db_langchain",
         logger: logging.Logger = None,
-        latest_only: bool = True,
+        latest_only: bool = False,
     ):
-        self.directory = directory
-        self.split_directory = split_directory
+        self.latest_directory = latest_directory
+        self.latest_split_directory = latest_split_directory
         self.split_length = split_length
         self.split_overlap = split_overlap
-        self.embedding_model = embedding_model
+        self.embedding_model_name = embedding_model_name
         self.redundant_similarity_threshold = redundant_similarity_threshold
         self.faiss_db_root = faiss_db_root + ("_latest" if latest_only else "")
         self.latest_only = latest_only
-        self.temp_directory = os.path.join(self.directory, "temp")
-        self.split_temp_directory = os.path.join(self.directory, "temp", "split")
+        self.temp_directory = os.path.join(self.latest_directory, "temp")
+        self.split_temp_directory = os.path.join(self.latest_directory, "temp", "split")
         self.temp_faiss_db_root = "temp_faiss_db"
 
         # Initialise logger
@@ -60,7 +60,7 @@ class UpdateVectorStore(DirectoryLoader, JSONLoader):
         else:
             self.logger = logger
 
-        # Only if temp directory exists i.e. new inbound
+        # Only if temp latest_directory exists i.e. new inbound
         # articles have been webscraped and stored
         if os.path.exists(self.temp_directory):
             if self.latest_only:
@@ -96,12 +96,12 @@ class UpdateVectorStore(DirectoryLoader, JSONLoader):
         them from the vector store.
         """
         self.logger.info("Checking for updates to 'latest'")
-        latest_filepaths = find_latest(self.directory)
-        _, former_latest = compare_latest(self.directory, latest_filepaths)
+        latest_filepaths = find_latest(self.latest_directory)
+        _, former_latest = compare_latest(self.latest_directory, latest_filepaths)
         self.logger.info(f"Number of outdated latest flags: {len(former_latest)}")
 
-        embeddings = HuggingFaceEmbeddings(model_name=self.embedding_model)
-        db = FAISS.load_local(self.faiss_db_root, embeddings)
+        embeddings = HuggingFaceEmbeddings(model_name=self.embedding_model_name)
+        db = FAISS.load_local(self.faiss_db_root, embeddings, allow_dangerous_deserialization=True)
         db_dict = db.docstore._dict
         self.logger.info(
             f"Number of chunks in vector store PRE-edit: {len(db.docstore._dict)}"
@@ -109,8 +109,8 @@ class UpdateVectorStore(DirectoryLoader, JSONLoader):
 
         if len(former_latest) > 0:
             self.logger.info("Revoking expired latest flags")
-            unflag_former_latest(self.directory, former_latest)
-            update_split_documents(self.split_directory, former_latest)
+            unflag_former_latest(self.latest_directory, former_latest)
+            update_split_documents(self.latest_split_directory, former_latest)
             self.logger.info("Removing expired latest chunks from vector store")
             chunks = find_matching_chunks(db_dict, former_latest)
             self.logger.info(
@@ -154,7 +154,7 @@ class UpdateVectorStore(DirectoryLoader, JSONLoader):
                             section_json = {**section, **publication_meta}
 
                             # Check that there's text extracted for this section
-                            if len(section["section_text"]) > 5:
+                            if len(section["page_text"]) > 5:
                                 with open(
                                     f"{self.split_temp_directory}/{id}_{num}.json", "w"
                                 ) as new_file:
@@ -185,10 +185,9 @@ class UpdateVectorStore(DirectoryLoader, JSONLoader):
 
             # Rename a few things
             metadata["source"] = metadata.pop("id")
-            metadata["section"] = metadata.pop("section_header")
 
             # Remove the text from metadata
-            metadata.pop("section_text")
+            metadata.pop("page_text")
 
             return metadata
 
@@ -196,7 +195,7 @@ class UpdateVectorStore(DirectoryLoader, JSONLoader):
         # text element required
         json_loader_kwargs = {
             "jq_schema": ".",
-            "content_key": "section_text",
+            "content_key": "page_text",
             "metadata_func": metadata_func,
         }
         self.logger.info(f"Loading data from {self.split_temp_directory}")
@@ -217,11 +216,11 @@ class UpdateVectorStore(DirectoryLoader, JSONLoader):
         """
         Loads embedding model to memory
         """
-        if self.embedding_model == "textembedding-gecko@001":
+        if self.embedding_model_name == "textembedding-gecko@001":
             self.embeddings = VertexAIEmbeddings()
 
         else:
-            self.embeddings = HuggingFaceEmbeddings(model_name=self.embedding_model)
+            self.embeddings = HuggingFaceEmbeddings(model_name=self.embedding_model_name)
 
         return None
 
@@ -268,7 +267,9 @@ class UpdateVectorStore(DirectoryLoader, JSONLoader):
         Merge temporary vector store for new articles into
         existing permanent vector store
         """
-        db = FAISS.load_local(self.faiss_db_root, self.embeddings)
+        db = FAISS.load_local(self.faiss_db_root, 
+                              self.embeddings, 
+                              allow_dangerous_deserialization=True)
         db.merge_from(self.temp_db)
         db.save_local(self.faiss_db_root)
         self.logger.info(
@@ -286,14 +287,14 @@ class UpdateVectorStore(DirectoryLoader, JSONLoader):
         all_files = glob.glob(path)
         for FILE in all_files:
             file = FILE.split("/")[-1]
-            dst_path = os.path.join(self.directory, file)
+            dst_path = os.path.join(self.latest_directory, file)
             os.rename(FILE, dst_path)
 
         path = f"{self.split_temp_directory}/*.json"
         split_files = glob.glob(path)
         for FILE in split_files:
             file = FILE.split("/")[-1]
-            dst_path = os.path.join(self.split_directory, file)
+            dst_path = os.path.join(self.latest_split_directory, file)
             os.rename(FILE, dst_path)
 
         # remove all temporary files
@@ -316,5 +317,5 @@ if __name__ == "__main__":
     # initiate Statschat AI and start the app
     config = load_config(name="main")
 
-    prepper = UpdateVectorStore(**config["db"], **config["preprocess"])
+    prepper = UpdateVectorStore(**config["db"], **config["preprocess_latest"])
     logger.info("Vector store updated...")
