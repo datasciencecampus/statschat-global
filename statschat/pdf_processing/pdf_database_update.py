@@ -1,11 +1,8 @@
 # %%
 # import modules
-import PyPDF2
 import os
 import json
 from pathlib import Path
-import datetime
-import numpy as np
 
 
 # %%
@@ -55,7 +52,12 @@ for new_pdf in new_pdf_list:
 # %%
 if __name__ == "__main__":
     
-    from statschat.pdf_processing.pdf_to_json import ( 
+    #from statschat.pdf_processing.pdf_to_json import ( 
+    #build_json,
+    #normalize_dict_keys,
+    #)
+    
+    from pdf_to_json import ( 
     build_json,
     normalize_dict_keys,
     )
