@@ -7,13 +7,9 @@ from pathlib import Path
 import datetime
 import numpy as np
 from statschat.pdf_processing.pdf_to_json import (
-    get_name_and_meta, 
-    #determine_dates, 
+    get_name_and_meta,  
     build_json,
     extract_url_keywords_from_filename,
-    #determine_document_type_from_filename,
-    #extract_pdf_creation_date,
-    #extract_pdf_modification_date,
     extract_pdf_metadata,extract_pdf_text,
     normalize_dict_keys,
     )
