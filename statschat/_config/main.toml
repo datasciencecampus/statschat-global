@@ -4,7 +4,9 @@ embedding_model_name = "sentence-transformers/all-mpnet-base-v2"  # "textembeddi
 
 [preprocess]
 directory = "data/json_conversions"
+latest_directory = "data/latest_json_conversions"
 split_directory = "data/json_split"
+latest_split_directory = "data/latest_json_split"
 split_length = 1000
 split_overlap = 100
 latest_only = true

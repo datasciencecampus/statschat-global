@@ -31,15 +31,15 @@ class UpdateVectorStore(DirectoryLoader, JSONLoader):
 
     def __init__(
         self,
-        directory: Path = "data/playground",
-        split_directory: Path = "data/full_bulletins_split_latest",
+        directory: Path = "data/latest_json_conversions",
+        split_directory: Path = "data/latest_json_split",
         split_length: int = 1000,
         split_overlap: int = 100,
         embedding_model: str = "sentence-transformers/all-mpnet-base-v2",
         redundant_similarity_threshold: float = 0.99,
         faiss_db_root: str = "db_lc",
         logger: logging.Logger = None,
-        latest_only: bool = False,
+        latest_only: bool = True,
     ):
         self.directory = directory
         self.split_directory = split_directory
