@@ -6,13 +6,7 @@ import json
 from pathlib import Path
 import datetime
 import numpy as np
-from statschat.pdf_processing.pdf_to_json import (
-    get_name_and_meta,  
-    build_json,
-    extract_url_keywords_from_filename,
-    extract_pdf_metadata,extract_pdf_text,
-    normalize_dict_keys,
-    )
+
 
 # %%
 # set relative paths
@@ -59,39 +53,36 @@ for new_pdf in new_pdf_list:
 # print(new_pdfs_to_convert)
 
 # %%
+if __name__ == "__main__":
+    
+    from statschat.pdf_processing.pdf_to_json import ( 
+    build_json,
+    normalize_dict_keys,
+    )
+    
+    print("STARTING CONVERSION OF LATEST PDF FILES")
+    # Initialize counter
+    count = 0  # Initialize counter
 
-print("STARTING CONVERSION OF LATEST PDF FILES")
-# Initialize counter
-count = 0  # Initialize counter
+    # Load in url dict
+    dict_filepath = f"{LATEST_DATA_DIR}/url_dict.json"
+    if os.path.exists(dict_filepath):
+        with open(dict_filepath, "r") as json_file:
+            url_dict = json.load(json_file)
+            
+    # normalize keys
+    normalize_dict_keys(url_dict)
 
-# Load in url dict
-dict_filepath = f"{LATEST_DATA_DIR}/url_dict.json"
-if os.path.exists(dict_filepath):
-    with open(dict_filepath, "r") as json_file:
-        url_dict = json.load(json_file)
+    # Loop through all PDF files and process them        
+    # Use functions from pdf_to_json to convert new pdfs to jsons
+    for pdf in new_pdfs_to_convert:
         
-# normalize keys
-normalize_dict_keys(url_dict)
-
-# Loop through all PDF files and process them        
-# Use functions from pdf_to_json to convert new pdfs to jsons
-for pdf in new_pdfs_to_convert:
-    
-    pdf_file_path = LATEST_DATA_DIR.joinpath(pdf)
-    
-    file_name, pdf_metadata = get_name_and_meta(pdf_file_path)
-    
-    pdf_url = url_dict[os.path.basename(pdf_file_path)]
-    
-    url_keywords = extract_url_keywords_from_filename(file_name)
-    
-    file_name, pdf_creation_date, pdf_metadata, counter = extract_pdf_metadata(pdf_file_path, count)
-    
-    pages_text = extract_pdf_text(pdf_file_path, pdf_url)
-    
-    count = build_json(pdf_file_path, pdf_url, count, JSON_DIR)
-    #print(pdf_file_path)
-    
-print("FINISHED PDF TO JSON CONVERSION")
+        pdf_file_path = LATEST_DATA_DIR.joinpath(pdf)
+        
+        pdf_url = url_dict[os.path.basename(pdf_file_path)]
+        
+        count = build_json(pdf_file_path, pdf_url, count, JSON_DIR)
+        
+    print("FINISHED PDF TO JSON CONVERSION")
     
     
