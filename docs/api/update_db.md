@@ -18,7 +18,7 @@ This tells you how many new PDF files there are then converts them to json files
 This converts the new json files into a pickle file then adds them to the 'db_langchain_latest' folder
 
 ...
-4) Run script 'move_new_files.py' to move new PDF, json conversions and splits to relevant folders after database update
+4) Run script 'merge_database_files.py' to move new PDF, json conversions and splits to relevant folders after database update
 ...
 This moves the new PDF files to the from 'latest_pdf' to 'pdf_downloads' folder and then removes all files in the 'latest_pdf_'
 This moves the new json conversions from 'latest_json' to the 'json_con' folder and then removes all files in 'latest_json_conversion'
