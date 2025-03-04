@@ -10,8 +10,12 @@ from pathlib import Path
 
 DATA_DIR = Path.cwd().joinpath("data/pdf_downloads")
 LATEST_DATA_DIR = Path.cwd().joinpath("data/latest_pdf_downloads")
-JSON_DIR = Path.cwd().joinpath("data/latest_json_conversions")
+JSON_DIR = Path.cwd().joinpath("data/latest_json_conversions/temp")
+LATEST_JSON_SPLIT_DIR = Path.cwd().joinpath("data/latest_json_split")
 
+# Check if LATEST_JSON_SPLIT_DIR exists, if not, create the folder
+if not LATEST_JSON_SPLIT_DIR.exists():
+    LATEST_JSON_SPLIT_DIR.mkdir(parents=True, exist_ok=True)
 # %%
 print("STARTING PDF COMPARISONS")
 # %%
