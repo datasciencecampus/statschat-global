@@ -18,8 +18,6 @@ LATEST_DATA_DIR = Path.cwd().joinpath("data/latest_pdf_downloads")
 
 for json_file in LATEST_JSON_DIR.glob("*.json"):
     
-    #print(json_file)
-    
     source_file = json_file
 
     destination_file = JSON_DIR.joinpath(json_file.name)
