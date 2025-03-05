@@ -16,8 +16,12 @@ JSON_DIR = Path.cwd().joinpath("data/json_conversions")
 
 
 def get_name_and_meta(file_path):
-    """
-    Extracts file name and metadata from PDF
+    """Extracts file name and metadata from PDF
+    Args:
+        file_path (path): file path for PDF file
+    Returns:
+        file_name: file for PDF file
+        pdf_metadata: metadata for PDF (dates etc)
     """
     file_name = pdf_file_path.name
     pdf_metadata = PyPDF2.PdfReader(pdf_file_path)
