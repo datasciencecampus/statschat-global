@@ -83,6 +83,13 @@ def determine_document_type_from_filename(filename: str) -> str:
     return "pdf_publication"
 
 
+def preprocess_date(date_str: str) -> str:
+    """Extracts only the YYYYMMDD portion from a PyPDF2 date string."""
+    if date_str and date_str.startswith("D:"):
+        date_str = date_str[2:10]  # Extract only YYYYMMDD
+    return date_str if date_str and len(date_str) == 8 and date_str.isdigit() else None
+
+
 def extract_pdf_creation_date(metadata, filename: str, counter: int) -> tuple[str, int]:
     """
     Extracts the creation date from PDF metadata if available. If unavailable,
@@ -100,14 +107,6 @@ def extract_pdf_creation_date(metadata, filename: str, counter: int) -> tuple[st
     """
 
     pdf_creation_date = None  # Initialize variable to store the extracted date.
-
-    def preprocess_date(date_str: str) -> str:
-        """Extracts only the YYYYMMDD portion from a PyPDF2 date string."""
-        if date_str and date_str.startswith("D:"):
-            date_str = date_str[2:10]  # Extract only YYYYMMDD
-        return (
-            date_str if date_str and len(date_str) == 8 and date_str.isdigit() else None
-        )
 
     # Ensure metadata is not None before accessing it
     if metadata:
@@ -140,7 +139,7 @@ def extract_pdf_creation_date(metadata, filename: str, counter: int) -> tuple[st
 
 
 def extract_pdf_modification_date(
-    metadata, filename: str, pdf_creation_date: str
+    pdf_metadata, filename: str, pdf_creation_date: str
 ) -> str:
     """
     Extracts the modification date from PDF metadata if available. If unavailable,
@@ -167,9 +166,10 @@ def extract_pdf_modification_date(
     """
 
     try:
-        pdf_modification_date = str(metadata.modification_date)[:10]
+        pdf_modification_date = pdf_metadata.get("/ModificationDate")
+        pdf_modification_date = preprocess_date(pdf_modification_date)
     except AttributeError:
-        print(f"An error fetching the modification date occurred for file {filename}")
+        print(f"No modification date found for: {filename} - setting to creation date.")
         pdf_modification_date = pdf_creation_date  # Fallback to creation date
 
     return pdf_modification_date
