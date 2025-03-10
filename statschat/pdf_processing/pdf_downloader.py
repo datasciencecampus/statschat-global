@@ -13,18 +13,18 @@ PDF_FILES = "UPDATE"
 # Set relative paths
 if PDF_FILES == "SETUP":
     DATA_DIR = Path.cwd().joinpath("data/pdf_downloads")
-    print("STARTING DATABASE SETUP")
+    print("STARTING DATABASE SETUP. PLEASE WAIT...")
     
 elif PDF_FILES == "UPDATE":
     DATA_DIR = Path.cwd().joinpath("data/latest_pdf_downloads")
-    print("STARTING DATABASE UPDATE")
+    print("STARTING DATABASE UPDATE. PLEASE WAIT...")
 
 # Check if DATA_DIR exists, if not, create the folder
 if not DATA_DIR.exists():
     DATA_DIR.mkdir(parents=True, exist_ok=True)
     
 # %%
-print("STARTING PROCESS. PLEASE WAIT...")
+print("IN PROGRESS.")
 
 # %%
 # Initialise empty dict to store url and download links
