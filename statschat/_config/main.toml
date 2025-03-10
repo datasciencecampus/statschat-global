@@ -11,8 +11,8 @@ latest_only = true
 
 [search]
 generative_model_name = "mistralai/Mistral-7B-Instruct-v0.3"  # "text-unicorn" "text-bison@001" "google/flan-t5-large" "lmsys/fastchat-t5-3b-v1.0" "google/flan-t5-large" "google/flan-ul2"
-k_docs = 1
-k_contexts = 1
+k_docs = 2
+k_contexts = 5
 similarity_threshold = 2.0     # Threshold score below which a document is returned in a search
 llm_temperature = 0.0
 answer_threshold = 0.5 # Threshold score below which a answer is returned in a search

@@ -1,10 +1,12 @@
 # %%
 # import modules
+import os
 import PyPDF2
 import json
 from pathlib import Path
 import datetime
 import numpy as np
+import re
 
 # %%
 # set relative paths
@@ -15,10 +17,8 @@ JSON_DIR = Path.cwd().joinpath("data/json_conversions")
 
 def get_name_and_meta(file_path):
     """Extracts file name and metadata from PDF
-
     Args:
         file_path (path): file path for PDF file
-
     Returns:
         file_name: file for PDF file
         pdf_metadata: metadata for PDF (dates etc)
@@ -30,179 +30,297 @@ def get_name_and_meta(file_path):
     return (file_name, pdf_metadata)
 
 
-def get_date(metadata, name, counter):
-    """Extracts creation date from PDF metadata
-       Assigns current date if creation date is unavailable
+def extract_url_keywords_from_filename(file_name: str) -> list[str]:
+    """
+    Extracts unique keywords from a hyphen-separated filename while
+    preserving order.
 
     Args:
-        metadata (_type_): metadata for PDF file
-        name (str): PDF file name
-        counter (int): counts numbers
+        filename (str): The input filename (e.g., '2018-Survey-Test-2018.pdf').
 
     Returns:
-        pdf_creation_date: date PDF file was created
-        counter: number of PDF files with metadata issues
+        list[str]: A list of unique keywords from the filename,
+        maintaining order.
+
+    Example:
+        >>> extract_unique_keywords_from_filename("2018-Survey-Test-2018.pdf")
+        ['2018', 'Survey', 'Test']
+    """
+    words = file_name.replace(".pdf", "").split("-")  # Remove extension & split
+    url_keywords = []
+
+    for word in words:
+        if word not in url_keywords:  # Maintain order & remove duplicates
+            url_keywords.append(word)
+
+    return url_keywords
+
+
+def determine_document_type_from_filename(filename: str) -> str:
+    """
+    Determines the document type based on whether 'Report' or 'Survey'
+    (case-insensitive) is in the filename.
+
+    Args:
+        filename (str): The filename associated with the document.
+
+    Returns:
+        str: The document type, either 'report' if 'Report' (case-insensitive)
+        is in the filename, 'survey' if 'Survey' (case-insensitive) is in the
+        filename, or 'pdf_publication' as the default.
+
+    Example:
+        >>> determine_document_type_from_filename("Economic-REPORT-2019.pdf")
+        'report'
+        >>> determine_document_type_from_filename("ECONOMIC-survey-2019.pdf")
+        'survey'
+        >>> determine_document_type_from_filename("Economic-Statistics-2019.pdf")
+        'pdf_publication'
+    """
+    filename_lower = filename.lower()  # Convert to lowercase
+
+    if "report" in filename_lower:
+        return "report"
+    if "survey" in filename_lower:
+        return "survey"
+
+    return "pdf_publication"
+
+
+def preprocess_date(date_str: str) -> str:
+    """Extracts only the YYYYMMDD portion from a PyPDF2 date string."""
+    if date_str and date_str.startswith("D:"):
+        date_str = date_str[2:10]  # Extract only YYYYMMDD
+    return date_str if date_str and len(date_str) == 8 and date_str.isdigit() else None
+
+
+def extract_pdf_creation_date(metadata, filename: str, counter: int) -> tuple[str, int]:
+    """
+    Extracts the creation date from PDF metadata if available. If unavailable,
+    it falls back to extracting the most recent year from the filename, the modification
+    date from metadata, or the current system date as a final fallback.
+
+    Args:
+        metadata: PDF metadata dictionary from PyPDF2.PdfReader (can be None).
+        filename (str): The filename from which to extract a year if needed.
+        counter (int): A running count of files that lack reliable date information.
+
+    Returns:
+        tuple[str, int]: The extracted or fallback PDF creation date in 'YYYY-MM-DD'
+        format, and an updated counter for files missing an explicit creation date.
     """
 
-    # pdf date, time and year (may need to add for modification date)
-    try:
-        pdf_creation_date = str(metadata.creation_date)
-        print(f"no issue with metadata for {name}")
+    pdf_creation_date = None  # Initialize variable to store the extracted date.
 
-    except Exception as e:
-        counter += 1
+    # Ensure metadata is not None before accessing it
+    if metadata:
+        raw_date = metadata.get("/CreationDate") if isinstance(metadata, dict) else None
+        cleaned_date = preprocess_date(str(raw_date)) if raw_date else None
+
+        if cleaned_date:
+            pdf_creation_date = (
+                f"{cleaned_date[:4]}-{cleaned_date[4:6]}-{cleaned_date[6:8]}"
+            )
+
+    # Extract the most recent year from the filename if no valid creation date is found.
+    if not pdf_creation_date:
+        years_in_filename = sorted(
+            map(int, re.findall(r"\b(19\d{2}|20\d{2})\b", filename))
+        )
+        if years_in_filename:
+            pdf_creation_date = (
+                f"{max(years_in_filename)}-01-01"  # Assign start-of-year date.
+            )
+
+    # Assign the current system date if no valid date is found.
+    if not pdf_creation_date:
         pdf_creation_date = datetime.datetime.now().strftime("%Y-%m-%d")
-        print(f"An error occurred for file {name}: {e}")
-        print(f"Total number of files with errors: {count}")
+        counter += (
+            1  # Increment counter since the system date is being used as a fallback.
+        )
 
     return pdf_creation_date, counter
 
 
-def determine_dates(pdf_creation_date, pdf_modification_date):
-    """Determines the correct year and month based on creation and modification date
+def extract_pdf_modification_date(
+    pdf_metadata, filename: str, pdf_creation_date: str
+) -> str:
+    """
+    Extracts the modification date from PDF metadata if available. If unavailable,
+    falls back to the provided PDF creation date.
 
     Args:
-        pdf_creation_date (datetime): date pdf created
-        pdf_modification_date (datetime): date pdf modified
+        metadata: PDF metadata object from PyPDF2.PdfReader.
+        filename (str): The filename associated with the PDF.
+        pdf_creation_date (str): The creation date to use as a fallback if
+        modification date is missing.
 
     Returns:
-        pdf_date: date for PDF to go into URL
-        pdf_month: month for PDF to go into URL
+        str: The extracted or fallback modification date in 'YYYY-MM-DD' format.
+
+    Example:
+        >>> extract_pdf_modification_date(metadata,
+                                          "Economic-Report-2019.pdf",
+                                          "2019-04-24")
+        '2023-09-04'
+        >>> extract_pdf_modification_date(metadata,
+                                          "Economic-Report.pdf",
+                                          "2019-04-24")
+        '2019-04-24'  # Fallback to creation date
     """
-
-    pdf_creation_year = pdf_creation_date[:4]
-    pdf_creation_month = pdf_creation_date[5:7]
-
-    pdf_modification_month = pdf_modification_date[5:7]
-    pdf_modification_year = pdf_modification_date[:4]
-
-    # in case creation date empty
-    if pdf_creation_year == "None":
-        pdf_creation_year = pdf_modification_year
-    if pdf_creation_month == "":
-        pdf_creation_month = pdf_modification_month
-
-    # if months below for pdf creation and modification are different
-    # An error will come in the pdf hyperlink
-    if int(pdf_creation_month) < int(pdf_modification_month) and int(
-        pdf_creation_year
-    ) == int(pdf_modification_year):
-        pdf_month = pdf_modification_month
-        pdf_year = pdf_modification_year
-    # if years below for pdf creation year and modification year are different
-    # An error will come in the pdf hyperlink
-    elif int(pdf_creation_year) < int(pdf_modification_year) and int(
-        pdf_creation_month
-    ) > int(pdf_modification_month):
-        pdf_year = pdf_modification_year
-        pdf_month = pdf_modification_month
-    else:
-        pdf_year = pdf_modification_year
-        pdf_month = pdf_modification_month
-
-    return pdf_year, pdf_month
-
-
-def build_json(
-    pdf_year, pdf_month, pdf_creation_date, pdf_file_path, pdf_metadata, file_name
-):
-    """Constructs a JSON representation of the PDF file
-       Saves it to a file
-
-    Args:
-        pdf_year (int): year for PDF
-        pdf_month (int): month for PDF
-        pdf_creation_date (datetime): date PDF created
-        pdf_file_path (path): PDF file path
-        pdf_metadata: PDF metadata
-        file_name (name): PDF name
-    """
-
-    # create new dict
-    pdf_info = {}
-    pdf_info["id"] = str(np.random.randint(1000000, 9999999))
-    pdf_info["latest"] = True
-    pdf_info["url"] = (
-        f"https://www.knbs.or.ke/wp-content/uploads/{pdf_year}/{pdf_month}/" + file_name
-    )
-    pdf_info["release_date"] = pdf_creation_date[:10]  # date only
-    pdf_info["release_type"] = "pdf_publication"
-    pdf_info["url_keywords"] = ["test", "bulletin"]
-    pdf_info["contact_name"] = "Joe Bloggs"
-    pdf_info["contact_link"] = "mailto:test@knbs.com"
 
     try:
-        pdf_info["title"] = str(pdf_metadata.title)
-    except Exception as e:
-        title_from_filename = file_name.replace(".pdf", "")
-        pdf_info["title"] = title_from_filename
-        print(f"An error occurred for file {file_name}: {e}")
+        pdf_modification_date = pdf_metadata.get("/ModificationDate")
+        pdf_modification_date = preprocess_date(pdf_modification_date)
+    except AttributeError:
+        print(f"No modification date found for: {filename} - setting to creation date.")
+        pdf_modification_date = pdf_creation_date  # Fallback to creation date
 
-    # create list to store
+    return pdf_modification_date
+
+
+def extract_pdf_metadata(pdf_file_path: Path, counter: int) -> tuple:
+    """
+    Extracts metadata from a given PDF file.
+
+    Args:
+        pdf_file_path (Path): The path to the PDF file.
+        counter (int): A running count of files missing reliable date information.
+
+    Returns:
+        tuple: (file_name, pdf_year, pdf_month,
+                pdf_creation_date, pdf_metadata, updated_counter)
+    """
+
+    # Extract filename and metadata
+    file_name, pdf_metadata = get_name_and_meta(pdf_file_path)
+    # Extract creation and modification dates
+    pdf_creation_date, counter = extract_pdf_creation_date(
+        pdf_metadata, file_name, counter
+    )
+
+    return file_name, pdf_creation_date, pdf_metadata, counter
+
+
+def extract_pdf_text(pdf_file_path: Path, pdf_url: str) -> list:
+    """
+    Extracts text content from each page of a PDF file.
+
+    Args:
+        pdf_file_path (Path): The path to the PDF file.
+        pdf_url (str): The base URL where the document is hosted.
+
+    Returns:
+        list: A list of dictionaries containing page number, URL, and extracted text.
+    """
+
     pages_text = []
-
     with open(pdf_file_path, "rb") as pdf_file:
-        # read file
         pdf_reader = PyPDF2.PdfReader(pdf_file)
 
-        # read every page
-        for page_num in range(len(pdf_reader.pages)):
-            # read page wise data from pdf file
-            page = pdf_reader.pages[page_num]
+        for page_num, page in enumerate(pdf_reader.pages, start=1):
+            text = page.extract_text()
+            if text:
+                text = text.replace("\n", "")
 
-            # extract data from page to text
-            text = page.extract_text().split("\n")
-            # convert list of strings into one large string
-            text = "".join(text)
-
-            # get page link
-            page_link = pdf_info["url"]
-
-            # add text of page to array
+            page_link = f"{pdf_url}#page={page_num}"
             pages_text.append(
                 {
-                    "page_number": page_num + 1,
-                    "page_url": page_link + "#page=" + str(page_num + 1),
-                    "page_text": text,
+                    "page_number": page_num,
+                    "page_url": page_link,
+                    "page_text": text or "",
                 }
             )
 
-        # create nested dictionary
-        pdf_info["content"] = pages_text
-
-        # Check if JSON_DIR exists, if not, create the folder
-        if not JSON_DIR.exists():
-            JSON_DIR.mkdir(parents=True, exist_ok=True)
-
-        with open(JSON_DIR / f"{pdf_file_path.stem}.json", "w") as json_file:
-            json.dump(pdf_info, json_file, indent=4)
-
-        # print JSON
-        # print(json.dumps([pdf_info], indent=4))
+    return pages_text
 
 
-# %%
-# create counter
-count = 0
+def build_json(pdf_file_path: Path, pdf_website_url: str, counter: int) -> int:
+    """
+    Processes a PDF file, extracts metadata and content, then saves it as JSON.
 
-pdf_list = DATA_DIR.glob("*.pdf")
+    Args:
+        pdf_file_path (Path): The path to the PDF file.
+        counter (int): A running count of files missing reliable date information.
 
-# loop through folder to get filepaths
-for pdf_file_path in DATA_DIR.glob("*.pdf"):
-    file_name, pdf_metadata = get_name_and_meta(pdf_file_path)
+    Returns:
+        int: Updated counter for files missing an explicit creation date.
+    """
 
-    pdf_creation_date, count = get_date(pdf_metadata, file_name, count)
+    # Notify which file is being processed
+    print(f"Processing: {pdf_file_path.name}")
 
-    try:
-        pdf_modification_date = str(pdf_metadata.modification_date)
-    except AttributeError:
-        print(f"An error fetching the modification date occurred for file {file_name}")
-        pdf_modification_date = pdf_creation_date
-
-    pdf_year, pdf_month = determine_dates(pdf_creation_date, pdf_modification_date)
-
-    build_json(
-        pdf_year, pdf_month, pdf_creation_date, pdf_file_path, pdf_metadata, file_name
+    # Extract Metadata & Pre-Process
+    file_name, pdf_creation_date, pdf_metadata, counter = extract_pdf_metadata(
+        pdf_file_path, counter
     )
 
+    # Construct the document's URL
+    pdf_url = pdf_website_url
+
+    # Construct Ordered Metadata Dictionary
+    pdf_info = {
+        "id": str(np.random.randint(1000000, 9999999)),  # Unique ID first
+        "title": file_name.replace(".pdf", "").replace("-", " ")
+        or pdf_metadata.title,  # Title next
+        "release_date": pdf_creation_date,  # Important date field
+        "modification_date": extract_pdf_modification_date(
+            pdf_metadata, file_name, pdf_creation_date
+        ),
+        "release_type": determine_document_type_from_filename(
+            file_name
+        ),  # Report, Survey, etc.
+        "url": pdf_url,  # URL for document access
+        "latest": True,  # Boolean flag for latest version
+        "url_keywords": extract_url_keywords_from_filename(
+            file_name
+        ),  # Extracted keywords
+        "contact_name": "Joe Bloggs",  # Contact details
+        "contact_link": "mailto:test@knbs.com",
+        "content": extract_pdf_text(
+            pdf_file_path, pdf_url
+        ),  # Extracted text at the end
+    }
+
+    # Export JSON
+    JSON_DIR.mkdir(parents=True, exist_ok=True)  # Ensure directory exists
+    json_file_path = JSON_DIR / f"{pdf_file_path.stem}.json"
+
+    with open(json_file_path, "w") as json_file:
+        json.dump(pdf_info, json_file, indent=4)
+
+    return counter  # Return updated counter
+
+
+def normalize_dict_keys(file_dict: dict) -> dict:
+    """
+    Normalizes dictionary keys by converting mixed slashes ('/' and '\\')
+    into Windows-compatible backslashes ('\\').
+
+    Args:
+        file_dict (dict): Dictionary with file paths as keys.
+
+    Returns:
+        dict: Dictionary with normalized file paths as keys.
+    """
+    return {os.path.normpath(k): v for k, v in file_dict.items()}
+
+
+# Initialize counter
+count = 0  # Initialize counter
+
+# Load in url dict
+dict_filepath = f"{DATA_DIR}/url_dict.json"
+if os.path.exists(dict_filepath):
+    with open(dict_filepath, "r") as json_file:
+        url_dict = json.load(json_file)
+
+# noralize keys
+normalize_dict_keys(url_dict)
+# Loop through all PDF files and process them
+for pdf_file_path in DATA_DIR.glob("*.pdf"):
+    pdf_url = url_dict[os.path.basename(pdf_file_path)]
+    count = build_json(pdf_file_path, pdf_url, count)
+
+# Print final count of files with metadata (date) errors
 print(f"Total number of files with errors: {count}")
