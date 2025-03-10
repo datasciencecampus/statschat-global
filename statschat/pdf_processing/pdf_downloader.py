@@ -24,7 +24,7 @@ if not DATA_DIR.exists():
     DATA_DIR.mkdir(parents=True, exist_ok=True)
     
 # %%
-print("STARTING PROCESS")
+print("STARTING PROCESS. PLEASE WAIT...")
 
 # %%
 # Initialise empty dict to store url and download links
