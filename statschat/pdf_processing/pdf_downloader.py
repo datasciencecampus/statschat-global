@@ -8,7 +8,7 @@ import json
 # %%
 
 # Update for latest PDFs or setup when using for first time
-PDF_FILES = "UPDATE"
+PDF_FILES = "SETUP"
 
 # Set relative paths
 if PDF_FILES == "SETUP":
@@ -34,6 +34,9 @@ url_dict = {}
 # get all webpages on KNBS website that have PDFs and add them to a list
 
 all_pdf_links = []
+
+# select page for downloads to start from
+# with 1 being the latest
 
 page = 1
 base_url = f'https://www.knbs.or.ke/all-reports/page'
