@@ -127,3 +127,4 @@ with open(f"{DATA_DIR}/url_dict.json", "w") as json_file:
     json.dump(url_dict, json_file, indent=4)
     print("url_dict saved to url_dict.json")
 
+print("Finished PDF downloads")
