@@ -19,7 +19,7 @@ if not DATA_DIR.exists():
 all_pdf_links = []
 
 page = 1
-base_url = "https://www.knbs.or.ke/all-reports/page"
+base_url = f"https://www.knbs.or.ke/all-reports/page"
 
 continue_search = True
 
