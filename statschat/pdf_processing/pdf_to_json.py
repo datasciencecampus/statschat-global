@@ -10,21 +10,15 @@ import re
 
 # %%
 # set relative paths
-# Update for latest PDFs or setup when using for first time
 
-# Set relative paths
 DATA_DIR = Path.cwd().joinpath("data/pdf_downloads")
 JSON_DIR = Path.cwd().joinpath("data/json_conversions")
-print("DATABASE SETUP PROCESS")
-    
-    
 
-def get_name_and_meta(pdf_file_path):
+
+def get_name_and_meta(file_path):
     """Extracts file name and metadata from PDF
-
     Args:
         file_path (path): file path for PDF file
-
     Returns:
         file_name: file for PDF file
         pdf_metadata: metadata for PDF (dates etc)
@@ -93,6 +87,18 @@ def determine_document_type_from_filename(filename: str) -> str:
     return "pdf_publication"
 
 
+def preprocess_date(date_str: str) -> str:
+    """Extracts only the YYYYMMDD portion from a PyPDF2 date string.
+       Args:
+        file_path (path): file path for PDF file
+       Returns:
+        date_str (str|None): date (YYYYMMDD) string if advailable, otherwise None.
+    """
+    if date_str and date_str.startswith("D:"):
+        date_str = date_str[2:10]  # Extract only YYYYMMDD
+    return date_str if date_str and len(date_str) == 8 and date_str.isdigit() else None
+
+
 def extract_pdf_creation_date(metadata, filename: str, counter: int) -> tuple[str, int]:
     """
     Extracts the creation date from PDF metadata if available. If unavailable,
@@ -110,14 +116,6 @@ def extract_pdf_creation_date(metadata, filename: str, counter: int) -> tuple[st
     """
 
     pdf_creation_date = None  # Initialize variable to store the extracted date.
-
-    def preprocess_date(date_str: str) -> str:
-        """Extracts only the YYYYMMDD portion from a PyPDF2 date string."""
-        if date_str and date_str.startswith("D:"):
-            date_str = date_str[2:10]  # Extract only YYYYMMDD
-        return (
-            date_str if date_str and len(date_str) == 8 and date_str.isdigit() else None
-        )
 
     # Ensure metadata is not None before accessing it
     if metadata:
@@ -150,7 +148,7 @@ def extract_pdf_creation_date(metadata, filename: str, counter: int) -> tuple[st
 
 
 def extract_pdf_modification_date(
-    metadata, filename: str, pdf_creation_date: str
+    pdf_metadata, filename: str, pdf_creation_date: str
 ) -> str:
     """
     Extracts the modification date from PDF metadata if available. If unavailable,
@@ -177,9 +175,10 @@ def extract_pdf_modification_date(
     """
 
     try:
-        pdf_modification_date = str(metadata.modification_date)[:10]
+        pdf_modification_date = pdf_metadata.get("/ModificationDate")
+        pdf_modification_date = preprocess_date(pdf_modification_date)
     except AttributeError:
-        print(f"An error fetching the modification date occurred for file {filename}")
+        print(f"No modification date found for: {filename} - setting to creation date.")
         pdf_modification_date = pdf_creation_date  # Fallback to creation date
 
     return pdf_modification_date
@@ -241,19 +240,18 @@ def extract_pdf_text(pdf_file_path: Path, pdf_url: str) -> list:
     return pages_text
 
 
-def build_json(pdf_file_path: Path, pdf_website_url: str, counter: int, JSON_DIR: Path) -> int:
+def build_json(pdf_file_path: Path, pdf_website_url: str, counter: int) -> int:
     """
     Processes a PDF file, extracts metadata and content, then saves it as JSON.
 
     Args:
         pdf_file_path (Path): The path to the PDF file.
         counter (int): A running count of files missing reliable date information.
-        JSON_DIR (Path): The path to the chosen json folder - latest or old
 
     Returns:
         int: Updated counter for files missing an explicit creation date.
     """
-    
+
     # Notify which file is being processed
     print(f"Processing: {pdf_file_path.name}")
 
@@ -312,6 +310,7 @@ def normalize_dict_keys(file_dict: dict) -> dict:
     """
     return {os.path.normpath(k): v for k, v in file_dict.items()}
 
+ 
 if __name__ == "__main__":
     # Initialize counter
     count = 0  # Initialize counter

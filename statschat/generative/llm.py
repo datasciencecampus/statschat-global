@@ -36,6 +36,8 @@ class Inquirer:
         llm_temperature: float = 0.0,
         llm_max_tokens: int = 1024,
         verbose: bool = False,
+        answer_threshold: float = 0.5,
+        document_threshold: float = 0.9,
     ):
         """
         Args:
@@ -55,6 +57,8 @@ class Inquirer:
         self.k_docs = k_docs
         self.k_contexts = k_contexts
         self.similarity_threshold = similarity_threshold
+        self.answer_threshold = answer_threshold
+        self.document_threshold = document_threshold
         self.verbose = verbose
         self.extractive_prompt = EXTRACTIVE_PROMPT_PYDANTIC
         self.stuff_document_prompt = STUFF_DOCUMENT_PROMPT
@@ -278,7 +282,27 @@ class Inquirer:
                 + validated_response.most_likely_answer
                 + "</div> </h4>"
             )
-
+        
+        if docs[0]['score'] > self.answer_threshold:
+            answer_str = "No suitable answer found however relevant information may be found in a PDF. Please check the link(s) provided"
+            
+        else:
+            answer_str = answer_str
+               
+        if docs[0]['score'] > self.document_threshold:
+            
+            document_string = "No suitable PDFs found. Please refer to context"
+            
+            context_string = "No context available. Please refer to response"
+            
+            docs.clear()
+            
+            docs.extend([document_string, context_string])
+            
+        else:
+            docs = docs
+        
+                 
         return docs, answer_str, validated_response
 
 
@@ -291,32 +315,49 @@ if __name__ == "__main__":
     # initiate Statschat AI and start the app
     inquirer = Inquirer(**CONFIG["db"], **CONFIG["search"], logger=logger)
 
-    question = "Give me the registered births by age of mother and county"
+    question = "Where can I find the registered births by age of mother and county?"
     # question = "What is the sample size of the Real Estate Survey?"
     # question = "How is core inflation calculated?"
-    # question = "What was inflation in Kenya in December 2024?"
+    question = "What was inflation in Kenya in December 2021?"
+    # question = "What is football?"
 
     docs, answer, response = inquirer.make_query(
         question,
         latest_filter="off",
     )
-
+    
+    test_thresholds = "NO"
+    
     print("-------------------- ANSWER --------------------")
-    print(answer)
-    page_url = docs[0]["page_url"]
-    # Extract document name from URL
-    document_url = docs[0]["url"]
-    split_url = document_url.split("/")
-    doc_id = split_url[-1]
-    document_name = doc_id[:-4]
-    document_title = docs[0]["title"]
+    
+    if test_thresholds == "YES":
+        print(answer)
+        
+    elif test_thresholds == "NO":
+        print(answer)
+        page_url = docs[0]["page_url"]
+        # Extract document name from URL
+        document_url = docs[0]["url"]
+        split_url = document_url.split("/")
+        doc_id = split_url[-1]
+        document_name = doc_id[:-4]
+        document_title = docs[0]["title"]
 
     print("-------------------- DOCUMENT -------------------")
-    print(f"The document title is {document_title}.")
-    print(f"The file name is {document_name}.")
-    print(f"You can read more from the document at {page_url}.")
+    if test_thresholds == "YES":
+        print(docs[0])
+        
+    elif test_thresholds == "NO":
+        print(f"The document title is {document_title}.")
+        print(f"The file name is {document_name}.")
+        print(f"You can read more from the document at {page_url}.")
 
     print("------------------ CONTEXT INFO ------------------")
-    print(docs)
+    if test_thresholds == "YES":
+        print(docs[1])
+        
+    elif test_thresholds == "NO":
+        print(docs)
+    
     print("------------------ FULL RESPONSE -----------------")
     print(response)
