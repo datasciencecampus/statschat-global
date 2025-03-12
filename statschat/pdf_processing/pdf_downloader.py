@@ -5,129 +5,122 @@ from pathlib import Path
 from urllib.parse import urlparse
 import json
 
-# %%
+# %% Configuration
 
-# Update for latest PDFs or setup when using for first time
-PDF_FILES = "SETUP"
+PDF_FILES = "UPDATE"  # Change to "SETUP" for the first run
 
-# Set relative paths
+# Set directories
+BASE_DIR = Path.cwd().joinpath("data")
+DATA_DIR = BASE_DIR.joinpath(
+    "pdf_downloads" if PDF_FILES == "SETUP" else "latest_pdf_downloads"
+)
+OUTPUT_URL_DIR = BASE_DIR.joinpath(
+    "pdf_downloads" if PDF_FILES == "SETUP" else "latest_pdf_downloads"
+)
+ORIGINAL_URL_DICT_PATH = BASE_DIR.joinpath("pdf_downloads/url_dict.json")
+
+# Ensure directories exist
+DATA_DIR.mkdir(parents=True, exist_ok=True)
+OUTPUT_URL_DIR.mkdir(parents=True, exist_ok=True)
+
+print(f"STARTING DATABASE {PDF_FILES}. PLEASE WAIT...")
+
+# Set path for new url_dict.json (where new entries are saved)
+url_dict_path = OUTPUT_URL_DIR / "url_dict.json"
+
+# Initialize URL dictionary
 if PDF_FILES == "SETUP":
-    DATA_DIR = Path.cwd().joinpath("data/pdf_downloads")
-    print("STARTING DATABASE SETUP. PLEASE WAIT...")
-    
-elif PDF_FILES == "UPDATE":
-    DATA_DIR = Path.cwd().joinpath("data/latest_pdf_downloads")
-    print("STARTING DATABASE UPDATE. PLEASE WAIT...")
+    url_dict = {}  # Start fresh, do not load anything
 
-# Check if DATA_DIR exists, if not, create the folder
-if not DATA_DIR.exists():
-    DATA_DIR.mkdir(parents=True, exist_ok=True)
-    
-# %%
+elif PDF_FILES == "UPDATE":
+    if ORIGINAL_URL_DICT_PATH.exists():
+        with open(ORIGINAL_URL_DICT_PATH, "r") as json_file:
+            original_url_dict = json.load(json_file)
+            print(f"Loaded existing url_dict.json from {ORIGINAL_URL_DICT_PATH}")
+    else:
+        print("No existing url_dict.json found in pdf_downloads. Exiting update mode.")
+        exit()  # Nothing to update if there's no record
+
+    url_dict = {}  # This will store only new entries
+
+# Set max pages for UPDATE mode
+max_pages = None if PDF_FILES == "SETUP" else 5  # Limit to 5 pages for updates
+
 print("IN PROGRESS.")
 
-# %%
-# Initialise empty dict to store url and download links
-url_dict = {}
-
-# %%
-# get all webpages on KNBS website that have PDFs and add them to a list
-
-all_pdf_links = []
-
-# select page for downloads to start from
-# with 1 being the latest
-
+# %% Scrape PDF links from KNBS website
+all_pdf_links = []  # List to store all PDF URLs
 page = 1
-base_url = f'https://www.knbs.or.ke/all-reports/page'
+base_url = "https://www.knbs.or.ke/all-reports/page"
 
-continue_search = True
+while True:
+    if max_pages and page > max_pages:
+        print(f"Reached page limit ({max_pages}). Stopping search.")
+        break
 
-while continue_search:
-    url = base_url + str(page) + '/'
+    url = f"{base_url}{page}/"
     response = requests.get(url)
-    soup = BeautifulSoup(response.content, 'html.parser')
 
-    # Break the loop if no more quotes are found
+    if response.status_code != 200:
+        print(f"Failed to access {url}. Stopping search.")
+        break
+
+    soup = BeautifulSoup(response.content, "html.parser")
+
+    # Extract all PDF links on the page
     pdf_links = [
         a["href"] for a in soup.find_all("a", href=True) if a["href"].endswith(".pdf")
     ]
-    
-    if len(pdf_links) == 0:
-        print('HAVE STOPPED GETTING WEBPAGES')
-        continue_search = False
-    
+
+    if not pdf_links:  # If no PDFs found, assume we've reached the last page
+        print("No PDFs found. Stopping search.")
+        break
+
+    all_pdf_links.extend(pdf_links)  # Flatten list correctly
+    print(f"Found {len(pdf_links)} PDFs on page {page}")
+
     page += 1
-    all_pdf_links.append(url)
 
-print('FINISHED COMPILING LINKS AND WILL NOW START DOWNLOADING PDFs')
+print(f"Total PDFs found: {len(all_pdf_links)}")
 
-# %%
-# print counter
+# %% If in UPDATE mode, filter only new PDFs
 
-# %%
-# removes last append to list as that webpage has no pdfs (USE THIS)
+if PDF_FILES == "UPDATE":
+    existing_urls = set(
+        original_url_dict.values()
+    )  # Convert existing URLs to a set for quick lookup
+    new_pdf_links = [pdf for pdf in all_pdf_links if pdf not in existing_urls]
 
-all_pdf_links = all_pdf_links[:-1]
-all_pdf_links
+    if not new_pdf_links:
+        print("No new PDFs found. Exiting update process.")
+        exit()
 
-# %%
-# gets links for every PDF from every KNBS webpage and adds to a list
+    print(f"Found {len(new_pdf_links)} new PDFs to download.")
+    all_pdf_links = new_pdf_links  # Replace with filtered list
 
-all_knbs_pdf_file_links = []
+# %% Download PDFs and Update URL Dictionary
 
-for pdf_file in all_pdf_links:
-    
-    url = pdf_file
-    response = requests.get(url)
-    soup = BeautifulSoup(response.text, "html.parser")
-    
-    pdf_links = [
-        a["href"] for a in soup.find_all("a", href=True) if a["href"].endswith(".pdf")
-    ]
-    
-    all_knbs_pdf_file_links.append(pdf_links)
+for pdf_url in all_pdf_links:
+    parsed_url = urlparse(pdf_url)
+    pdf_name = Path(parsed_url.path).name  # Extract the actual filename
 
-# %%
-# gets page range for PDFs to loop through multiple lists made
+    file_path = DATA_DIR / pdf_name  # Store PDFs in the correct directory
 
-pdf_page_range = len(all_knbs_pdf_file_links)
+    # Download PDF
+    response = requests.get(pdf_url)
 
-# %%
-# downloads PDFs to relevant folder
+    if response.status_code == 200:
+        with open(file_path, "wb") as file:
+            file.write(response.content)
+            print(f"Downloaded: {pdf_name} -> {file_path}")
 
-counter = 0 
+        url_dict[pdf_name] = pdf_url  # Store only new entries
+    else:
+        print(f"Failed to download: {pdf_url}")
 
-for i in range(pdf_page_range):
-    for pdf in all_knbs_pdf_file_links[i]:
-        url = pdf
-        parsed_url = urlparse(url)
-        pdf_name = parsed_url.path
-        actual_pdf_file_name = pdf_name[28:]
-
-        response = requests.get(url)
-        file_path = f"{DATA_DIR}/{actual_pdf_file_name}"
-
-        # Save file in binary mode if request is successful,
-        # return error message if request fails.
-        if response.status_code == 200:
-            with open(file_path, "wb") as file:
-                file.write(response.content)
-                print(f"File {actual_pdf_file_name} downloaded successfully")
-            
-            counter += 1
-        
-        else:
-            print(f"ERROR. Failed to download file {actual_pdf_file_name}")
-            
-        
-        # update dictionary
-        url_dict[actual_pdf_file_name] = url
-        print(url_dict[actual_pdf_file_name])
-
-# Export url link dictionary to json file
-with open(f"{DATA_DIR}/url_dict.json", "w") as json_file:
+# %% Save New URL Dictionary to JSON (Only new entries)
+with open(url_dict_path, "w") as json_file:
     json.dump(url_dict, json_file, indent=4)
-    print("url_dict saved to url_dict.json")
+    print(f"Saved new url_dict.json to {url_dict_path}")
 
-print("Finished PDF downloads")
+print("Finished PDF downloads.")
