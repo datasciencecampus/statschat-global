@@ -123,4 +123,8 @@ with open(url_dict_path, "w") as json_file:
     json.dump(url_dict, json_file, indent=4)
     print(f"Saved new url_dict.json to {url_dict_path}")
 
-print("Finished PDF downloads.")
+if PDF_FILES == "UPDATE":
+    print("Finished downloading new PDF file. Please run pdf_database_update.py next.")
+
+if PDF_FILES == "SETUP":
+    print("Finished downloading all PDF files. Please run pdf_to_json.py next.")
