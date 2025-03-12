@@ -101,7 +101,9 @@ class UpdateVectorStore(DirectoryLoader, JSONLoader):
         self.logger.info(f"Number of outdated latest flags: {len(former_latest)}")
 
         embeddings = HuggingFaceEmbeddings(model_name=self.embedding_model_name)
-        db = FAISS.load_local(self.faiss_db_root, embeddings, allow_dangerous_deserialization=True)
+        db = FAISS.load_local(
+            self.faiss_db_root, embeddings, allow_dangerous_deserialization=True
+        )
         db_dict = db.docstore._dict
         self.logger.info(
             f"Number of chunks in vector store PRE-edit: {len(db.docstore._dict)}"
@@ -220,7 +222,9 @@ class UpdateVectorStore(DirectoryLoader, JSONLoader):
             self.embeddings = VertexAIEmbeddings()
 
         else:
-            self.embeddings = HuggingFaceEmbeddings(model_name=self.embedding_model_name)
+            self.embeddings = HuggingFaceEmbeddings(
+                model_name=self.embedding_model_name
+            )
 
         return None
 
@@ -267,9 +271,9 @@ class UpdateVectorStore(DirectoryLoader, JSONLoader):
         Merge temporary vector store for new articles into
         existing permanent vector store
         """
-        db = FAISS.load_local(self.faiss_db_root, 
-                              self.embeddings, 
-                              allow_dangerous_deserialization=True)
+        db = FAISS.load_local(
+            self.faiss_db_root, self.embeddings, allow_dangerous_deserialization=True
+        )
         db.merge_from(self.temp_db)
         db.save_local(self.faiss_db_root)
         self.logger.info(
@@ -286,7 +290,7 @@ class UpdateVectorStore(DirectoryLoader, JSONLoader):
         path = f"{self.temp_directory}/*.json"
         all_files = glob.glob(path)
         for FILE in all_files:
-            file = FILE.split("/")[-1]
+            file = FILE.split("\\")[-1]
             dst_path = os.path.join(self.latest_directory, file)
             os.rename(FILE, dst_path)
 
