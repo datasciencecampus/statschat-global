@@ -75,4 +75,4 @@ if __name__ == "__main__":
 
         count = build_json(pdf_file_path, pdf_url, count, JSON_DIR)
 
-    print("FINISHED PDF TO JSON CONVERSION. Please now run merge_database_files.py")
+    print("FINISHED PDF TO JSON CONVERSION. Please now run preprocess_update_db.py")
