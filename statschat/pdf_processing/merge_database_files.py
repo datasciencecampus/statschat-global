@@ -11,7 +11,7 @@ JSON_SPLIT_DIR = Path.cwd().joinpath("data/json_split")
 
 # Latest directories
 LATEST_JSON_SPLIT_DIR = Path.cwd().joinpath("data/latest_json_split")
-LATEST_JSON_DIR = Path.cwd().joinpath("data/latest_json_conversions")
+LATEST_JSON_DIR = Path.cwd().joinpath("data/latest_json_conversions/temp")
 LATEST_DATA_DIR = Path.cwd().joinpath("data/latest_pdf_downloads")
 
 # %%
