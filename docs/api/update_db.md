@@ -1,29 +1,35 @@
-## Instructions for how to update PDF Database with PDF files
+## Instructions for how to update PDF Database with new PDF files
 
-### Run on a...basis
+### Run on a...basis (automatically done on KNBS server)
 
-...
-1) Run script 'pdf_downloader.py' but ensure 'PDF_FILES = "UPDATE"'
-...
-This downloads all PDF files into the 'latest_pdf_downloads' folder
+```
+1) Run script `pdf_downloader.py` and ensure PDF_FILES = UPDATE
+```
 
-...
+**Downloads newest PDF files into the `latest_pdf_downloads` folder**
+
+```
 2) Run script 'pdf_database_update.py'
-...
-This tells you how many new PDF files there are then converts them to json files in the 'latest_json_conversions' folder 
+```
 
-...
+**Informs how many new PDF files there are then converts them to json files in the `latest_json_conversions` folder**
+
+```
 3) Run script 'preprocess_update_db.py'
-...
-This splits the latest json conversion files, converts them into a pickle file then merges that pickle file with the pickle file currently in the 'db_langchain_latest' folder
+```
 
-...
+**Splits the latest json conversion files, converts them to a pickle file then merges that pickle file with the pickle file currently in the `db_langchain_latest` folder**
+
+```
 4) Run script 'merge_database_files.py' to move new PDF, json conversions and splits to relevant folders after database update
-...
-This moves the new PDF files to the from 'latest_pdf_downloads' to 'pdf_downloads' folder and then removes all files in the 'latest_pdf_downloads'
+```
 
-This moves the new json conversions from 'latest_json_conversions' to the 'json_conversions' folder and then removes all files in 'latest_json_conversion'
+**Moves the new PDF files to the from `latest_pdf_downloads` to `pdf_downloads` folder and then removes all files in the `latest_pdf_downloads`**
 
-This moves the new json splits from 'latest_json_splits' to the 'json_splits' folder and then removes all files in 'latest_json_splits'
+**Moves the new json conversions from `latest_json_conversions` to the `json_conversions` folder and then removes all files in `latest_json_conversion`**
 
-## Repeat this process each time new KNBS PDF files are published to update the database that Statschats will use. 
+**Moves the new json splits from `latest_json_splits` to the `json_splits` folder and then removes all files in `latest_json_splits`**
+
+```
+Repeat process each time new KNBS PDF files are published to update the database that Statschats will use to answer questions.
+```
