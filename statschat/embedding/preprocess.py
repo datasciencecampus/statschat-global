@@ -5,11 +5,11 @@ import toml
 import os
 from pathlib import Path
 from datetime import datetime
-from langchain.document_loaders import DirectoryLoader, JSONLoader
+from langchain_community.document_loaders import DirectoryLoader, JSONLoader
 from langchain_huggingface.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.document_transformers import EmbeddingsRedundantFilter
+from langchain_community.document_transformers import EmbeddingsRedundantFilter
 
 
 class PrepareVectorStore(DirectoryLoader, JSONLoader):
