@@ -2,6 +2,9 @@
 faiss_db_root = "data/db_langchain"
 embedding_model_name = "sentence-transformers/all-mpnet-base-v2"  # "textembedding-gecko@001" "sentence-transformers/paraphrase-MiniLM-L3-v2"
 
+[runner]
+pdf_files_mode = "UPDATE"  # or "SETUP"
+
 [preprocess]
 directory = "data/json_conversions"
 split_directory = "data/json_split"
