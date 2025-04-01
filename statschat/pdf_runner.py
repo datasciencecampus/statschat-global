@@ -22,6 +22,7 @@ Each step is modular and run as an independent subprocess.
 import subprocess
 import sys
 from statschat import load_config
+from pathlib import Path
 
 
 def run_script(script_name: str):
@@ -54,22 +55,27 @@ if __name__ == "__main__":
     config = load_config(name="main")
     pdf_mode = config["runner"]["pdf_files_mode"].upper()
 
+    # Define base directory for the script
+    BASE_DIR = Path().cwd()
+    PDF_PROC_DIR = BASE_DIR / "statschat" / "pdf_processing"
+    EMBEDDING_DIR = BASE_DIR / "statschat" / "embedding"
+
     print(f"Pipeline mode: {pdf_mode}\n")
 
     # Step 1: Download PDFs
-    run_script("statschat/pdf_processing/pdf_downloader.py")
+    run_script(PDF_PROC_DIR / "pdf_downloader.py")
 
     # Step 2: Execute pipeline based on mode
     if pdf_mode == "SETUP":
         print("Executing full setup pipeline...")
-        run_script("statschat/pdf_processing/pdf_to_json.py")
-        run_script("statschat/embedding/preprocess.py")
+        run_script(PDF_PROC_DIR / "pdf_to_json.py")
+        run_script(EMBEDDING_DIR / "preprocess.py")
 
     elif pdf_mode == "UPDATE":
         print("Executing update pipeline...")
-        run_script("statschat/pdf_processing/pdf_database_update.py")
-        run_script("statschat/embedding/preprocess_update_db.py")
-        run_script("statschat/pdf_processing/merge_database_files.py")
+        run_script(PDF_PROC_DIR / "pdf_database_update.py")
+        run_script(EMBEDDING_DIR / "preprocess_update_db.py")
+        run_script(PDF_PROC_DIR / "merge_database_files.py")
 
     else:
         raise ValueError(f"Invalid pdf_files_mode in configuration: '{pdf_mode}'")
