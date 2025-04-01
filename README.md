@@ -217,7 +217,7 @@ Convert the downloaded pdfs into JSON formats:
 
 3. #### Run the sample questions manually
 
-    Make sure that you're terminall is running from `statschat-ke`.
+    Make sure that you're terminal is running from `statschat-ke`.
     Then run the `llm.py` script using:
 
     ```shell
