@@ -4,10 +4,13 @@ from bs4 import BeautifulSoup
 from pathlib import Path
 from urllib.parse import urlparse
 import json
+from statschat import load_config
 
 # %% Configuration
 
-PDF_FILES = "UPDATE"  # Change to "SETUP" for the first run
+# Load configuration
+config = load_config(name="main")
+PDF_FILES = config["runner"]["pdf_files_mode"].upper()
 
 # Set directories
 BASE_DIR = Path.cwd().joinpath("data")
