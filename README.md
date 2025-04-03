@@ -192,30 +192,23 @@ gcloud auth application-default login
 
 1. #### Webscraping the source documents
 
-Before running `pdf_downloader.py` you should make sure that the url path in line 18
-is the desired one.
+Before running `pdf_runner.py` you should make sure that the PDF_FILES_MODE (in `main.toml`) is set to the desired option.
 
     ```shell
-    python statschat/pdf_processing/pdf_downloader.py
+    python statschat/pdf_runner.py
     ```
 
-Convert the downloaded pdfs into JSON formats:
+This script will webscrape PDF documents from the KNBS website, convert them to JSON files and either append or replace the vector store - based on the PDF_FILES_MODE parameter.
 
-    ```shell
-    python statschat/pdf_processing/pdf_to_json.py
-    ```
+PDF_FILES_MODE = "UPDATE" -> Will only scrape the latest 5 pages of PDF files, compare existing PDF files in the vector store with those downloaded and only process new files - appending these to the database and "flushing" the latest data folders ready for a new run.
+
+PDF_FILES_MODE = "SETUP" -> Will scrape all pdf files from the KNBS website and reset the vector store, creating a new one from the PDF documents that are scraped and processed into JSON files.
 
 > [!NOTE]
 > The second script my flag some files that don't have compliant metadata.
 > For now the guidance is to delete those PDFs, the produced JSONS and re-run the script.
 
-2. #### Creating a local document store
-
-    ```shell
-    python statschat/embedding/preprocess.py
-    ```
-
-3. #### Run the sample questions manually
+2. #### Run the sample questions manually
 
     Make sure that you're terminal is running from `statschat-ke`.
     Then run the `llm.py` script using:
@@ -224,7 +217,7 @@ Convert the downloaded pdfs into JSON formats:
     python statschat/generative/llm.py
     ```
 
-4. #### Run the interactive Statschat API
+3. #### Run the interactive Statschat API
 
     In order to run the interactive Statschat API you will need to make sure you have:
 
@@ -264,7 +257,7 @@ Convert the downloaded pdfs into JSON formats:
     <API_URL>/search?q=<your_question>
     ```
 
-5. #### Run the flask web interface
+4. #### Run the flask web interface
 
     ```shell
     python flask-app/app.py
@@ -272,7 +265,7 @@ Convert the downloaded pdfs into JSON formats:
     To use the user UI
     navigate in your browser to http://localhost:5000. Note that it requires the API to be running and the endpoind specified in the app.
 
-6. #### Run the search evaluation pipeline
+5. #### Run the search evaluation pipeline
     ```shell
     python statschat/model_evaluation/evaluation.py
     ```
@@ -281,7 +274,7 @@ Convert the downloaded pdfs into JSON formats:
     evaluation and results are written to `data/model_evaluation` folder.
 
 
-7. #### Testing
+6. #### Testing
     ```shell
     python -m pytest
     ```

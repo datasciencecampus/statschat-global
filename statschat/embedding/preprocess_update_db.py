@@ -6,7 +6,8 @@ from pathlib import Path
 from datetime import datetime
 
 from langchain_community.document_loaders import JSONLoader, DirectoryLoader
-from langchain_community.embeddings import HuggingFaceEmbeddings, VertexAIEmbeddings
+from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_community.embeddings import VertexAIEmbeddings
 from langchain_community.vectorstores import FAISS
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.document_transformers import EmbeddingsRedundantFilter
@@ -49,8 +50,6 @@ class UpdateVectorStore(DirectoryLoader, JSONLoader):
         self.redundant_similarity_threshold = redundant_similarity_threshold
         self.faiss_db_root = faiss_db_root + ("_latest" if latest_only else "")
         self.latest_only = latest_only
-        #self.latest_directory = os.path.join(self.latest_directory, "temp")
-        #self.latest_split_directory = os.path.join(self.latest_directory, "temp", "split")
         self.temp_faiss_db_root = "temp_faiss_db"
 
         # Initialise logger
@@ -80,8 +79,6 @@ class UpdateVectorStore(DirectoryLoader, JSONLoader):
             self._embed_documents()
             self.logger.info("Merging into existing FAISS DB")
             self._merge_faiss_db()
-            #self.logger.info("Cleaning up folders")
-            #self._cleaning_up()
 
         else:
             self.logger.info("Aborting: no new documents to be added")
@@ -158,7 +155,8 @@ class UpdateVectorStore(DirectoryLoader, JSONLoader):
                             # Check that there's text extracted for this section
                             if len(section["page_text"]) > 5:
                                 with open(
-                                    f"{self.latest_split_directory}/{id}_{num}.json", "w"
+                                    f"{self.latest_split_directory}/{id}_{num}.json",
+                                    "w",
                                 ) as new_file:
                                     json.dump(section_json, new_file, indent=4)
 
