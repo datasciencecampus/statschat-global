@@ -115,3 +115,20 @@ helping to maintain a clean and consistent codebase.
 
 > [!NOTE]
 > Pre-commit hooks execute Python, so it expects a working Python build.
+
+## Setup Vector Store
+
+To web scrape the source documents run **`pdf_runner.py`**. Ensure that the **`PDF_FILES_MODE`** (in `main.toml`) is set to the desired option **"SETUP"**.
+
+    ```shell
+    python statschat/pdf_runner.py
+    ```
+
+This script will webscrape PDF documents from the KNBS website, convert them to JSON files and either append or replace the vector store - based on the **PDF_FILES_MODE** parameter.
+
+**PDF_FILES_MODE** = **"SETUP"** -> Will scrape all pdf files from the KNBS website and reset the vector store, creating a new one from the PDF documents that are scraped and processed into JSON files.
+
+> [!NOTE]
+> YOU WILL ONLY NEED TO DO THE VECTORE STORE SETUP ONCE
+> AFTERWARDS IT WILL ONLY NEED TO BE UPDATED
+
