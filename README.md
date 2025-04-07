@@ -204,6 +204,8 @@ PDF_FILES_MODE = "UPDATE" -> Will only scrape the latest 5 pages of PDF files, c
 
 PDF_FILES_MODE = "SETUP" -> Will scrape all pdf files from the KNBS website and reset the vector store, creating a new one from the PDF documents that are scraped and processed into JSON files.
 
+Further information on how to "UPDATE" vector store can be found [here](https://github.com/KNBS-StatsChat/statschat-ke/blob/readme_docs_update/docs/api/update_db.md)
+
 > [!NOTE]
 > The second script my flag some files that don't have compliant metadata.
 > For now the guidance is to delete those PDFs, the produced JSONS and re-run the script.
