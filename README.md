@@ -33,6 +33,22 @@ For this prototype, relevant web pages are scraped and the data stored in `data/
 the docstore / embedding store that is created is likewise in local folders and files,
 and the LLM is either run in memory or accessed through VertexAI.
 
+## Vector store
+> [!NOTE]
+> **Before setting up or updating the vector store ensure the [virtual or conda environment has been created.](https://github.com/KNBS-StatsChat/statschat-ke/blob/readme_docs_update/docs/api/setup_guide.md)**
+
+Before running `pdf_runner.py` ensure that the PDF_FILES_MODE (in `main.toml`) is set to the desired option.
+
+    ```shell
+    python statschat/pdf_runner.py
+    ```
+
+This script will webscrape PDF documents from the KNBS website, convert them to JSON files and either append or replace the vector store - based on the `PDF_FILES_MODE` parameter.
+
+`PDF_FILES_MODE = "SETUP"` -> Will scrape all pdf files from the KNBS website and reset the vector store, creating a new one from the PDF documents that are scraped and processed into JSON files. This will only need to be done `once` as afterwards it will just need updating. 
+
+`PDF_FILES_MODE = "UPDATE"` -> Will only scrape the latest 5 pages of PDF files from the KNBS website, compare existing PDF files in the vector store with those downloaded and only process new files - appending these to the database and "flushing" the latest data folders ready for a new run. This will need to be done as new PDFs are added to the KNBS website.
+
 ## Usage
 
 #### Run the sample questions manually (backend)
