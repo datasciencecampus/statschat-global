@@ -37,8 +37,9 @@ and the LLM is either run in memory or accessed through VertexAI.
 
 #### Run the sample questions manually (backend)
 
-Make sure that you're terminal is running from **`statschat-ke`**. Then use the **`llm.py`** script and 
-change the **question** parameter with the desired question:
+This assumes the vector store has already been created otherwise this will need to be done before.
+Make sure that you're terminal is running from **`statschat-ke`**. Then use the **`llm.py`** 
+script and change the **question** parameter with the desired question:
 
 ![image](https://github.com/user-attachments/assets/83e2e4e8-1ecf-43e1-bcdc-e8f39e5d5e12)
 
