@@ -109,20 +109,6 @@ The generic formula to ask a question is:
 <API_URL>/search?q=<your_question>
 ```
 
-### Run the search evaluation pipeline
-    ```shell
-    python statschat/model_evaluation/evaluation.py
-    ```
-    The StatsChat pipeline is currently evaluated based on small number of test
-    question. The main 'app_config.toml' determines pipeline setting used in
-    evaluation and results are written to `data/model_evaluation` folder.
-
-### Testing
-    ```shell
-    python -m pytest
-    ```
-    Preferred unittesting framework is PyTest.
-
 # License
 
 <!-- Unless stated otherwise, the codebase is released under [the MIT Licence][mit]. -->
