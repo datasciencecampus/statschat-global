@@ -37,7 +37,7 @@ and the LLM is either run in memory or accessed through VertexAI.
 
 #### Run the sample questions manually (backend)
 
-This assumes the vector store has already been created otherwise this will need to be done before.
+This assumes the [vector store](https://github.com/KNBS-StatsChat/statschat-ke/blob/readme_docs_update/docs/api/setup_guide.md) has already been created otherwise this will need to be done before.
 Make sure that you're terminal is running from **`statschat-ke`**. Then use the **`llm.py`** 
 script and change the **question** parameter with the desired question:
 
