@@ -1,9 +1,22 @@
-## Instructions for how to update PDF Database with new PDF files
+## How to update PDF Database with new PDF files
 
-### Run on a...basis (automatically done on KNBS server)
+### For Server - run on a...basis (automatically done on KNBS server)
+
+Before running **`pdf_runner.py`** ensure that the PDF_FILES_MODE (in **`main.toml`**) is set to the desired option **"UPDATE"**.
+
+    ```shell
+    python statschat/pdf_runner.py
+    ```
+
+This script will webscrape PDF documents from the KNBS website, convert them to JSON files and either append or replace the vector store - based on the PDF_FILES_MODE parameter.
+
+PDF_FILES_MODE = "UPDATE" -> Will only scrape the latest 5 pages of PDF files, compare existing PDF files in the vector store with those downloaded and only process new files - appending these to the database and "flushing" the latest data folders ready for a new run.
+
+### For Development
+For development/testing purposes this update can also be done by running these 4 scripts individually
 
 ```
-1) Run script `pdf_downloader.py` and ensure PDF_FILES = UPDATE
+1) Run script `pdf_downloader.py` and PDF_FILES_MODE (in main.toml) is set to the desired option "UPDATE".
 ```
 
 **Downloads newest PDF files into the `latest_pdf_downloads` folder**
