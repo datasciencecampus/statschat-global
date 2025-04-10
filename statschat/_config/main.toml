@@ -2,6 +2,9 @@
 faiss_db_root = "data/db_langchain"
 embedding_model_name = "sentence-transformers/all-mpnet-base-v2"  # "textembedding-gecko@001" "sentence-transformers/paraphrase-MiniLM-L3-v2"
 
+[runner]
+pdf_files_mode = "UPDATE"  # or "SETUP"
+
 [preprocess]
 directory = "data/json_conversions"
 split_directory = "data/json_split"
@@ -9,12 +12,21 @@ split_length = 1000
 split_overlap = 100
 latest_only = true
 
+[preprocess_latest]
+latest_directory = "data/latest_json_conversions"
+latest_split_directory = "data/latest_json_split"
+split_length = 1000
+split_overlap = 100
+latest_only = true
+
 [search]
 generative_model_name = "mistralai/Mistral-7B-Instruct-v0.3"  # "text-unicorn" "text-bison@001" "google/flan-t5-large" "lmsys/fastchat-t5-3b-v1.0" "google/flan-t5-large" "google/flan-ul2"
-k_docs = 1
-k_contexts = 1
+k_docs = 2
+k_contexts = 5
 similarity_threshold = 2.0     # Threshold score below which a document is returned in a search
 llm_temperature = 0.0
+answer_threshold = 0.5 # Threshold score below which a answer is returned in a search
+document_threshold = 0.9 # Threshold score below which a document is returned in a search
 
 [app]
 latest_max = 2    # Takes value int >= 0, commonly 0, 1 or 2

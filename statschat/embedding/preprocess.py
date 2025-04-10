@@ -5,11 +5,11 @@ import toml
 import os
 from pathlib import Path
 from datetime import datetime
-from langchain.document_loaders import DirectoryLoader, JSONLoader
+from langchain_community.document_loaders import DirectoryLoader, JSONLoader
 from langchain_huggingface.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.document_transformers import EmbeddingsRedundantFilter
+from langchain_community.document_transformers import EmbeddingsRedundantFilter
 
 
 class PrepareVectorStore(DirectoryLoader, JSONLoader):
@@ -63,6 +63,40 @@ class PrepareVectorStore(DirectoryLoader, JSONLoader):
             # self._drop_redundant_documents()
             self.logger.info("Vectorise docs and commit to physical vector store")
             self._embed_documents()
+
+            # Copy the contents of self.faiss_db_root to self.faiss_db_root + "_latest"
+            latest_db_root = self.faiss_db_root.replace("_latest", "")
+            if not os.path.exists(latest_db_root):
+                os.makedirs(latest_db_root)
+
+            for item in os.listdir(self.faiss_db_root):
+                source = os.path.join(self.faiss_db_root, item)
+                destination = os.path.join(latest_db_root, item)
+                if os.path.isdir(source):
+                    os.makedirs(destination, exist_ok=True)
+                    for root, dirs, files in os.walk(source):
+                        for dir in dirs:
+                            os.makedirs(
+                                os.path.join(
+                                    destination,
+                                    os.path.relpath(os.path.join(root, dir), source),
+                                ),
+                                exist_ok=True,
+                            )
+                        for file in files:
+                            src_file = os.path.join(root, file)
+                            dst_file = os.path.join(
+                                destination, os.path.relpath(src_file, source)
+                            )
+                            with open(src_file, "rb") as fsrc, open(
+                                dst_file, "wb"
+                            ) as fdst:
+                                fdst.write(fsrc.read())
+                else:
+                    with open(source, "rb") as fsrc, open(destination, "wb") as fdst:
+                        fdst.write(fsrc.read())
+
+            self.logger.info(f"Copied vector store to {latest_db_root}")
 
         else:
             self.logger.info("Aborting: named vector store already exists")
@@ -210,7 +244,11 @@ class PrepareVectorStore(DirectoryLoader, JSONLoader):
             self.db.save_local(self.faiss_db_root)
         else:
             self.logger.info("Vector store already exists")
-            self.db = FAISS.load_local(self.faiss_db_root, self.embeddings)
+            self.db = FAISS.load_local(
+                self.faiss_db_root,
+                self.embeddings,
+                allow_dangerous_deserialization=True,
+            )
 
         return None
 
@@ -233,3 +271,4 @@ if __name__ == "__main__":
 
     prepper = PrepareVectorStore(**config["db"], **config["preprocess"])
     logger.info("setup of docstore should be complete.")
+    print("setup of docstore should be complete.")
