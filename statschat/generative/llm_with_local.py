@@ -75,8 +75,9 @@ class Inquirer:
                         "text-generation", 
                         model=model, 
                         tokenizer=tokenizer, 
-                        max_new_tokens=10, 
-                        device_map="auto"
+                        max_new_tokens=1000, 
+                        device_map="auto",
+                        torch_dtype=torch.float16
                     )
         self.llm = HuggingFacePipeline(pipeline=pipe)
 
@@ -187,7 +188,7 @@ class Inquirer:
             {"input_documents": top_matches, "question": query},
             return_only_outputs=True,
         )
-
+        
         parser = PydanticOutputParser(pydantic_object=LlmResponse)
         try:
             if "output_text" in response:
@@ -206,7 +207,7 @@ class Inquirer:
                 highlighting3=[],
                 reasoning=f"Cannot parse response: {e} /n/n  response: {response}",
             )
-
+        print(f"check: {validated_answer}")
         return validated_answer
 
     @lru_cache()

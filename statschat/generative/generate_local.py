@@ -5,6 +5,12 @@
 
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
+from statschat.generative.prompts_copy import (
+    EXTRACTIVE_PROMPT_PYDANTIC,
+    STUFF_DOCUMENT_PROMPT,
+    _extractive_prompt,
+    _core_prompt
+)
 
 
 # Define a function to generate responses
@@ -41,8 +47,12 @@ if __name__ == "__main__":
         device_map="auto",  # Automatically selects GPU if available
     )
     print("Model loaded successfully.")
-    question = "What was inflation in Kenya in December 2021?"
+    question = "How is core inflation calculated?"
 
-    user_input = question
+    user_input = _core_prompt + _extractive_prompt
     response = generate_response(user_input, model, tokenizer)
     print(response)
+    
+    
+
+
