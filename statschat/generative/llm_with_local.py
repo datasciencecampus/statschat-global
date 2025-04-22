@@ -2,24 +2,26 @@ import logging
 import os
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
-from dotenv import load_dotenv
-from langchain_huggingface import HuggingFaceEndpoint
 from langchain_community.vectorstores import FAISS
 from langchain_huggingface.embeddings import HuggingFaceEmbeddings
 from langchain.docstore.document import Document
 from langchain.chains.qa_with_sources import load_qa_with_sources_chain
 from langchain.output_parsers import PydanticOutputParser
+
+from langchain_huggingface.llms import HuggingFacePipeline
+from langchain.chains import LLMChain
+from langchain_community.llms import HuggingFaceHub
+from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
+
 from statschat.generative.response_model import LlmResponse
-from statschat.generative.prompts import (
+from statschat.generative.prompts_copy import (
     EXTRACTIVE_PROMPT_PYDANTIC,
-    STUFF_DOCUMENT_PROMPT,
+    STUFF_DOCUMENT_PROMPT
 )
 from functools import lru_cache
 from statschat.generative.utils import deduplicator, highlighter
 from statschat.embedding.latest_flag_helpers import time_decay
 
-from langchain_huggingface.llms import HuggingFacePipeline
-from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
 
 class Inquirer:
     """
@@ -70,13 +72,13 @@ class Inquirer:
 
         # Load local model
         tokenizer = AutoTokenizer.from_pretrained(generative_model_name)
-        model = AutoModelForCausalLM.from_pretrained(generative_model_name)
+        model = AutoModelForCausalLM.from_pretrained(generative_model_name, device_map="auto")
         pipe = pipeline(
                         "text-generation", 
                         model=model, 
                         tokenizer=tokenizer, 
                         max_new_tokens=1000, 
-                        device_map="auto",
+                        #device_map="auto",
                         torch_dtype=torch.float16
                     )
         self.llm = HuggingFacePipeline(pipeline=pipe)
@@ -174,20 +176,32 @@ class Inquirer:
         ]
         self.logger.info(f"Passing top {len(top_matches)} results for QA")
 
+        chain = LLMChain(prompt=self.extractive_prompt + self.stuff_document_prompt,
+                         #document_prompt=self.stuff_document_prompt,
+                         verbose=self.verbose,
+                         #chain_type = "stuff",
+                         llm = self.llm)
+                         
+        
         # stuff all above documents to the model
-        chain = load_qa_with_sources_chain(
-            self.llm,
-            chain_type="stuff",
-            prompt=self.extractive_prompt,
-            document_prompt=self.stuff_document_prompt,
-            verbose=self.verbose,
-        )
+        #chain = load_qa_with_sources_chain(
+         #   self.llm,
+          #  chain_type="stuff",
+           # prompt=self.extractive_prompt,
+            #document_prompt=self.stuff_document_prompt,
+            #verbose=self.verbose,
+        #)
 
-        # parameter values
-        response = chain.invoke(
+        response = chain.run(
             {"input_documents": top_matches, "question": query},
             return_only_outputs=True,
         )
+        
+        # parameter values
+        #response = chain.invoke(
+        #    {"input_documents": top_matches, "question": query},
+         #   return_only_outputs=True,
+        #)
         
         parser = PydanticOutputParser(pydantic_object=LlmResponse)
         try:
@@ -321,8 +335,8 @@ if __name__ == "__main__":
 
     # question = "Where can I find the registered births by age of mother and county?"
     # question = "What is the sample size of the Real Estate Survey?"
-    # question = "How is core inflation calculated?"
-    question = "What was inflation in Kenya in December 2021?"
+    question = "How is core inflation calculated?"
+    # question = "What was inflation in Kenya in December 2021?"
     # question = "What is football?"
 
     docs, answer, response = inquirer.make_query(
