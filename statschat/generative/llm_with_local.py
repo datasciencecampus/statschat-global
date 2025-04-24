@@ -182,26 +182,11 @@ class Inquirer:
                          #chain_type = "stuff",
                          llm = self.llm)
                          
-        
-        # stuff all above documents to the model
-        #chain = load_qa_with_sources_chain(
-         #   self.llm,
-          #  chain_type="stuff",
-           # prompt=self.extractive_prompt,
-            #document_prompt=self.stuff_document_prompt,
-            #verbose=self.verbose,
-        #)
 
         response = chain.run(
             {"input_documents": top_matches, "question": query},
             return_only_outputs=True,
         )
-        
-        # parameter values
-        #response = chain.invoke(
-        #    {"input_documents": top_matches, "question": query},
-         #   return_only_outputs=True,
-        #)
         
         parser = PydanticOutputParser(pydantic_object=LlmResponse)
         try:
