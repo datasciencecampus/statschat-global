@@ -1,22 +1,17 @@
 import logging
-import os
 import torch
-from transformers import AutoModelForCausalLM, AutoTokenizer
 from langchain_community.vectorstores import FAISS
 from langchain_huggingface.embeddings import HuggingFaceEmbeddings
 from langchain.docstore.document import Document
-from langchain.chains.qa_with_sources import load_qa_with_sources_chain
 from langchain.output_parsers import PydanticOutputParser
-
 from langchain_huggingface.llms import HuggingFacePipeline
 from langchain.chains import LLMChain
-from langchain_community.llms import HuggingFaceHub
 from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
 
 from statschat.generative.response_model import LlmResponse
-from statschat.generative.prompts_copy import (
+from statschat.generative.prompts_local import (
     EXTRACTIVE_PROMPT_PYDANTIC,
-    STUFF_DOCUMENT_PROMPT
+    STUFF_DOCUMENT_PROMPT,
 )
 from functools import lru_cache
 from statschat.generative.utils import deduplicator, highlighter
@@ -68,19 +63,20 @@ class Inquirer:
         self.verbose = verbose
         self.extractive_prompt = EXTRACTIVE_PROMPT_PYDANTIC
         self.stuff_document_prompt = STUFF_DOCUMENT_PROMPT
-        
 
         # Load local model
         tokenizer = AutoTokenizer.from_pretrained(generative_model_name)
-        model = AutoModelForCausalLM.from_pretrained(generative_model_name, device_map="auto")
+        model = AutoModelForCausalLM.from_pretrained(
+            generative_model_name, device_map="auto"
+        )
         pipe = pipeline(
-                        "text-generation", 
-                        model=model, 
-                        tokenizer=tokenizer, 
-                        max_new_tokens=1000, 
-                        #device_map="auto",
-                        torch_dtype=torch.float16
-                    )
+            "text-generation",
+            model=model,
+            tokenizer=tokenizer,
+            max_new_tokens=1000,
+            # device_map="auto",
+            torch_dtype=torch.float16,
+        )
         self.llm = HuggingFacePipeline(pipeline=pipe)
 
         # Embeddings
@@ -176,18 +172,19 @@ class Inquirer:
         ]
         self.logger.info(f"Passing top {len(top_matches)} results for QA")
 
-        chain = LLMChain(prompt=self.extractive_prompt + self.stuff_document_prompt,
-                         #document_prompt=self.stuff_document_prompt,
-                         verbose=self.verbose,
-                         #chain_type = "stuff",
-                         llm = self.llm)
-                         
+        chain = LLMChain(
+            prompt=self.extractive_prompt + self.stuff_document_prompt,
+            # document_prompt=self.stuff_document_prompt,
+            verbose=self.verbose,
+            # chain_type = "stuff",
+            llm=self.llm,
+        )
 
         response = chain.run(
             {"input_documents": top_matches, "question": query},
             return_only_outputs=True,
         )
-        
+
         parser = PydanticOutputParser(pydantic_object=LlmResponse)
         try:
             if "output_text" in response:
@@ -285,27 +282,29 @@ class Inquirer:
                 + validated_response.most_likely_answer
                 + "</div> </h4>"
             )
-        
-        if docs[0]['score'] > self.answer_threshold:
-            answer_str = "No suitable answer found however relevant information may be found in a PDF. Please check the link(s) provided"
-            
+
+        if docs[0]["score"] > self.answer_threshold:
+            answer_str = (
+                "No suitable answer found."
+                + "However relevant information may be found in a PDF."
+                + "Please check the link(s) provided"
+            )
+
         else:
             answer_str = answer_str
-               
-        if docs[0]['score'] > self.document_threshold:
-            
+
+        if docs[0]["score"] > self.document_threshold:
             document_string = "No suitable PDFs found. Please refer to context"
-            
+
             context_string = "No context available. Please refer to response"
-            
+
             docs.clear()
-            
+
             docs.extend([document_string, context_string])
-            
+
         else:
             docs = docs
-        
-                 
+
         return docs, answer_str, validated_response
 
 
@@ -328,14 +327,14 @@ if __name__ == "__main__":
         question,
         latest_filter="off",
     )
-    
+
     test_thresholds = "YES"
-    
+
     print("-------------------- ANSWER --------------------")
-    
+
     if test_thresholds == "YES":
         print(answer)
-        
+
     elif test_thresholds == "NO":
         print(answer)
         page_url = docs[0]["page_url"]
@@ -349,7 +348,7 @@ if __name__ == "__main__":
     print("-------------------- DOCUMENT -------------------")
     if test_thresholds == "YES":
         print(docs[0])
-        
+
     elif test_thresholds == "NO":
         print(f"The document title is {document_title}.")
         print(f"The file name is {document_name}.")
@@ -358,9 +357,9 @@ if __name__ == "__main__":
     print("------------------ CONTEXT INFO ------------------")
     if test_thresholds == "YES":
         print(docs[1])
-        
+
     elif test_thresholds == "NO":
         print(docs)
-    
+
     print("------------------ FULL RESPONSE -----------------")
     print(response)

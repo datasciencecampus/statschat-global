@@ -282,27 +282,29 @@ class Inquirer:
                 + validated_response.most_likely_answer
                 + "</div> </h4>"
             )
-        
-        if docs[0]['score'] > self.answer_threshold:
-            answer_str = "No suitable answer found however relevant information may be found in a PDF. Please check the link(s) provided"
-            
+
+        if docs[0]["score"] > self.answer_threshold:
+            answer_str = (
+                "No suitable answer found."
+                + "However relevant information may be found in a PDF."
+                + "Please check the link(s) provided."
+            )
+
         else:
             answer_str = answer_str
-               
-        if docs[0]['score'] > self.document_threshold:
-            
+
+        if docs[0]["score"] > self.document_threshold:
             document_string = "No suitable PDFs found. Please refer to context"
-            
+
             context_string = "No context available. Please refer to response"
-            
+
             docs.clear()
-            
+
             docs.extend([document_string, context_string])
-            
+
         else:
             docs = docs
-        
-                 
+
         return docs, answer_str, validated_response
 
 
@@ -325,14 +327,14 @@ if __name__ == "__main__":
         question,
         latest_filter="off",
     )
-    
+
     test_thresholds = "NO"
-    
+
     print("-------------------- ANSWER --------------------")
-    
+
     if test_thresholds == "YES":
         print(answer)
-        
+
     elif test_thresholds == "NO":
         print(answer)
         page_url = docs[0]["page_url"]
@@ -346,7 +348,7 @@ if __name__ == "__main__":
     print("-------------------- DOCUMENT -------------------")
     if test_thresholds == "YES":
         print(docs[0])
-        
+
     elif test_thresholds == "NO":
         print(f"The document title is {document_title}.")
         print(f"The file name is {document_name}.")
@@ -355,9 +357,9 @@ if __name__ == "__main__":
     print("------------------ CONTEXT INFO ------------------")
     if test_thresholds == "YES":
         print(docs[1])
-        
+
     elif test_thresholds == "NO":
         print(docs)
-    
+
     print("------------------ FULL RESPONSE -----------------")
     print(response)

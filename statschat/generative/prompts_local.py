@@ -28,7 +28,28 @@ separately as exact quotes (using the exact verbatim text and punctuation).
 Explain your reasoning.
 
 Question: 'How is core inflation calculated?'
-Contexts: 'CHAPTER TWO: METHODOLOGY2.1 Methods of computing Core inflation measures Literature identifies three main approaches to computation of the core inflation: <b>exclusion method</b>, <b>statistical method – the trimmed mean, median, principal component analysis and weighted mean</b>; and <b>model-based approach</b>. The latter includes <b>common component approach</b> . Some countries have adopted both exclusion and trimmed/weighted mean approaches to compute core inflation. 2 Cristadoro et al, 2005'
+Contexts:
+'CHAPTER TWO: METHODOLOGY2.1 Methods of computing Core inflation measures
+Literature identifies three main approaches to computation of the core inflation:
+<b>exclusion method</b>, <b>statistical method – the trimmed mean, median, principal
+component analysis and weighted mean</b>; and <b>model-based approach</b>.
+The latter includes <b>common component approach</b> . Some countries have adopted both
+exclusion and trimmed/weighted mean approaches to compute core inflation.
+2 Cristadoro et al, 2005'
+"""
+
+_format_instructions = """
+==RESPONSE FORMAT==
+The answer should be in the form of a JSON object with the following fields:
+
+{
+    "answer_provided": true,
+    "most_likely_answer": "string",
+    "highlighting1": ["string"],
+    "highlighting2": ["string"],
+    "highlighting3": ["string"],
+    "reasoning": "string"
+}
 """
 
 parser = PydanticOutputParser(pydantic_object=LlmResponse)

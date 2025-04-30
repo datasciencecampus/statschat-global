@@ -16,8 +16,7 @@ import re
 DATA_DIR = Path.cwd().joinpath("data/pdf_downloads")
 JSON_DIR = Path.cwd().joinpath("data/json_conversions")
 print("DATABASE SETUP PROCESS")
-    
-    
+
 
 def get_name_and_meta(pdf_file_path):
     """Extracts file name and metadata from PDF
@@ -241,7 +240,9 @@ def extract_pdf_text(pdf_file_path: Path, pdf_url: str) -> list:
     return pages_text
 
 
-def build_json(pdf_file_path: Path, pdf_website_url: str, counter: int, JSON_DIR: Path) -> int:
+def build_json(
+    pdf_file_path: Path, pdf_website_url: str, counter: int, JSON_DIR: Path
+) -> int:
     """
     Processes a PDF file, extracts metadata and content, then saves it as JSON.
 
@@ -253,7 +254,7 @@ def build_json(pdf_file_path: Path, pdf_website_url: str, counter: int, JSON_DIR
     Returns:
         int: Updated counter for files missing an explicit creation date.
     """
-    
+
     # Notify which file is being processed
     print(f"Processing: {pdf_file_path.name}")
 
@@ -311,6 +312,7 @@ def normalize_dict_keys(file_dict: dict) -> dict:
         dict: Dictionary with normalized file paths as keys.
     """
     return {os.path.normpath(k): v for k, v in file_dict.items()}
+
 
 if __name__ == "__main__":
     # Initialize counter

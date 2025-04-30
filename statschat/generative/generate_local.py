@@ -5,11 +5,11 @@
 
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
-from statschat.generative.prompts_copy import (
-    EXTRACTIVE_PROMPT_PYDANTIC,
-    STUFF_DOCUMENT_PROMPT,
+import json
+from statschat.generative.prompts_local import (
     _extractive_prompt,
-    _core_prompt
+    _core_prompt,
+    _format_instructions,
 )
 
 
@@ -29,7 +29,37 @@ def generate_response(question, model, tokenizer):
     input_ids = tokenizer(question, return_tensors="pt").input_ids.to(model.device)
     print("Generating response...")
     output = model.generate(input_ids, max_new_tokens=1000)
-    return tokenizer.decode(output[0], skip_special_tokens=True)
+    raw_response = tokenizer.decode(output[0], skip_special_tokens=True)
+    return raw_response
+
+
+# Define a function to format the response
+def format_response(raw_response):
+    """
+    Format the raw response from the model.
+
+    Args:
+        raw_response (str): The raw response from the model.
+
+    Returns
+    -------
+        dict: The formatted response.
+    """
+    if "==ANSWER==" in raw_response:
+        raw_response = raw_response.split("==ANSWER==")[1]
+    clean_response = (
+        raw_response.replace("“", '"')
+        .replace("”", '"')
+        .replace("‘", "'")
+        .replace("’", "'")
+        .strip()
+    )
+    try:
+        validated_answer = json.loads(clean_response)
+    except json.JSONDecodeError as e:
+        print(f"Error decoding JSON: {e}")
+        validated_answer = {"error": f"Invalid JSON format: {e}"}
+    return validated_answer
 
 
 # Example usage
@@ -47,12 +77,10 @@ if __name__ == "__main__":
         device_map="auto",  # Automatically selects GPU if available
     )
     print("Model loaded successfully.")
-    question = "How is core inflation calculated?"
-
-    user_input = _core_prompt + _extractive_prompt
-    response = generate_response(user_input, model, tokenizer)
-    print(response)
-    
-    
-
-
+    user_input = _core_prompt + _extractive_prompt + _format_instructions
+    raw_response = generate_response(user_input, model, tokenizer)
+    formatted_response = format_response(raw_response)
+    if formatted_response["answer_provided"]:
+        print("Answer provided:", formatted_response["most_likely_answer"])
+    else:
+        print("No answer provided.")
