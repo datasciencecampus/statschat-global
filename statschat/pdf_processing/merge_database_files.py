@@ -36,7 +36,7 @@ for json_split_file in LATEST_JSON_SPLIT_DIR.glob("*.json"):
 
     source_file.rename(destination_file)
 
-    print(f"{json_split_file.name} has been moved to {JSON_SPLIT_DIR}")
+print(f"json_splits have been moved to {JSON_SPLIT_DIR}")
 
 # %%
 # Moves latest PDF file downloads to 'pdf_downloads' folder
