@@ -4,6 +4,9 @@
 # pip install 'accelerate>=0.26.0'
 
 import torch
+import logging
+from langchain_community.vectorstores import FAISS
+from langchain_huggingface.embeddings import HuggingFaceEmbeddings
 from transformers import AutoModelForCausalLM, AutoTokenizer
 import json
 from statschat.generative.prompts_local import (
@@ -11,6 +14,59 @@ from statschat.generative.prompts_local import (
     _core_prompt,
     _format_instructions,
 )
+
+
+@staticmethod
+def flatten_meta(d):
+    """Utility, raise metadata within nested dicts."""
+    return d | d.pop("metadata")
+
+
+def similarity_search(
+    query: str, latest_filter: bool = True, return_dicts: bool = True
+) -> list[dict]:
+    """
+    Returns k document chunks with the highest relevance to the
+    query
+
+    Args:
+        query (str): Question for which most relevant articles will
+        be returned
+        return_dicts: if True, data returned as dictionary, key = rank
+
+    Returns:
+        List[dict]: List of top k article chunks by relevance
+    """
+    logger = logging.getLogger(__name__)
+    logger.info("Retrieving most relevant text chunks")
+    faiss_db_root = "data/db_langchain"
+    faiss_db_root_latest = None
+    k_docs = 10
+    similarity_threshold = 2.0
+    embedding_model_name = "sentence-transformers/all-MiniLM-L6-v2"
+    embeddings = HuggingFaceEmbeddings(model_name=embedding_model_name)
+
+    if latest_filter:
+        db_latest = FAISS.load_local(
+            faiss_db_root_latest, embeddings, allow_dangerous_deserialization=True
+        )
+        top_matches = db_latest.similarity_search_with_score(query=query, k=k_docs)
+    else:
+        db = FAISS.load_local(
+            faiss_db_root, embeddings, allow_dangerous_deserialization=True
+        )
+        top_matches = db.similarity_search_with_score(query=query, k=k_docs)
+
+    # filter to document matches with similarity scores less than...
+    # i.e. closest cosine distances to query
+    top_matches = [x for x in top_matches if x[-1] <= similarity_threshold]
+
+    if return_dicts:
+        return [
+            flatten_meta(doc[0].dict()) | {"score": float(doc[1])}
+            for doc in top_matches
+        ]
+    return top_matches
 
 
 # Define a function to generate responses
@@ -64,6 +120,11 @@ def format_response(raw_response):
 
 # Example usage
 if __name__ == "__main__":
+    # For a question, retreive the most relevant text chunks
+    question = "How is core inflation calculated?"
+    # Get the most relevant text chunks
+    relevant_texts = similarity_search(question, latest_filter=True)
+
     # Choose your model (e.g., Mistral-7B, DeepSeek, Llama-3, etc.)
     MODEL_ID = "mistralai/Mistral-7B-Instruct-v0.3"  # Change this if needed
     # Load model and tokenizer
