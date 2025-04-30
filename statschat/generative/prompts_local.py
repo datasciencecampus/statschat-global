@@ -27,15 +27,8 @@ or keywords in each context that are most relevant to the question, and return t
 separately as exact quotes (using the exact verbatim text and punctuation).
 Explain your reasoning.
 
-Question: 'How is core inflation calculated?'
-Contexts:
-'CHAPTER TWO: METHODOLOGY2.1 Methods of computing Core inflation measures
-Literature identifies three main approaches to computation of the core inflation:
-<b>exclusion method</b>, <b>statistical method – the trimmed mean, median, principal
-component analysis and weighted mean</b>; and <b>model-based approach</b>.
-The latter includes <b>common component approach</b> . Some countries have adopted both
-exclusion and trimmed/weighted mean approaches to compute core inflation.
-2 Cristadoro et al, 2005'
+Question: {QuestionPlaceholder}
+Contexts: {ContextPlaceholder}
 """
 
 _format_instructions = """

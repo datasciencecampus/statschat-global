@@ -40,10 +40,10 @@ def similarity_search(
     logger = logging.getLogger(__name__)
     logger.info("Retrieving most relevant text chunks")
     faiss_db_root = "data/db_langchain"
-    faiss_db_root_latest = None
-    k_docs = 10
+    faiss_db_root_latest = "data/db_langchain_latest"
+    k_docs = 1
     similarity_threshold = 2.0
-    embedding_model_name = "sentence-transformers/all-MiniLM-L6-v2"
+    embedding_model_name = "sentence-transformers/all-mpnet-base-v2"
     embeddings = HuggingFaceEmbeddings(model_name=embedding_model_name)
 
     if latest_filter:
@@ -120,10 +120,24 @@ def format_response(raw_response):
 
 # Example usage
 if __name__ == "__main__":
+    verbose = False
+
     # For a question, retreive the most relevant text chunks
-    question = "How is core inflation calculated?"
+    question = "What is the leading cause of death in Kenya in 2023?"
     # Get the most relevant text chunks
     relevant_texts = similarity_search(question, latest_filter=True)
+
+    if verbose:
+        print("Relevant text chunks retrieved:")
+        for i, text in enumerate(relevant_texts):
+            print(f"Rank {i + 1}: {text['page_content']} (Score: {text['score']})")
+
+    # Extract the most relevant text chunk data
+    key_context = relevant_texts[0]["page_content"]
+    key_title = relevant_texts[0]["title"]
+    key_url = relevant_texts[0]["page_url"]
+    key_date = relevant_texts[0]["date"]
+    result_score = relevant_texts[0]["score"]
 
     # Choose your model (e.g., Mistral-7B, DeepSeek, Llama-3, etc.)
     MODEL_ID = "mistralai/Mistral-7B-Instruct-v0.3"  # Change this if needed
@@ -138,10 +152,28 @@ if __name__ == "__main__":
         device_map="auto",  # Automatically selects GPU if available
     )
     print("Model loaded successfully.")
-    user_input = _core_prompt + _extractive_prompt + _format_instructions
+    specific_prompt = _extractive_prompt.format(
+        QuestionPlaceholder=question, ContextPlaceholder=key_context
+    )
+    user_input = _core_prompt + specific_prompt + _format_instructions
+
+    if verbose:
+        print(user_input)
+
     raw_response = generate_response(user_input, model, tokenizer)
     formatted_response = format_response(raw_response)
     if formatted_response["answer_provided"]:
         print("Answer provided:", formatted_response["most_likely_answer"])
+        print("This answer is based on the following publication:")
+        print(f"Title: {key_title}")
+        print(f"Date: {key_date}")
+        print(f"URL: {key_url}")
+    elif result_score < 0.5:
+        print("Answer not provided, as the context found wasn't easily quotable.")
+        print("There may be relevant information in the following publication:")
+        print("This answer is based on the following publication:")
+        print(f"Title: {key_title}")
+        print(f"Date: {key_date}")
+        print(f"URL: {key_url}")
     else:
-        print("No answer provided.")
+        print("Answer not provided, and the context is not relevant.")
