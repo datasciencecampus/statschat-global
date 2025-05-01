@@ -24,8 +24,10 @@ cannot be answered from the information in the context, please do not provide an
 If the context is not related to the question, please do not provide an answer.
 Most importantly, even if no answer is provided, find one to three short phrases
 or keywords in each context that are most relevant to the question, and return them
-separately as exact quotes (using the exact verbatim text and punctuation).
+separately as exact quotes (using the exact verbatim text and punctuation). If a date
+is in the question try and find a publication with a similar date.
 Explain your reasoning.
+
 
 Question: {QuestionPlaceholder}
 Contexts: {ContextPlaceholder}

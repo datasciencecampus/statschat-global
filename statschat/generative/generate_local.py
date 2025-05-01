@@ -123,7 +123,9 @@ if __name__ == "__main__":
     verbose = False
 
     # For a question, retreive the most relevant text chunks
-    question = "What is the leading cause of death in Kenya in 2023?"
+    #question = "What is the leading cause of death in Kenya in 2023?"
+    question = "What was inflation in Kenya in 2023?"
+    
     # Get the most relevant text chunks
     relevant_texts = similarity_search(question, latest_filter=True)
 
@@ -162,18 +164,25 @@ if __name__ == "__main__":
 
     raw_response = generate_response(user_input, model, tokenizer)
     formatted_response = format_response(raw_response)
-    if formatted_response["answer_provided"]:
+    
+    if formatted_response["answer_provided"] and result_score < 0.5:
+        print(f"Question: {question}")
         print("Answer provided:", formatted_response["most_likely_answer"])
         print("This answer is based on the following publication:")
         print(f"Title: {key_title}")
         print(f"Date: {key_date}")
         print(f"URL: {key_url}")
+        print(f"Score: {result_score}")
+        
     elif result_score < 0.5:
+        print(f"Question: {question}")
         print("Answer not provided, as the context found wasn't easily quotable.")
         print("There may be relevant information in the following publication:")
         print("This answer is based on the following publication:")
         print(f"Title: {key_title}")
         print(f"Date: {key_date}")
         print(f"URL: {key_url}")
+        print(f"Score: {result_score}")
+        
     else:
         print("Answer not provided, and the context is not relevant.")
