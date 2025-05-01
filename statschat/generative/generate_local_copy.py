@@ -174,7 +174,7 @@ if __name__ == "__main__":
     raw_response = generate_response(user_input, model, tokenizer)
     formatted_response = format_response(raw_response)
     
-    if formatted_response["answer_provided"] and result_score_1 < 0.5:
+    if formatted_response["answer_provided"] and result_score_1 or result_score_2 < 0.5: #check
         print(f"Question: {question}")
         print("Answer provided:", formatted_response["most_likely_answer"])
         print("These answers are based on the following publications:")
@@ -192,7 +192,7 @@ if __name__ == "__main__":
         print(f"Score: {result_score_2}")
         
         print("CONTEXT")
-        print(f"{formatted_response}")
+        print(f"{formatted_response['reasoning']}")
         
     elif result_score_1 < 0.5:
         print(f"Question: {question}")
@@ -213,7 +213,7 @@ if __name__ == "__main__":
         print(f"Score: {result_score_2}")
         
         print("CONTEXT")
-        print(f"{formatted_response}")
+        print(f"{formatted_response['reasoning']}")
         
     else:
         print("Answer not provided, and the context is not relevant.")
