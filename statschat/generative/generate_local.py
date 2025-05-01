@@ -70,15 +70,16 @@ def similarity_search(
 
 
 # Define a function to generate responses
-def generate_response(question, model, tokenizer):
+def generate_response(question: str, model: str, tokenizer) -> str:
     """
     Generate a response to the given question using the pre-trained model.
 
     Args:
         question (str): The input question to generate a response for.
+        model (str): The model from huggingface that is being downloaded
+        tokenizer (): Pretrained tokenizer from huggingface
 
     Returns
-    -------
         str: The generated response.
     """
     print("Generating input tokens...")
@@ -90,7 +91,7 @@ def generate_response(question, model, tokenizer):
 
 
 # Define a function to format the response
-def format_response(raw_response):
+def format_response(raw_response: str) -> dict:
     """
     Format the raw response from the model.
 
@@ -98,7 +99,6 @@ def format_response(raw_response):
         raw_response (str): The raw response from the model.
 
     Returns
-    -------
         dict: The formatted response.
     """
     if "==ANSWER==" in raw_response:
