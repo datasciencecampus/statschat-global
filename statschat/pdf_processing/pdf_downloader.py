@@ -51,10 +51,10 @@ max_pages = None if PDF_FILES == "SETUP" else 5  # Limit to 5 pages for updates
 
 print("IN PROGRESS.")
 
-# %% Scrape PDF links from KNBS website
+# %% Scrape PDF links from website
 all_pdf_links = []  # List to store all PDF URLs
 page = 1
-base_url = "https://www.knbs.or.ke/all-reports/page"
+base_url = "URL to scrape from here"
 
 while True:
     if max_pages and page > max_pages:

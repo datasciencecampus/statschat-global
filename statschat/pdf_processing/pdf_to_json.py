@@ -282,8 +282,8 @@ def build_json(pdf_file_path: Path, pdf_website_url: str, counter: int, JSON_DIR
         "url_keywords": extract_url_keywords_from_filename(
             file_name
         ),  # Extracted keywords
-        "contact_name": "Kenya National Bureau of Statistics",  # Contact details
-        "contact_link": "datarequest@knbs.or.ke",
+        "contact_name": " ",  # Contact details
+        "contact_link": " ",
         "content": extract_pdf_text(
             pdf_file_path, pdf_url
         ),  # Extracted text at the end
