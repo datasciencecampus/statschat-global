@@ -124,9 +124,9 @@ To web scrape the source documents run **`pdf_runner.py`**. Ensure that the **`P
     python statschat/pdf_runner.py
     ```
 
-This script will webscrape PDF documents from the KNBS website, convert them to JSON files and either append or replace the vector store - based on the **PDF_FILES_MODE** parameter.
+This script will webscrape PDF documents from the website, convert them to JSON files and either append or replace the vector store - based on the **PDF_FILES_MODE** parameter.
 
-**PDF_FILES_MODE** = **"SETUP"** -> Will scrape all pdf files from the KNBS website and reset the vector store, creating a new one from the PDF documents that are scraped and processed into JSON files.
+**PDF_FILES_MODE** = **"SETUP"** -> Will scrape all pdf files from the website and reset the vector store, creating a new one from the PDF documents that are scraped and processed into JSON files.
 
 > [!NOTE]
 > YOU WILL ONLY NEED TO DO THE VECTORE STORE SETUP ONCE

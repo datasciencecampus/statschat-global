@@ -1,4 +1,4 @@
-# `KNBS StatsChat`
+# `StatsChat`
 
 [![Stability](https://img.shields.io/badge/stability-experimental-orange.svg)](https://github.com/mkenney/software-guides/blob/master/STABILITY-BADGES.md#experimental)
 [![Shared under the MIT License](https://img.shields.io/badge/license-MIT-green)](https://github.com/datasciencecampus/Statschat/blob/main/LICENSE)
@@ -19,7 +19,7 @@
 
 ## Introduction
 
-This is an experimental application for semantic search of KNBS statistical publications.
+This is an experimental application for semantic search of statistical publications.
 It uses LangChain to implement a fairly simple Retriaval Augmented Generation (RAG) using embedding search
 and QA information retrieval process.
 
@@ -35,7 +35,7 @@ and the LLM is either run in memory or accessed through VertexAI.
 
 ## Step 1: Vector store
 > [!NOTE]
-> **Before setting up or updating the vector store ensure the [virtual or conda environment has been created.](https://github.com/KNBS-StatsChat/statschat-ke/blob/readme_docs_update/docs/api/setup_guide.md)**
+> **Before setting up or updating the vector store ensure the [virtual or conda environment has been created.]("link for when on DSC github")**
 
 Before running `pdf_runner.py` ensure that the PDF_FILES_MODE (in `main.toml`) is set to the desired option.
 
@@ -43,17 +43,17 @@ Before running `pdf_runner.py` ensure that the PDF_FILES_MODE (in `main.toml`) i
     python statschat/pdf_runner.py
     ```
 
-This script will webscrape PDF documents from the KNBS website, convert them to JSON files and either append or replace the vector store - based on the `PDF_FILES_MODE` parameter.
+This script will webscrape PDF documents from the a website, convert them to JSON files and either append or replace the vector store - based on the `PDF_FILES_MODE` parameter.
 
-`PDF_FILES_MODE = "SETUP"` -> Will scrape all pdf files from the KNBS website and reset the vector store, creating a new one from the PDF documents that are scraped and processed into JSON files. This will only need to be done `once` as afterwards it will just need updating. 
+`PDF_FILES_MODE = "SETUP"` -> Will scrape all pdf files from a website and reset the vector store, creating a new one from the PDF documents that are scraped and processed into JSON files. This will only need to be done `once` as afterwards it will just need updating. 
 
-`PDF_FILES_MODE = "UPDATE"` -> Will only scrape the latest 5 pages of PDF files from the KNBS website, compare existing PDF files in the vector store with those downloaded and only process new files - appending these to the database and "flushing" the latest data folders ready for a new run. This will need to be done as new PDFs are added to the KNBS website.
+`PDF_FILES_MODE = "UPDATE"` -> Will only scrape the latest 5 pages of PDF files from the website, compare existing PDF files in the vector store with those downloaded and only process new files - appending these to the database and "flushing" the latest data folders ready for a new run. This will need to be done as new PDFs are added to the website.
 
 ## Step 2: Usage
 
 #### Run the sample questions manually (backend)
 
-This assumes the [vector store](https://github.com/KNBS-StatsChat/statschat-ke/blob/readme_docs_update/docs/api/setup_guide.md) has already been created otherwise this will need to be done before.
+This assumes the [vector store]("update link") has already been created otherwise this will need to be done before.
 Make sure that you're terminal is running from **`statschat-ke`**. Then use the **`llm.py`** 
 script and change the **question** parameter with the desired question:
 
