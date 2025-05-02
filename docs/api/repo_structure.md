@@ -37,8 +37,7 @@ Successful running of the scripts assumes a certain structure in how where data 
 📦statschat-ke
  ┣ 📂statschat
  ┃ ┣ 📂_config
- ┃ ┃ ┣📜main.toml
- ┃ ┃ ┗📜questions.toml
+ ┃ ┃ ┗📜main.toml
  ┃ ┣ 📂embedding
  ┃ ┃ ┣📜latest_flag_helpers.py
  ┃ ┃ ┣📜latest_updates.py
