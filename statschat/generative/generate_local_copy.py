@@ -183,13 +183,13 @@ if __name__ == "__main__":
         print(f"Title: {key_title_1}")
         print(f"Date: {key_date_1}")
         print(f"URL: {key_url_1}")
-        print(f"Score: {result_score_1}")
+        print(f"Score: {round(result_score_1, 2)}")
         
         print("SECOND OPTION")
         print(f"Title: {key_title_2}")
         print(f"Date: {key_date_2}")
         print(f"URL: {key_url_2}")
-        print(f"Score: {result_score_2}")
+        print(f"Score: {round(result_score_2, 2)}")
         
         print("CONTEXT")
         print(f"{formatted_response['reasoning']}")
@@ -204,13 +204,13 @@ if __name__ == "__main__":
         print(f"Title: {key_title_1}")
         print(f"Date: {key_date_1}")
         print(f"URL: {key_url_1}")
-        print(f"Score: {result_score_1}")
+        print(f"Score: {round(result_score_1, 2)}")
         
         print("SECOND OPTION")
         print(f"Title: {key_title_2}")
         print(f"Date: {key_date_2}")
         print(f"URL: {key_url_2}")
-        print(f"Score: {result_score_2}")
+        print(f"Score: {round(result_score_2, 2)}")
         
         print("CONTEXT")
         print(f"{formatted_response['reasoning']}")
