@@ -147,6 +147,7 @@ if __name__ == "__main__":
     key_url_2 = relevant_texts[1]["page_url"]
     key_date_2 = relevant_texts[1]["date"]
     result_score_2 = relevant_texts[1]["score"]
+    
 
     # Choose your model (e.g., Mistral-7B, DeepSeek, Llama-3, etc.)
     MODEL_ID = "mistralai/Mistral-7B-Instruct-v0.3"  # Change this if needed
@@ -179,19 +180,21 @@ if __name__ == "__main__":
         print("Answer provided:", formatted_response["most_likely_answer"])
         print("These answers are based on the following publications:")
         
-        print("FIRST OPTION")
+        print("(ONE)")
         print(f"Title: {key_title_1}")
         print(f"Date: {key_date_1}")
         print(f"URL: {key_url_1}")
         print(f"Score: {round(result_score_1, 2)}")
-        
-        print("SECOND OPTION")
+        print(f"This comes from: {key_context_1}")
+    
+        print("(TWO)")
         print(f"Title: {key_title_2}")
         print(f"Date: {key_date_2}")
         print(f"URL: {key_url_2}")
         print(f"Score: {round(result_score_2, 2)}")
+        print(f"This comes from: {key_context_2}")
         
-        print("CONTEXT")
+        print("(RESPONSE)")
         print(f"{formatted_response['reasoning']}")
         
     elif result_score_1 < 0.5:
@@ -200,19 +203,21 @@ if __name__ == "__main__":
         print("There may be relevant information in the following publication:")
         print("These answers are based on the following publications:")
         
-        print("FIRST OPTION")
+        print("ONE)")
         print(f"Title: {key_title_1}")
         print(f"Date: {key_date_1}")
         print(f"URL: {key_url_1}")
         print(f"Score: {round(result_score_1, 2)}")
-        
-        print("SECOND OPTION")
+        print(f"This comes from: {key_context_1}")
+   
+        print("(TWO)")
         print(f"Title: {key_title_2}")
         print(f"Date: {key_date_2}")
         print(f"URL: {key_url_2}")
         print(f"Score: {round(result_score_2, 2)}")
+        print(f"This comes from: {key_context_2}")
         
-        print("CONTEXT")
+        print("(RESPONSE)")
         print(f"{formatted_response['reasoning']}")
         
     else:
