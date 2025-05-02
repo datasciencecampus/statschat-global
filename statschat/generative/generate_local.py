@@ -203,7 +203,7 @@ if __name__ == "__main__":
         print("There may be relevant information in the following publication:")
         print("These answers are based on the following publications:")
         
-        print("ONE)")
+        print("(ONE)")
         print(f"Title: {key_title_1}")
         print(f"Date: {key_date_1}")
         print(f"URL: {key_url_1}")
