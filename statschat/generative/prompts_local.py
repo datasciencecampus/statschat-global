@@ -32,6 +32,7 @@ Explain your reasoning.
 Question: {QuestionPlaceholder}
 Contexts1: {ContextPlaceholder1}
 Contexts2: {ContextPlaceholder2}
+Contexts3: {ContextPlaceholder3}
 """
 
 _format_instructions = """
