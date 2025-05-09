@@ -181,7 +181,7 @@ if __name__ == "__main__":
         print("Answer provided:", formatted_response["most_likely_answer"])
         print("These answers are based on the following publications:")
         print("This comes from:", formatted_response["context_from"])
-        print("PDF Link:", formatted_response["context_from_url"])
+        print(formatted_response["context_from_text"])
         
         print("(ONE)")
         print(f"Title: {key_title_1}")

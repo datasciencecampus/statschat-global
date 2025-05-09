@@ -28,7 +28,8 @@ separately as exact quotes (using the exact verbatim text and punctuation). If a
 is in the question try and find a publication with a similar date.
 Explain your reasoning.
 
-Please show where the context is from also and provide url of pdf of where context from.
+Please show where the context is from also and provide text exact passage from pdf 
+of where context has been gotten from. 
 
 
 Question: {QuestionPlaceholder}
@@ -48,7 +49,7 @@ The answer should be in the form of a JSON object with the following fields:
     "highlighting3": ["string"],
     "reasoning": "string",
     "context_from": "string",
-    "context_from_url": "string",
+    "context_from_text": "string",
     
 }
 """
