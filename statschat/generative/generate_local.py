@@ -179,10 +179,10 @@ if __name__ == "__main__":
     if formatted_response["answer_provided"] and result_score_1 or result_score_2 < 0.5: #check
         print(f"Question: {question}")
         print("Answer provided:", formatted_response["most_likely_answer"])
-        print("These answers are based on the following publications:")
         print("This comes from:", formatted_response["context_from"])
         print(formatted_response["context_from_text"])
         
+        print("These answers are based on the following publications:")
         print("RELEVANT PUBLICATIONS")
         print("(ONE)")
         print(f"Title: {key_title_1}")
@@ -203,8 +203,11 @@ if __name__ == "__main__":
         print(f"Question: {question}")
         print("Answer not provided, as the context found wasn't easily quotable.")
         print("There may be relevant information in the following publication:")
-        print("These answers are based on the following publications:")
+        print("This comes from:", formatted_response["context_from"])
+        print(formatted_response["context_from_text"])
         
+        print("These answers are based on the following publications:")
+        print("(RELEVANT PUBLICATIONS)")
         print("(ONE)")
         print(f"Title: {key_title_1}")
         print(f"Date: {key_date_1}")
