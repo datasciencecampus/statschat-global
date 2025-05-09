@@ -123,8 +123,9 @@ if __name__ == "__main__":
     verbose = False
 
     # For a question, retreive the most relevant text chunks
-    #question = "What is the leading cause of death in Kenya in 2023?"
-    question = "What was inflation in Kenya in 2023?"
+    question = "What is the leading cause of death in Kenya in 2023?"
+    #question = "What was inflation in Kenya in 2023?"
+    #question = "How is inflation calculated?"
     
     # Get the most relevant text chunks
     relevant_texts = similarity_search(question, latest_filter=True)
@@ -148,12 +149,6 @@ if __name__ == "__main__":
     key_date_2 = relevant_texts[1]["date"]
     result_score_2 = relevant_texts[1]["score"]
     
-    key_context_3 = relevant_texts[2]["page_content"]
-    key_title_3 = relevant_texts[2]["title"]
-    key_url_3 = relevant_texts[2]["page_url"]
-    key_date_3 = relevant_texts[2]["date"]
-    result_score_3 = relevant_texts[2]["score"]
-    
 
     # Choose your model (e.g., Mistral-7B, DeepSeek, Llama-3, etc.)
     MODEL_ID = "mistralai/Mistral-7B-Instruct-v0.3"  # Change this if needed
@@ -172,7 +167,6 @@ if __name__ == "__main__":
         QuestionPlaceholder=question, 
         ContextPlaceholder1=key_context_1, 
         ContextPlaceholder2=key_context_2,
-        ContextPlaceholder3=key_context_3
     )
     user_input = _core_prompt + specific_prompt + _format_instructions
 
@@ -182,31 +176,23 @@ if __name__ == "__main__":
     raw_response = generate_response(user_input, model, tokenizer)
     formatted_response = format_response(raw_response)
     
-    if formatted_response["answer_provided"] and result_score_1 or result_score_2 or result_score_3 < 0.5: #check
+    if formatted_response["answer_provided"] and result_score_1 or result_score_2 < 0.5: #check
         print(f"Question: {question}")
         print("Answer provided:", formatted_response["most_likely_answer"])
         print("These answers are based on the following publications:")
+        print("This comes from:", formatted_response["context_from"])
         
         print("(ONE)")
         print(f"Title: {key_title_1}")
         print(f"Date: {key_date_1}")
         print(f"URL: {key_url_1}")
         print(f"Score: {round(result_score_1, 2)}")
-        print(f"This comes from: {key_context_1}")
     
         print("(TWO)")
         print(f"Title: {key_title_2}")
         print(f"Date: {key_date_2}")
         print(f"URL: {key_url_2}")
         print(f"Score: {round(result_score_2, 2)}")
-        print(f"This comes from: {key_context_2}")
-        
-        print("(THREE)")
-        print(f"Title: {key_title_3}")
-        print(f"Date: {key_date_3}")
-        print(f"URL: {key_url_3}")
-        print(f"Score: {round(result_score_3, 2)}")
-        print(f"This comes from: {key_context_3}")
         
         print("(RESPONSE)")
         print(f"{formatted_response['reasoning']}")

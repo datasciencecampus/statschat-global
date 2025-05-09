@@ -28,11 +28,12 @@ separately as exact quotes (using the exact verbatim text and punctuation). If a
 is in the question try and find a publication with a similar date.
 Explain your reasoning.
 
+Please show where the context is from also.
+
 
 Question: {QuestionPlaceholder}
 Contexts1: {ContextPlaceholder1}
 Contexts2: {ContextPlaceholder2}
-Contexts3: {ContextPlaceholder3}
 """
 
 _format_instructions = """
@@ -45,7 +46,9 @@ The answer should be in the form of a JSON object with the following fields:
     "highlighting1": ["string"],
     "highlighting2": ["string"],
     "highlighting3": ["string"],
-    "reasoning": "string"
+    "reasoning": "string",
+    "context_from": "string"
+    
 }
 """
 
