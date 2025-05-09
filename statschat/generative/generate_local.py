@@ -123,8 +123,8 @@ if __name__ == "__main__":
     verbose = False
 
     # For a question, retreive the most relevant text chunks
-    question = "What is the leading cause of death in Kenya in 2023?"
-    #question = "What was inflation in Kenya in 2023?"
+    #question = "What is the leading cause of death in Kenya in 2023?"
+    question = "What was inflation in Kenya in 2023?"
     #question = "How is inflation calculated?"
     
     # Get the most relevant text chunks
@@ -183,6 +183,7 @@ if __name__ == "__main__":
         print("This comes from:", formatted_response["context_from"])
         print(formatted_response["context_from_text"])
         
+        print("RELEVANT PUBLICATIONS")
         print("(ONE)")
         print(f"Title: {key_title_1}")
         print(f"Date: {key_date_1}")
@@ -217,13 +218,6 @@ if __name__ == "__main__":
         print(f"URL: {key_url_2}")
         print(f"Score: {round(result_score_2, 2)}")
         print(f"This comes from: {key_context_2}")
-        
-        print("(THREE)")
-        print(f"Title: {key_title_3}")
-        print(f"Date: {key_date_3}")
-        print(f"URL: {key_url_3}")
-        print(f"Score: {round(result_score_3, 2)}")
-        print(f"This comes from: {key_context_3}")
         
         print("(RESPONSE)")
         print(f"{formatted_response['reasoning']}")
