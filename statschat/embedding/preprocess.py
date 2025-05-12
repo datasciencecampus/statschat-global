@@ -21,26 +21,35 @@ class PrepareVectorStore(DirectoryLoader, JSONLoader):
 
     def __init__(
         self,
-        directory: Path = "data/json_conversions",
-        split_directory: Path = "data/json_split",
+        data_dir: Path = "data/",
+        directory: Path = "json_conversions",
+        split_directory: Path = "json_split",
+        download_dir: Path = "pdf_downloads",
         split_length: int = 1000,
-        split_overlap: int = 100,
+        split_overlap: int = 200,
         embedding_model_name: str = "sentence-transformers/all-mpnet-base-v2",
         redundant_similarity_threshold: float = 0.99,
-        faiss_db_root: str = "data/db_langchain",
+        faiss_db_root: str = "db_langchain",
         db=None,  # vector store
         logger: logging.Logger = None,
         latest_only: bool = False,
+        mode: str = "SETUP",
     ):
-        self.directory = directory
-        self.split_directory = split_directory
+        self.directory = data_dir + ("latest_" if mode == "UPDATE" else "") + directory
+        self.split_directory = (
+            data_dir + ("latest_" if mode == "UPDATE" else "") + split_directory
+        )
+        self.download_dir = data_dir + download_dir
         self.split_length = split_length
         self.split_overlap = split_overlap
         self.embedding_model_name = embedding_model_name
         self.redundant_similarity_threshold = redundant_similarity_threshold
-        self.faiss_db_root = faiss_db_root + ("_latest" if latest_only else "")
+        self.faiss_db_root = (
+            data_dir + faiss_db_root + ("_latest" if mode == "UPDATE" else "")
+        )
         self.db = db
         self.latest_only = latest_only
+        self.mode = mode
 
         # Initialise logger
         if logger is None:
@@ -49,57 +58,26 @@ class PrepareVectorStore(DirectoryLoader, JSONLoader):
         else:
             self.logger = logger
 
-        # Does the named vector store exist already?
+        # Create directory for vector store
         if not os.path.exists(self.faiss_db_root):
-            self.logger.info("Split full article JSONs into sections")
-            self._json_splitter()
-            self.logger.info("Load section JSONs to memory")
-            self._load_json_to_memory()
-            self.logger.info("Chunk documents")
-            self._split_documents()
-            self.logger.info("Instantiate embeddings")
-            self._instantiate_embeddings()
-            # self.logger.info("Filtering out duplicate docs")
-            # self._drop_redundant_documents()
-            self.logger.info("Vectorise docs and commit to physical vector store")
-            self._embed_documents()
+            os.makedirs(self.faiss_db_root)
 
-            # Copy the contents of self.faiss_db_root to self.faiss_db_root + "_latest"
-            latest_db_root = self.faiss_db_root.replace("_latest", "")
-            if not os.path.exists(latest_db_root):
-                os.makedirs(latest_db_root)
+        self.logger.info("Split full article JSONs into sections")
+        self._json_splitter()
+        self.logger.info("Load section JSONs to memory")
+        self._load_json_to_memory()
+        self.logger.info("Chunk documents")
+        self._split_documents()
+        self.logger.info("Instantiate embeddings")
+        self._instantiate_embeddings()
+        # self.logger.info("Filtering out duplicate docs")
+        # self._drop_redundant_documents()
+        self.logger.info("Vectorise docs and commit to physical vector store")
+        self._embed_documents()
 
-            for item in os.listdir(self.faiss_db_root):
-                source = os.path.join(self.faiss_db_root, item)
-                destination = os.path.join(latest_db_root, item)
-                if os.path.isdir(source):
-                    os.makedirs(destination, exist_ok=True)
-                    for root, dirs, files in os.walk(source):
-                        for dir in dirs:
-                            os.makedirs(
-                                os.path.join(
-                                    destination,
-                                    os.path.relpath(os.path.join(root, dir), source),
-                                ),
-                                exist_ok=True,
-                            )
-                        for file in files:
-                            src_file = os.path.join(root, file)
-                            dst_file = os.path.join(
-                                destination, os.path.relpath(src_file, source)
-                            )
-                            with open(src_file, "rb") as fsrc, open(
-                                dst_file, "wb"
-                            ) as fdst:
-                                fdst.write(fsrc.read())
-                else:
-                    with open(source, "rb") as fsrc, open(destination, "wb") as fdst:
-                        fdst.write(fsrc.read())
-
-            self.logger.info(f"Copied vector store to {latest_db_root}")
-
-        else:
-            self.logger.info("Aborting: named vector store already exists")
+        # except Exception as e:
+        #     print(e)
+        #     self.logger.error(f"Error in vector store preparation: {e}")
 
         return None
 
@@ -113,9 +91,9 @@ class PrepareVectorStore(DirectoryLoader, JSONLoader):
         isExist = os.path.exists(self.split_directory)
         if not isExist:
             os.makedirs(self.split_directory)
-
         found_articles = glob.glob(f"{self.directory}/*.json")
         self.logger.info(f"Found {len(found_articles)} articles for splitting")
+        print(f"Found {len(found_articles)} articles for splitting, please wait..")
 
         # extract metadata from each article section
         # and store as separate JSON
@@ -182,7 +160,7 @@ class PrepareVectorStore(DirectoryLoader, JSONLoader):
             self.split_directory,
             glob="*.json",
             use_multithreading=True,
-            show_progress=True,
+            show_progress=False,
             loader_cls=JSONLoader,
             loader_kwargs=json_loader_kwargs,
         )
@@ -239,16 +217,16 @@ class PrepareVectorStore(DirectoryLoader, JSONLoader):
         Tokenise all document chunks and commit to vector store,
         persisting in local memory for efficiency of reproducibility
         """
-        if not os.path.exists(self.faiss_db_root):
-            self.db = FAISS.from_documents(self.chunks, self.embeddings)
-            self.db.save_local(self.faiss_db_root)
-        else:
-            self.logger.info("Vector store already exists")
-            self.db = FAISS.load_local(
-                self.faiss_db_root,
-                self.embeddings,
-                allow_dangerous_deserialization=True,
-            )
+        self.logger.info("Starting embedding of document chunks")
+        print("Starting embedding of document chunks, please wait...")
+
+        # Save to FAISS vector store
+        self.db = FAISS.from_documents(self.chunks, self.embeddings)
+        print("Exporting to FAISS vector store...")
+        print(self.faiss_db_root)
+        self.db.save_local(self.faiss_db_root)
+        self.logger.info(f"Vector store saved to {self.faiss_db_root}")
+        print(f"Vector store saved to {self.faiss_db_root}")
 
         return None
 
@@ -265,7 +243,7 @@ if __name__ == "__main__":
         filemode="a",
     )
 
-    # initiate Statschat AI and start the app
+    # load config file
     config_path = Path(__file__).resolve().parent.parent / "_config" / "main.toml"
     config = toml.load(config_path)
 
