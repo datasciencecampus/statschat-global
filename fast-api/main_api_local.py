@@ -127,24 +127,18 @@ async def search(
 
     raw_response = generate_response(user_input, model, tokenizer)
     formatted_response = format_response(raw_response)
-    
-    #if formatted_response["answer_provided"] and relevant_texts[0]["score"] < 0.5:
-    #    print("Answer provided:")
-    #elif relevant_texts[0]["score"] < 0.5:
-    #    print("Answer not provided, as the context found wasn't easily quotable.")
         
     results = {
         "question": question,
         "content_type": content_type,
         "answer": formatted_response["most_likely_answer"],
-        "publication_title": relevant_texts[0]["title"],
         "references": relevant_texts[0]["page_url"],
         "this_comes_from":formatted_response["context_from"],
         "context":formatted_response["context_from_text"],
+        "relevant_publication_one": relevant_texts[0]["title"],
+        "relevant_publication_two": relevant_texts[1]["title"],
     }
     
-    #if debug:
-       # results["debug_response"] = formatted_response["answer_provided"].__dict__
     logger.info(f"Sending following response: {results}")
     return results
 
