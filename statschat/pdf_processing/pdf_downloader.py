@@ -55,7 +55,7 @@ print("IN PROGRESS.")
 # %% Scrape intermediate report pages and extract PDF links
 all_pdf_entries = {}  # {"pdf_url": "report_page", ...}
 visited_report_pages = set()
-page = 38
+page = 38 # Higher the number the older the publications
 max_pages = page + max_pages  # Set max pages for UPDATE mode
 if max_pages > 38:
     max_pages = 38  # Limit to 38 pages for updates
