@@ -15,6 +15,8 @@ from statschat.generative.prompts_local import (
     _format_instructions,
 )
 
+# pip install 'accelerate>=0.26.0'
+# install sentencepiece
 
 @staticmethod
 def flatten_meta(d):
