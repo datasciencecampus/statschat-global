@@ -5,12 +5,13 @@ from pathlib import Path
 from urllib.parse import urlparse
 import json
 from statschat import load_config
+import re
 
 # %% Configuration
 
 # Load configuration
 config = load_config(name="main")
-PDF_FILES = config["runner"]["pdf_files_mode"].upper()
+PDF_FILES = config["preprocess"]["mode"].upper()
 
 # Set directories
 BASE_DIR = Path.cwd().joinpath("data")
@@ -47,13 +48,18 @@ elif PDF_FILES == "UPDATE":
     url_dict = {}  # This will store only new entries
 
 # Set max pages for UPDATE mode
-max_pages = None if PDF_FILES == "SETUP" else 5  # Limit to 5 pages for updates
+max_pages = 0 if PDF_FILES == "SETUP" else 5  # Limit to 5 pages for updates
 
 print("IN PROGRESS.")
 
-# %% Scrape PDF links from KNBS website
-all_pdf_links = []  # List to store all PDF URLs
-page = 1
+# %% Scrape intermediate report pages and extract PDF links
+all_pdf_entries = {}  # {"pdf_url": "report_page", ...}
+visited_report_pages = set()
+page = 38
+max_pages = page + max_pages  # Set max pages for UPDATE mode
+if max_pages > 38:
+    max_pages = 38  # Limit to 38 pages for updates
+# Set base URL for KNBS reports
 base_url = "https://www.knbs.or.ke/all-reports/page"
 
 while True:
@@ -70,44 +76,78 @@ while True:
 
     soup = BeautifulSoup(response.content, "html.parser")
 
-    # Extract all PDF links on the page
-    pdf_links = [
-        a["href"] for a in soup.find_all("a", href=True) if a["href"].endswith(".pdf")
+    # Find all links that match the /reports/ pattern
+    report_links = [
+        a["href"]
+        for a in soup.find_all("a", href=True)
+        if re.search(r"/reports/[^/]+/?$", a["href"])
+        and not a["href"].startswith("https://www.knbs.or.ke/reports/kenya-census")
     ]
 
-    if not pdf_links:  # If no PDFs found, assume we've reached the last page
-        print("No PDFs found. Stopping search.")
+    report_links = list(dict.fromkeys(report_links))
+    # remove duplicate reports
+    if not report_links:
+        print(f"Reached page limit ({max_pages}). Stopping search.")
         break
+    # print(report_links)
+    print(f"Found {len(report_links)} report pages on page {page}")
 
-    all_pdf_links.extend(pdf_links)  # Flatten list correctly
-    print(f"Found {len(pdf_links)} PDFs on page {page}")
+    # Step 2: Visit each report page and extract PDF links
+    for report_url in report_links:
+        if report_url in visited_report_pages:
+            continue  # Skip already visited report pages
+
+        visited_report_pages.add(report_url)
+        report_response = requests.get(report_url)
+
+        if report_response.status_code != 200:
+            print(f"Failed to access report page: {report_url}")
+            continue
+
+        report_soup = BeautifulSoup(report_response.content, "html.parser")
+
+        pdf_links = report_soup.find(
+            "a", href=lambda href: href and href.endswith(".pdf")
+        )
+        # if pdf link found - retain first one
+        if pdf_links:
+            pdf_links = pdf_links["href"]
+            all_pdf_entries[
+                pdf_links
+            ] = report_url  # Store the PDF URL and report page URL
 
     page += 1
 
-print(f"Total PDFs found: {len(all_pdf_links)}")
+print(f"Total PDFs found: {len(all_pdf_entries)}")
 
 # %% If in UPDATE mode, filter only new PDFs
 
 if PDF_FILES == "UPDATE":
     existing_urls = set(
-        original_url_dict.values()
-    )  # Convert existing URLs to a set for quick lookup
-    new_pdf_links = [pdf for pdf in all_pdf_links if pdf not in existing_urls]
+        entry["pdf_url"]
+        for entry in original_url_dict.values()
+        if isinstance(entry, dict) and "pdf_url" in entry.keys()
+    )
 
-    if not new_pdf_links:
+    new_entries = {
+        pdf_url for pdf_url in all_pdf_entries.keys() if pdf_url not in existing_urls
+    }
+
+    if not new_entries:
         print("No new PDFs found. Exiting update process.")
         exit()
 
-    print(f"Found {len(new_pdf_links)} new PDFs to download.")
-    all_pdf_links = new_pdf_links  # Replace with filtered list
+    print(f"Found {len(new_entries)} new PDFs to download.")
+    all_pdf_entries = new_entries  # Replace with filtered dictionary
 
 # %% Download PDFs and Update URL Dictionary
-
-for pdf_url in all_pdf_links:
+for pdf, report_page in all_pdf_entries.items():
+    pdf_url = pdf
+    report_url = report_page
     parsed_url = urlparse(pdf_url)
-    pdf_name = Path(parsed_url.path).name  # Extract the actual filename
+    pdf_name = Path(parsed_url.path).name
 
-    file_path = DATA_DIR / pdf_name  # Store PDFs in the correct directory
+    file_path = DATA_DIR / pdf_name
 
     # Download PDF
     response = requests.get(pdf_url)
@@ -117,7 +157,8 @@ for pdf_url in all_pdf_links:
             file.write(response.content)
             print(f"Downloaded: {pdf_name} -> {file_path}")
 
-        url_dict[pdf_name] = pdf_url  # Store only new entries
+        # Store both pdf_url and report page
+        url_dict[pdf_name] = {"pdf_url": pdf_url, "report_page": report_url}
     else:
         print(f"Failed to download: {pdf_url}")
 
