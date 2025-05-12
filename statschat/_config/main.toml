@@ -1,22 +1,15 @@
 [db]
-faiss_db_root = "data/db_langchain"
-embedding_model_name = "sentence-transformers/all-mpnet-base-v2"  # "textembedding-gecko@001" "sentence-transformers/paraphrase-MiniLM-L3-v2"
-
-[runner]
-pdf_files_mode = "UPDATE"  # or "SETUP"
+faiss_db_root = "db_langchain"
+embedding_model_name = "sentence-transformers/all-MiniLM-L6-v2" #all-mpnet-base-v2" #all-MiniLM-L6-v2" #"sentence-transformers/all-mpnet-base-v2"  # "textembedding-gecko@001" "sentence-transformers/paraphrase-MiniLM-L3-v2"
 
 [preprocess]
-directory = "data/json_conversions"
-split_directory = "data/json_split"
-split_length = 1000
-split_overlap = 100
-latest_only = true
-
-[preprocess_latest]
-latest_directory = "data/latest_json_conversions"
-latest_split_directory = "data/latest_json_split"
-split_length = 1000
-split_overlap = 100
+mode = "SETUP" # or "UPDATE"
+data_dir = "data/"
+download_dir = "pdf_downloads"
+directory = "json_conversions"
+split_directory = "json_split"
+split_length = 2000
+split_overlap = 200
 latest_only = true
 
 [search]
