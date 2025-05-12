@@ -23,7 +23,6 @@ from statschat.generative.prompts_local import (
     _format_instructions,
 )
 
-
 # Config file to load
 CONFIG = load_config(name="main")
 
@@ -39,8 +38,6 @@ logging.basicConfig(
     filemode="a",
 )
 
-# initiate Local Statschat AI and start the app
-# inquirer = Inquirer(**CONFIG["db"], **CONFIG["search"], logger=logger)
 
 app = FastAPI(
     title="KNBS StatsChat API",
@@ -104,13 +101,7 @@ async def search(
     if content_type not in ["latest", "all"]:
         logger.warning('Unknown content type. Fallback to "latest".')
         content_type = "latest"
-    #latest_weight = get_latest_flag({"q": question}, CONFIG["app"]["latest_max"])
-
-    #docs, answer, response = inquirer.make_query(
-    #    question,
-     #   latest_filter=content_type == "latest",
-      ##  latest_weight=latest_weight,
-    #)
+    
     # Choose your model (e.g., Mistral-7B, DeepSeek, Llama-3, etc.)
     MODEL_ID = "mistralai/Mistral-7B-Instruct-v0.3"  # Change this if needed
     # Load model and tokenizer
