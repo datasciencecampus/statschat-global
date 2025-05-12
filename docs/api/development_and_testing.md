@@ -28,3 +28,17 @@ from page 37 and 38 then `page = 37` and `max_pages = 38`.
 ```
 ![image](https://github.com/user-attachments/assets/b6179157-bf89-4be9-a6be-58356cb4f6b2)
 
+## Adapting
+
+There will most likely be differences for each organisation in relation to setup/layout. Therefore changes may need 
+to be made to the codebase to get the Statschat package to work for your organisation. This is due to:
+
+**- The organisations website that PDF's are downloaded from**
+
+**- The PDF metadata for each document**
+
+The scripts potentially needing to be looked at are:
+
+**- pdf_downloader.py**
+
+**- pdf_to_json.py**
