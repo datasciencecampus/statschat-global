@@ -55,7 +55,7 @@ print("IN PROGRESS.")
 # %% Scrape intermediate report pages and extract PDF links
 all_pdf_entries = {}  # {"pdf_url": "report_page", ...}
 visited_report_pages = set()
-page = 38 # Higher the number the older the publications
+page = 38  # Higher the number the older the publications
 max_pages = page + max_pages  # Set max pages for UPDATE mode
 if max_pages > 38:
     max_pages = 38  # Limit to 38 pages for updates
@@ -121,7 +121,6 @@ while True:
 print(f"Total PDFs found: {len(all_pdf_entries)}")
 
 # %% If in UPDATE mode, filter only new PDFs
-
 if PDF_FILES == "UPDATE":
     existing_urls = set(
         entry["pdf_url"]
@@ -129,8 +128,11 @@ if PDF_FILES == "UPDATE":
         if isinstance(entry, dict) and "pdf_url" in entry.keys()
     )
 
+    # Filter `all_pdf_entries` to include only new entries
     new_entries = {
-        pdf_url for pdf_url in all_pdf_entries.keys() if pdf_url not in existing_urls
+        pdf_url: report_page
+        for pdf_url, report_page in all_pdf_entries.items()
+        if pdf_url not in existing_urls
     }
 
     if not new_entries:
