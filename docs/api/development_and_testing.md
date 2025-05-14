@@ -21,7 +21,7 @@ that will be scraped from the KNBS website. So for example if `page = 37` the ol
 In essence the `page` variable in `pdf_downloader.py` determines the range of pages that PDFs are scraped from.
 ```
 
-![image](https://github.com/user-attachments/assets/0ea8f8d2-1c30-42cc-b0db-912d02e87a94)
+![image](https://github.com/user-attachments/assets/bfe4bce4-2d38-4bab-b1ab-ccd6987c607b)
 
 ```
 If `pdf_files_mode` = `UPDATE` then the `max_pages` variable will need to be changed along with the `page` variable
