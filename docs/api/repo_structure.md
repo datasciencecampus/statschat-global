@@ -53,7 +53,6 @@ Successful running of the scripts assumes a certain structure in how where data 
  ┃ ┃ ┗📜evaluation.py
  ┃ ┣ 📂pdf_processing
  ┃ ┃ ┣ 📜merge_database_files.py
- ┃ ┃ ┣ 📜pdf_database_update.py
  ┃ ┃ ┣ 📜pdf_downloader.py
  ┃ ┗ ┗ 📜pdf_to_json.py
  ┗ 📜pdf_runner.py
