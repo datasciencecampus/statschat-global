@@ -55,7 +55,7 @@ print("IN PROGRESS.")
 # %% Scrape intermediate report pages and extract PDF links
 all_pdf_entries = {}  # {"pdf_url": "report_page", ...}
 visited_report_pages = set()
-page = 38  # Higher the number the older the publications
+page = 37  # Higher the number the older the publications
 max_pages = page + max_pages  # Set max pages for UPDATE mode
 if max_pages > 38:
     max_pages = 38  # Limit to 38 pages for updates
@@ -170,7 +170,7 @@ with open(url_dict_path, "w") as json_file:
     print(f"Saved new url_dict.json to {url_dict_path}")
 
 if PDF_FILES == "UPDATE":
-    print("Finished downloading new PDF file. Please run pdf_database_update.py next.")
+    print("Finished downloading new PDF file for vector store update. Please run pdf_to_json.py next.")
 
 if PDF_FILES == "SETUP":
     print("Finished downloading all PDF files. Please run pdf_to_json.py next.")
