@@ -129,6 +129,8 @@ class UpdateVectorStore(DirectoryLoader, JSONLoader):
         one for each article section
         """
 
+        print("Splitting json conversions. Please wait...")
+        
         # create storage folder for split articles
         isExist = os.path.exists(self.latest_split_directory)
         if not isExist:
@@ -170,6 +172,8 @@ class UpdateVectorStore(DirectoryLoader, JSONLoader):
         Loads article section JSONs to memory
         """
 
+        print("Loading to memory. Please wait...")
+        
         def metadata_func(record: dict, metadata: dict) -> dict:
             """
             Helper, instructs on how to fetch metadata.  Here I take
@@ -216,6 +220,9 @@ class UpdateVectorStore(DirectoryLoader, JSONLoader):
         """
         Loads embedding model to memory
         """
+        
+        print("Instantiating embeddings. Please wait...")
+        
         if self.embedding_model_name == "textembedding-gecko@001":
             self.embeddings = VertexAIEmbeddings()
 
@@ -244,6 +251,9 @@ class UpdateVectorStore(DirectoryLoader, JSONLoader):
         """
         Splits documents into chunks
         """
+        
+        print("Splitting documents into chunks. Please wait...")
+        
         self.text_splitter = RecursiveCharacterTextSplitter(
             chunk_size=self.split_length,
             chunk_overlap=self.split_overlap,
@@ -260,6 +270,9 @@ class UpdateVectorStore(DirectoryLoader, JSONLoader):
         Tokenise all document chunks and commit to vector store,
         persisting in local memory for efficiency of reproducibility
         """
+        
+        print("Embedding documents chunks. Please wait...")
+        
         self.temp_db = FAISS.from_documents(self.chunks, self.embeddings)
 
         return None
@@ -269,6 +282,9 @@ class UpdateVectorStore(DirectoryLoader, JSONLoader):
         Merge temporary vector store for new articles into
         existing permanent vector store
         """
+        
+        print("Merging vector store. Please wait...")
+        
         db = FAISS.load_local(
             self.faiss_db_root, self.embeddings, allow_dangerous_deserialization=True
         )

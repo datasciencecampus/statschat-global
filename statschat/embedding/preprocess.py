@@ -86,6 +86,8 @@ class PrepareVectorStore(DirectoryLoader, JSONLoader):
         Splits scraped json to multiple json,
         one for each article section
         """
+        
+        print("Splitting json conversions. Please wait...")
 
         # create storage folder for split articles
         isExist = os.path.exists(self.split_directory)
@@ -127,6 +129,8 @@ class PrepareVectorStore(DirectoryLoader, JSONLoader):
         Loads article section JSONs to memory
         """
 
+        print("Loading to memory. Please wait...")
+        
         def metadata_func(record: dict, metadata: dict) -> dict:
             """
             Helper, instructs on how to fetch metadata.  Here I take
@@ -173,6 +177,9 @@ class PrepareVectorStore(DirectoryLoader, JSONLoader):
         """
         Loads embedding model to memory
         """
+        
+        print("Instantiating embeddings. Please wait...")
+        
         if self.embedding_model_name == "textembedding-gecko@001":
             model = "sentence-transformers/all-mpnet-base-v2"
             self.embeddings = HuggingFaceEmbeddings(model_name=model)
@@ -201,6 +208,9 @@ class PrepareVectorStore(DirectoryLoader, JSONLoader):
         """
         Splits documents into chunks
         """
+        
+        print("Splitting documents into chunks. Please wait...")
+        
         self.text_splitter = RecursiveCharacterTextSplitter(
             chunk_size=self.split_length,
             chunk_overlap=self.split_overlap,
@@ -217,6 +227,9 @@ class PrepareVectorStore(DirectoryLoader, JSONLoader):
         Tokenise all document chunks and commit to vector store,
         persisting in local memory for efficiency of reproducibility
         """
+        
+        print("Embedding documents chunks. Please wait...")
+        
         self.logger.info("Starting embedding of document chunks")
         print("Starting embedding of document chunks, please wait...")
 
