@@ -2,7 +2,7 @@
 
 ### For Server - run on a...basis (automatically done on KNBS server)
 
-Before running **`pdf_runner.py`** ensure that the PDF_FILES_MODE (in **`main.toml`**) is set to the desired option **"UPDATE"**.
+Before running **`pdf_runner.py`** ensure that the PDF_FILES_MODE (in **`main.toml`**) is set to the desired option **"UPDATE"**. You can either run the python file in the IDE or use in the terminal as below.
 
     ```shell
     python statschat/pdf_runner.py
