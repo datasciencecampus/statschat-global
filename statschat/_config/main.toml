@@ -3,7 +3,7 @@ faiss_db_root = "db_langchain"
 embedding_model_name = "sentence-transformers/all-MiniLM-L6-v2" #all-mpnet-base-v2" #all-MiniLM-L6-v2" #"sentence-transformers/all-mpnet-base-v2"  # "textembedding-gecko@001" "sentence-transformers/paraphrase-MiniLM-L3-v2"
 
 [preprocess]
-mode = "UPDATE"
+mode = "SETUP" # or "UPDATE"
 data_dir = "data/"
 download_dir = "pdf_downloads"
 directory = "json_conversions"
