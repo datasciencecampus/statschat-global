@@ -48,26 +48,26 @@ elif PDF_FILES == "UPDATE":
 
     url_dict = {}  # This will store only new entries
 
-# Set max pages for UPDATE mode
-max_pages = 0 if PDF_FILES == "SETUP" else 5  # Limit to 5 pages for updates
 
-print("IN PROGRESS.")
+page = 37  # Higher the number the older the publications
+# Set max pages for UPDATE mode
+max_pages = 100 if PDF_FILES == "SETUP" else page + 5  # Limit to page + 5 for updates
 
 # %% Scrape intermediate report pages and extract PDF links
 all_pdf_entries = {}  # {"pdf_url": "report_page", ...}
 visited_report_pages = set()
-page = 38  # Higher the number the older the publications
-max_pages = page + max_pages  # Set max pages for UPDATE mode
-if max_pages > 38:
-    max_pages = 38  # Limit to 38 pages for updates
+
 # Set base URL for KNBS reports
 base_url = "https://www.knbs.or.ke/all-reports/page"
 
+print("IN PROGRESS.")
 while True:
+    # Trigger page limit for UPDATE mode
     if max_pages and page > max_pages:
-        print(f"Reached page limit ({max_pages}). Stopping search.")
+        print(f"Reached page limit ({max_pages}) for UPDATE mode. Stopping search.")
         break
 
+    # Visit each page and extract report links
     url = f"{base_url}{page}/"
     response = requests.get(url)
 
@@ -147,7 +147,7 @@ if PDF_FILES == "UPDATE":
 format = "[{elapsed}<{remaining}]{n_fmt}/{total_fmt}|{l_bar}{bar} {rate_fmt}{postfix}"
 for pdf, report_page in tqdm(
     all_pdf_entries.items(),
-    desc="DOWNLOADING PDF FILES \n",
+    desc="DOWNLOADING PDF FILES",
     bar_format=format,
     colour="yellow",
     total=len(all_pdf_entries),
