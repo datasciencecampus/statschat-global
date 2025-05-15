@@ -277,13 +277,30 @@ def get_abstract_metadata(url: str) -> dict:
         else "Unknown"
     )
     
+    # if page layout to abstract metadata different as per "https://www.knbs.or.ke/reports/kdhs-2014/"
+    # will catch error and resolve
+    if publication_date == "Unknown":
+        
+        # Extract new substring containing the relevant metadata with different start/end point
+        start = "Main Report"
+        end = "Visit the KNBS"
+        index_1 = text.find(start)
+        index_2 = text.find(end, index_1 + len(start))
+
+        if index_1 != -1 and index_2 != -1:
+            pdf_substring_new = text[index_1 + len(start) : index_2]
+            
+            # range of publication years should be between this range but can be adjusted
+            for year in range(1954,2050):
+                if str(year) in pdf_substring_new:
+                    publication_date = str(year)
+    
     # To catch errors related to publication date if str present "Indicators 2019" for example
     if len(publication_date) > 4:
         publication_date = publication_date[-4:]
     else:
         publication_date = publication_date
-    
-    
+            
     publication_theme = (
         " ".join(publication_info_split[1:-2])
         if len(publication_info_split) > 2
