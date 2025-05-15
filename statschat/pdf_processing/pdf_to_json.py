@@ -276,6 +276,15 @@ def get_abstract_metadata(url: str) -> dict:
         if len(publication_info_split) >= 2
         else "Unknown"
     )
+    
+    # To catch errors related to publication date if str present "Indicators 2019" for example
+    if len(publication_date) > 4:
+        publication_date = publication_date[-4:]
+        print(publication_date)
+    else:
+        publication_date = publication_date
+    
+    
     publication_theme = (
         " ".join(publication_info_split[1:-2])
         if len(publication_info_split) > 2
