@@ -47,6 +47,7 @@ class PrepareVectorStore(DirectoryLoader, JSONLoader):
         self.faiss_db_root = (
             data_dir + faiss_db_root + ("_latest" if mode == "UPDATE" else "")
         )
+        self.latest_faiss_db_root = data_dir + faiss_db_root + "_latest"
         self.db = db
         self.latest_only = latest_only
         self.mode = mode
@@ -68,12 +69,17 @@ class PrepareVectorStore(DirectoryLoader, JSONLoader):
         self._load_json_to_memory()
         self.logger.info("Chunk documents")
         self._split_documents()
+        self.logger.info("Remove duplicate sections")
+        self.remove_duplicate_splits()
         self.logger.info("Instantiate embeddings")
         self._instantiate_embeddings()
-        # self.logger.info("Filtering out duplicate docs")
+        self.logger.info("Filtering out duplicate docs")
         # self._drop_redundant_documents()
         self.logger.info("Vectorise docs and commit to physical vector store")
         self._embed_documents()
+        if mode == "UPDATE":
+            self.logger.info("Merging vector store with existing data")
+            self._merge_faiss_db()
 
         # except Exception as e:
         #     print(e)
@@ -86,7 +92,7 @@ class PrepareVectorStore(DirectoryLoader, JSONLoader):
         Splits scraped json to multiple json,
         one for each article section
         """
-        
+
         print("Splitting json conversions. Please wait...")
 
         # create storage folder for split articles
@@ -130,7 +136,7 @@ class PrepareVectorStore(DirectoryLoader, JSONLoader):
         """
 
         print("Loading to memory. Please wait...")
-        
+
         def metadata_func(record: dict, metadata: dict) -> dict:
             """
             Helper, instructs on how to fetch metadata.  Here I take
@@ -177,9 +183,9 @@ class PrepareVectorStore(DirectoryLoader, JSONLoader):
         """
         Loads embedding model to memory
         """
-        
+
         print("Instantiating embeddings. Please wait...")
-        
+
         if self.embedding_model_name == "textembedding-gecko@001":
             model = "sentence-transformers/all-mpnet-base-v2"
             self.embeddings = HuggingFaceEmbeddings(model_name=model)
@@ -208,9 +214,9 @@ class PrepareVectorStore(DirectoryLoader, JSONLoader):
         """
         Splits documents into chunks
         """
-        
+
         print("Splitting documents into chunks. Please wait...")
-        
+
         self.text_splitter = RecursiveCharacterTextSplitter(
             chunk_size=self.split_length,
             chunk_overlap=self.split_overlap,
@@ -227,21 +233,85 @@ class PrepareVectorStore(DirectoryLoader, JSONLoader):
         Tokenise all document chunks and commit to vector store,
         persisting in local memory for efficiency of reproducibility
         """
-        
+
         print("Embedding documents chunks. Please wait...")
-        
+
         self.logger.info("Starting embedding of document chunks")
         print("Starting embedding of document chunks, please wait...")
 
         # Save to FAISS vector store
         self.db = FAISS.from_documents(self.chunks, self.embeddings)
         print("Exporting to FAISS vector store...")
-        print(self.faiss_db_root)
         self.db.save_local(self.faiss_db_root)
         self.logger.info(f"Vector store saved to {self.faiss_db_root}")
         print(f"Vector store saved to {self.faiss_db_root}")
 
         return None
+
+    def _merge_faiss_db(self):
+        """
+        Merge temporary vector store for new articles into
+        existing permanent vector store
+        """
+
+        print("Merging vector store. Please wait...")
+
+        # Load both vector stores as FAISS objects
+        db = FAISS.load_local(
+            self.faiss_db_root, self.embeddings, allow_dangerous_deserialization=True
+        )
+        latest_db = FAISS.load_local(
+            self.latest_faiss_db_root,
+            self.embeddings,
+            allow_dangerous_deserialization=True,
+        )
+        db.merge_from(latest_db)  # Pass the FAISS object, not the path
+        db.save_local(self.faiss_db_root)
+        self.logger.info(
+            f"Number of chunks in vector store POST-edit: {len(db.docstore._dict)}"
+        )
+
+        return None
+
+    def remove_duplicate_splits(self):
+        """
+        Compares JSON split files in the main and latest split directories.
+        Removes any files from the latest split directory that also exist in the
+        main split directory.
+        """
+        # Determine the main split directory (without 'latest_' prefix)
+        if "latest_" in self.split_directory:
+            main_split_directory = self.split_directory.replace("latest_", "")
+        else:
+            print("No 'latest_' prefix in split_directory. Skipping duplicate removal.")
+            return
+
+        # Get sets of filenames in both directories
+        main_files = set(os.listdir(main_split_directory))
+        latest_files = set(os.listdir(self.split_directory))
+
+        # Find duplicates
+        duplicates = latest_files.intersection(main_files)
+
+        if not duplicates:
+            print("No duplicate split files found.")
+            return
+
+        print(
+            f"Found {len(duplicates)} duplicate split files."
+            " Removing from latest split directory..."
+        )
+
+        # Remove duplicates from latest split directory
+        for filename in duplicates:
+            file_path = os.path.join(self.split_directory, filename)
+            try:
+                os.remove(file_path)
+                print(f"Removed duplicate: {file_path}")
+            except Exception as e:
+                print(f"Failed to remove {file_path}: {e}")
+
+        print("Duplicate removal complete.")
 
 
 if __name__ == "__main__":
