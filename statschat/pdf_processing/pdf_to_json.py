@@ -3,9 +3,11 @@
 import os
 import PyPDF2
 import json
+import re
 from pathlib import Path
 import numpy as np
 from typing import List
+from tqdm import tqdm
 from bs4 import BeautifulSoup
 from urllib.request import Request, urlopen
 from datetime import datetime
@@ -117,6 +119,63 @@ def extract_url_keywords_from_filename(file_name: str) -> list[str]:
             url_keywords.append(word)
 
     return url_keywords
+
+
+def extract_pdf_creation_date(metadata, filename: str, counter: int) -> tuple[str, int]:
+    """
+    Extracts the creation date from PDF metadata if available. If unavailable,
+    it falls back to extracting the most recent year from the filename, the modification
+    date from metadata, or the current system date as a final fallback.
+
+    Args:
+        metadata: PDF metadata dictionary from PyPDF2.PdfReader (can be None).
+        filename (str): The filename from which to extract a year if needed.
+        counter (int): A running count of files that lack reliable date information.
+
+    Returns:
+        tuple[str, int]: The extracted or fallback PDF creation date in 'YYYY-MM-DD'
+        format, and an updated counter for files missing an explicit creation date.
+    """
+
+    pdf_creation_date = None  # Initialize variable to store the extracted date.
+
+    def preprocess_date(date_str: str) -> str:
+        """Extracts only the YYYYMMDD portion from a PyPDF2 date string."""
+        if date_str and date_str.startswith("D:"):
+            date_str = date_str[2:10]  # Extract only YYYYMMDD
+        return (
+            date_str if date_str and len(date_str) == 8 and date_str.isdigit() else None
+        )
+
+    # Ensure metadata is not None before accessing it
+    if metadata:
+        raw_date = metadata.get("/CreationDate") if isinstance(metadata, dict) else None
+        cleaned_date = preprocess_date(str(raw_date)) if raw_date else None
+
+        if cleaned_date:
+            pdf_creation_date = (
+                f"{cleaned_date[:4]}-{cleaned_date[4:6]}-{cleaned_date[6:8]}"
+            )
+
+    # Extract the most recent year from the filename if no valid creation date is found.
+    if not pdf_creation_date:
+        years_in_filename = sorted(
+            map(int, re.findall(r"\b(19\d{2}|20\d{2})\b", filename))
+        )
+        if years_in_filename:
+            pdf_creation_date = (
+                f"{max(years_in_filename)}-01-01"  # Assign start-of-year date.
+            )
+
+    # Assign the current system date if no valid date is found.
+    if not pdf_creation_date:
+        pdf_creation_date = datetime.datetime.now().strftime("%Y-%m-%d")
+        counter += (
+            1  # Increment counter since the system date is being used as a fallback.
+        )
+        print("No valid creation date found setting as todays date")
+
+    return pdf_creation_date, counter
 
 
 def extract_pdf_modification_date(metadata, pdf_creation_date: str) -> str:
@@ -276,14 +335,13 @@ def get_abstract_metadata(url: str) -> dict:
         if len(publication_info_split) >= 2
         else "Unknown"
     )
-    
-    # To catch errors related to publication date if str present "Indicators 2019" for example
+
+    # To catch errors related to publication date if str present
     if len(publication_date) > 4:
         publication_date = publication_date[-4:]
     else:
         publication_date = publication_date
-    
-    
+
     publication_theme = (
         " ".join(publication_info_split[1:-2])
         if len(publication_info_split) > 2
@@ -305,9 +363,7 @@ def get_abstract_metadata(url: str) -> dict:
 
     # Create dictionary for metadata
     url_dict_abstract = {
-        "date": convert_to_date(publication_date)
-        if publication_date != "Unknown"
-        else "Unknown",
+        "date": publication_date if publication_date != "Unknown" else "Unknown",
         "overview": overview_info,
         "publication_type": publication_type,
         "publication_theme": publication_theme,
@@ -363,7 +419,7 @@ def build_json(
     """
 
     # Notify which file is being processed
-    print(f"Processing: {pdf_file_path.name}")
+    # print(f"Processing: {pdf_file_path.name}")
 
     # Extract Metadata & Pre-Process
     file_name, pdf_metadata = extract_pdf_metadata(pdf_file_path)
@@ -372,8 +428,12 @@ def build_json(
     pdf_url = pdf_website_url
     # Obtain additional metadata from pdf report page
     pdf_add_metadata = get_abstract_metadata(report_page)
-    # define pdf_creation_date
-    pdf_creation_date = pdf_add_metadata["date"]
+    try:
+        pdf_creation_date = convert_to_date(pdf_add_metadata["date"])
+    except Exception:
+        # Fallback: extract from PDF metadata or filename
+        pdf_creation_date, _ = extract_pdf_creation_date(pdf_metadata, file_name, 0)
+        print("Defaulting to PDF metadata or filename for creation date.")
 
     # Construct Ordered Metadata Dictionary
     pdf_info = {
@@ -476,7 +536,17 @@ def process_pdfs(mode: str, config: dict):
 
     # Process PDFs
     count = 0
-    for pdf in pdf_list:
+    for pdf in tqdm(
+        pdf_list,
+        desc="Converting PDF file(s) to json(s)",
+        total=len(url_dict),
+        colour="red",
+        dynamic_ncols=True,
+        bar_format=(
+            "[{elapsed}<{remaining}] {n_fmt}/{total_fmt}| "
+            "{l_bar}{bar} {rate_fmt}{postfix}"
+        ),
+    ):
         pdf_path = pdf_dir.joinpath(f"{pdf}.pdf")
         pdf_url = url_dict.get(f"{pdf}.pdf", {}).get("pdf_url", "Unknown URL")
         report_page = url_dict.get(f"{pdf}.pdf", {}).get(
