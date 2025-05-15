@@ -47,7 +47,8 @@ class PrepareVectorStore(DirectoryLoader, JSONLoader):
         self.faiss_db_root = (
             data_dir + faiss_db_root + ("_latest" if mode == "UPDATE" else "")
         )
-        self.latest_faiss_db_root = data_dir + faiss_db_root + "_latest"
+        # Remove '_latest' from faiss_db_root if present
+        self.original_faiss_db_root = (data_dir + faiss_db_root).replace("_latest", "")
         self.db = db
         self.latest_only = latest_only
         self.mode = mode
@@ -258,14 +259,20 @@ class PrepareVectorStore(DirectoryLoader, JSONLoader):
 
         # Load both vector stores as FAISS objects
         db = FAISS.load_local(
-            self.faiss_db_root, self.embeddings, allow_dangerous_deserialization=True
-        )
-        latest_db = FAISS.load_local(
-            self.latest_faiss_db_root,
+            self.original_faiss_db_root,
             self.embeddings,
             allow_dangerous_deserialization=True,
         )
-        db.merge_from(latest_db)  # Pass the FAISS object, not the path
+        existing_ids = set(db.docstore._dict.keys())
+        filtered_docs = [
+            doc
+            for doc in self.db.docstore._dict.values()
+            if doc.metadata["source"] not in existing_ids
+        ]
+
+        print(len(filtered_docs), len(existing_ids))
+
+        db.merge_from(self.db)  # Pass the FAISS object, not the path
         db.save_local(self.faiss_db_root)
         self.logger.info(
             f"Number of chunks in vector store POST-edit: {len(db.docstore._dict)}"
