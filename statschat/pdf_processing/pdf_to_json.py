@@ -173,7 +173,7 @@ def extract_pdf_creation_date(metadata, filename: str, counter: int) -> tuple[st
         counter += (
             1  # Increment counter since the system date is being used as a fallback.
         )
-        print("No valid creation date found setting as todays date")
+        print("WARNING: No valid creation date found setting as todays date")
 
     return pdf_creation_date, counter
 
@@ -335,12 +335,6 @@ def get_abstract_metadata(url: str) -> dict:
         if len(publication_info_split) >= 2
         else "Unknown"
     )
-
-    # To catch errors related to publication date if str present
-    if len(publication_date) > 4:
-        publication_date = publication_date[-4:]
-    else:
-        publication_date = publication_date
 
     publication_theme = (
         " ".join(publication_info_split[1:-2])
@@ -506,6 +500,7 @@ def process_pdfs(mode: str, config: dict):
         pdf_dir = DATA_DIR
         json_dir = JSON_DIR
         pdf_list = get_pdf_list(pdf_dir)
+
     elif mode == "UPDATE":
         # Dynamically generate "latest" directories
         pdf_dir = generate_latest_dir(DATA_DIR)
