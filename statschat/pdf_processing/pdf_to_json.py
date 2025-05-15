@@ -280,7 +280,6 @@ def get_abstract_metadata(url: str) -> dict:
     # To catch errors related to publication date if str present "Indicators 2019" for example
     if len(publication_date) > 4:
         publication_date = publication_date[-4:]
-        print(publication_date)
     else:
         publication_date = publication_date
     
