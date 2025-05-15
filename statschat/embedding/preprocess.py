@@ -3,6 +3,7 @@ import json
 import logging
 import toml
 import os
+import shutil
 from pathlib import Path
 from datetime import datetime
 from langchain_community.document_loaders import DirectoryLoader, JSONLoader
@@ -70,8 +71,6 @@ class PrepareVectorStore(DirectoryLoader, JSONLoader):
         self._load_json_to_memory()
         self.logger.info("Chunk documents")
         self._split_documents()
-        self.logger.info("Remove duplicate sections")
-        self.remove_duplicate_splits()
         self.logger.info("Instantiate embeddings")
         self._instantiate_embeddings()
         self.logger.info("Filtering out duplicate docs")
@@ -251,8 +250,9 @@ class PrepareVectorStore(DirectoryLoader, JSONLoader):
 
     def _merge_faiss_db(self):
         """
-        Merge temporary vector store for new articles into
-        existing permanent vector store
+        Merge latest vector store for new articles into
+        existing permanent vector store. Removes latest vector store files
+        after merging.
         """
 
         print("Merging vector store. Please wait...")
@@ -263,68 +263,35 @@ class PrepareVectorStore(DirectoryLoader, JSONLoader):
             self.embeddings,
             allow_dangerous_deserialization=True,
         )
-        existing_ids = set(db.docstore._dict.keys())
-        filtered_docs = [
-            doc
-            for doc in self.db.docstore._dict.values()
-            if doc.metadata["source"] not in existing_ids
-        ]
-
-        print(len(filtered_docs), len(existing_ids))
 
         db.merge_from(self.db)  # Pass the FAISS object, not the path
-        db.save_local(self.faiss_db_root)
+        db.save_local(self.original_faiss_db_root)
         self.logger.info(
             f"Number of chunks in vector store POST-edit: {len(db.docstore._dict)}"
         )
 
+        # Remove all files in the _latest FAISS directory, but keep the directory itself
+        if os.path.exists(self.faiss_db_root):
+            for filename in os.listdir(self.faiss_db_root):
+                file_path = os.path.join(self.faiss_db_root, filename)
+                try:
+                    if os.path.isfile(file_path) or os.path.islink(file_path):
+                        os.unlink(file_path)
+                    elif os.path.isdir(file_path):
+                        # Remove subdirectories and their contents
+                        shutil.rmtree(file_path)
+                except Exception as e:
+                    print(f"Failed to delete {file_path}: {e}")
+            self.logger.info(
+                f"Cleared files from FAISS _latest directory: {self.faiss_db_root}"
+            )
+
         return None
-
-    def remove_duplicate_splits(self):
-        """
-        Compares JSON split files in the main and latest split directories.
-        Removes any files from the latest split directory that also exist in the
-        main split directory.
-        """
-        # Determine the main split directory (without 'latest_' prefix)
-        if "latest_" in self.split_directory:
-            main_split_directory = self.split_directory.replace("latest_", "")
-        else:
-            print("No 'latest_' prefix in split_directory. Skipping duplicate removal.")
-            return
-
-        # Get sets of filenames in both directories
-        main_files = set(os.listdir(main_split_directory))
-        latest_files = set(os.listdir(self.split_directory))
-
-        # Find duplicates
-        duplicates = latest_files.intersection(main_files)
-
-        if not duplicates:
-            print("No duplicate split files found.")
-            return
-
-        print(
-            f"Found {len(duplicates)} duplicate split files."
-            " Removing from latest split directory..."
-        )
-
-        # Remove duplicates from latest split directory
-        for filename in duplicates:
-            file_path = os.path.join(self.split_directory, filename)
-            try:
-                os.remove(file_path)
-                print(f"Removed duplicate: {file_path}")
-            except Exception as e:
-                print(f"Failed to remove {file_path}: {e}")
-
-        print("Duplicate removal complete.")
 
 
 if __name__ == "__main__":
     # define session_id that will be used for log file and feedback
     session_name = f"statschat_preprocess_{format(datetime.now(), '%Y_%m_%d_%H:%M')}"
-    logger = logging.getLogger(__name__)
     log_fmt = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
     logging.basicConfig(
         level=logging.INFO,
@@ -332,11 +299,11 @@ if __name__ == "__main__":
         filename=f"log/{session_name}.log",
         filemode="a",
     )
-
+    logger = logging.getLogger(__name__)
     # load config file
     config_path = Path(__file__).resolve().parent.parent / "_config" / "main.toml"
     config = toml.load(config_path)
 
-    prepper = PrepareVectorStore(**config["db"], **config["preprocess"])
+    prepper = PrepareVectorStore(**config["db"], **config["preprocess"], logger=logger)
     logger.info("setup of docstore should be complete.")
     print("setup of docstore should be complete.")
