@@ -4,6 +4,7 @@ from bs4 import BeautifulSoup
 from pathlib import Path
 from urllib.parse import urlparse
 import json
+from tqdm import tqdm
 from statschat import load_config
 import re
 
@@ -55,7 +56,7 @@ print("IN PROGRESS.")
 # %% Scrape intermediate report pages and extract PDF links
 all_pdf_entries = {}  # {"pdf_url": "report_page", ...}
 visited_report_pages = set()
-page = 37  # Higher the number the older the publications
+page = 38  # Higher the number the older the publications
 max_pages = page + max_pages  # Set max pages for UPDATE mode
 if max_pages > 38:
     max_pages = 38  # Limit to 38 pages for updates
@@ -143,7 +144,15 @@ if PDF_FILES == "UPDATE":
     all_pdf_entries = new_entries  # Replace with filtered dictionary
 
 # %% Download PDFs and Update URL Dictionary
-for pdf, report_page in all_pdf_entries.items():
+format = "[{elapsed}<{remaining}]{n_fmt}/{total_fmt}|{l_bar}{bar} {rate_fmt}{postfix}"
+for pdf, report_page in tqdm(
+    all_pdf_entries.items(),
+    desc="DOWNLOADING PDF FILES \n",
+    bar_format=format,
+    colour="yellow",
+    total=len(all_pdf_entries),
+    dynamic_ncols=True,
+):
     pdf_url = pdf
     report_url = report_page
     parsed_url = urlparse(pdf_url)
@@ -157,7 +166,6 @@ for pdf, report_page in all_pdf_entries.items():
     if response.status_code == 200:
         with open(file_path, "wb") as file:
             file.write(response.content)
-            print(f"Downloaded: {pdf_name} -> {file_path}")
 
         # Store both pdf_url and report page
         url_dict[pdf_name] = {"pdf_url": pdf_url, "report_page": report_url}
@@ -170,7 +178,7 @@ with open(url_dict_path, "w") as json_file:
     print(f"Saved new url_dict.json to {url_dict_path}")
 
 if PDF_FILES == "UPDATE":
-    print("Finished downloading new PDF file for vector store update. Please run pdf_to_json.py next.")
+    print("Finished downloading new PDF files.")
 
 if PDF_FILES == "SETUP":
-    print("Finished downloading all PDF files. Please run pdf_to_json.py next.")
+    print("Finished downloading all PDF files.")
