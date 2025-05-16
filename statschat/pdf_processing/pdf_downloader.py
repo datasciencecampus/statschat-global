@@ -49,7 +49,7 @@ elif PDF_FILES == "UPDATE":
     url_dict = {}  # This will store only new entries
 
 
-page = 37  # Higher the number the older the publications
+page = 38  # Higher the number the older the publications
 # Set max pages for UPDATE mode
 max_pages = 100 if PDF_FILES == "SETUP" else 5  # Limit to 5 for updates
 
