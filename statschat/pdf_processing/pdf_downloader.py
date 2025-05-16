@@ -148,7 +148,7 @@ if PDF_FILES == "UPDATE":
 format = "[{elapsed}<{remaining}]{n_fmt}/{total_fmt}|{l_bar}{bar} {rate_fmt}{postfix}"
 for pdf, report_page in tqdm(
     all_pdf_entries.items(),
-    desc="DOWNLOADING PDF FILES",
+    desc="DOWNLOADING PDF FILES:",
     bar_format=format,
     colour="yellow",
     total=len(all_pdf_entries),
