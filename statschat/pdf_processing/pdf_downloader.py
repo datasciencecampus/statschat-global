@@ -51,7 +51,7 @@ elif PDF_FILES == "UPDATE":
 
 page = 37  # Higher the number the older the publications
 # Set max pages for UPDATE mode
-max_pages = 100 if PDF_FILES == "SETUP" else page + 5  # Limit to page + 5 for updates
+max_pages = 100 if PDF_FILES == "SETUP" else 5  # Limit to 5 for updates
 
 # %% Scrape intermediate report pages and extract PDF links
 all_pdf_entries = {}  # {"pdf_url": "report_page", ...}
@@ -88,8 +88,9 @@ while True:
     report_links = list(dict.fromkeys(report_links))
     # remove duplicate reports
     if not report_links:
-        print(f"Reached page limit ({max_pages}). Stopping search.")
+        print(f"Reached page limit ({page}). Stopping search.")
         break
+
     # print(report_links)
     print(f"Found {len(report_links)} report pages on page {page}")
 
