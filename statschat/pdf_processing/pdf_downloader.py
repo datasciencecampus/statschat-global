@@ -61,11 +61,11 @@ if PDF_FILES == "SETUP":
     page = 38  # Higher the number the older the publications
     max_pages = page + max_pages  # Set max pages for UPDATE mode
     if max_pages > 38:
-        max_pages = 38  # Limit to 38 pages for updates
+        max_pages = 38  
 
 elif PDF_FILES == "UPDATE":
     page = 1  # Higher the number the older the publications
-    max_pages = 5  # Limit to 38 pages for updates
+    max_pages = 1  # Limit to 5 pages for updates
     
 # Set base URL for KNBS reports
 base_url = "https://www.knbs.or.ke/all-reports/page"
