@@ -299,11 +299,11 @@ if __name__ == "__main__":
         filename=f"log/{session_name}.log",
         filemode="a",
     )
-    logger = logging.getLogger(__name__)
+    log = logging.getLogger(__name__)
     # load config file
     config_path = Path(__file__).resolve().parent.parent / "_config" / "main.toml"
     config = toml.load(config_path)
 
-    prepper = PrepareVectorStore(**config["db"], **config["preprocess"], logger=logger)
-    logger.info("setup of docstore should be complete.")
+    prepper = PrepareVectorStore(**config["db"], **config["preprocess"], logger=log)
+    log.info("setup of docstore should be complete.")
     print("setup of docstore should be complete.")
