@@ -329,18 +329,36 @@ def get_abstract_metadata(url: str) -> dict:
     # Split publication info into components
     publication_info_split = publication_info.split()
 
-    # Extract publication date, theme, and type
+    # Extract publication date
     publication_date = (
         " ".join(publication_info_split[-2:])
         if len(publication_info_split) >= 2
         else "Unknown"
     )
 
+    # if page layout different as per "https://www.knbs.or.ke/reports/kdhs-2014/"
+    # will catch error and resolve
+    if publication_date == "Unknown":
+        # Extract text containing the relevant metadata with different start/end point
+        start = "Main Report"
+        end = "Visit the KNBS"
+        index_1 = text.find(start)
+        index_2 = text.find(end, index_1 + len(start))
+
+        if index_1 != -1 and index_2 != -1:
+            pdf_substring_new = text[index_1 + len(start) : index_2]
+
+            # range of publication years should be between this range (adjustable)
+            for year in range(1954, 2050):
+                if str(year) in pdf_substring_new:
+                    publication_date = str(year)
+    # Extract publication theme
     publication_theme = (
         " ".join(publication_info_split[1:-2])
         if len(publication_info_split) > 2
         else "Unknown"
     )
+    # Extract publication type
     publication_type = (
         publication_info_split[0] if len(publication_info_split) > 0 else "Unknown"
     )
