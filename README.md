@@ -82,7 +82,7 @@ Then you will need to make sure your terminal is on the **`statschat-ke`** folde
 From there, you can generate the synthetic "server" locally from your terminal:
 
 ```shell
-uvicorn fast-api.main_api:app --reload
+uvicorn fast-api.main_api_local:app --reload
 ```
 
 The fastapi is set to respond to http requests on a particular port.
