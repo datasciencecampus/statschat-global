@@ -8,6 +8,7 @@ import logging
 from langchain_community.vectorstores import FAISS
 from langchain_huggingface.embeddings import HuggingFaceEmbeddings
 from transformers import AutoModelForCausalLM, AutoTokenizer
+from pathlib import Path
 import json
 from statschat.generative.prompts_local import (
     _extractive_prompt,
@@ -39,10 +40,22 @@ def similarity_search(
     Returns:
         List[dict]: List of top k article chunks by relevance
     """
+        
     logger = logging.getLogger(__name__)
     logger.info("Retrieving most relevant text chunks")
     faiss_db_root = "data/db_langchain"
-    faiss_db_root_latest = "data/db_langchain_latest"
+    
+    # Check directories exist in "SETUP" MODE to avoid error
+    BASE_DIR = Path.cwd().joinpath("data")
+    DB_LANGCHAIN_DIR = BASE_DIR.joinpath("db_langchain")
+    DB_LANGCHAIN_UPDATE_DIR = BASE_DIR.joinpath("db_langchain_update")
+    
+    if DB_LANGCHAIN_UPDATE_DIR.exists():
+        faiss_db_root_latest = "data/db_langchain_latest"
+        
+    elif DB_LANGCHAIN_DIR.exists():
+        faiss_db_root_latest = "data/db_langchain"
+        
     k_docs = 3
     similarity_threshold = 2.0
     embedding_model_name = "sentence-transformers/all-mpnet-base-v2"
