@@ -67,13 +67,13 @@ async def search(
     content_type: Union[str, None] = "latest",
     debug: bool = True,
 ):
-    """Search articles and bulletins for a question.
+    """Search publications and bulletins for a question.
 
     Args:
         q (str): Question to be answered based on PDFs.
         content_type (Union[str, None], optional): Type of content to be searched.
             Currently accepted values: 'latest' to search the latest bulletins only
-            or 'all' to search any articles and bulletins.
+            or 'all' to search any publications and bulletins.
             Optional, defaults to 'latest'.
         debug (bool, optional): Flag to return debug information (full LLM response).
             Optional, defaults to True.

@@ -331,6 +331,6 @@ if __name__ == "__main__":
 
 
 # TODO consider alternative tests for answer correctness
-# TODO conduct relevance scoring on more than the first returned article
+# TODO conduct relevance scoring on more than the first returned publication
 # TODO add a field to capture other relevant parameters
 # TODO create a new script for joining multiple test output csvs

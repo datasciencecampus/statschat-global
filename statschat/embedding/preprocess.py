@@ -14,7 +14,7 @@ from langchain_community.document_transformers import EmbeddingsRedundantFilter
 
 class PrepareVectorStore(DirectoryLoader, JSONLoader):
     """
-    Leveraging Langchain classes to split pre-scraped article
+    Leveraging Langchain classes to split pre-scraped publication
     JSONs to section-level JSONs and loading to document
     store
     """
@@ -51,7 +51,7 @@ class PrepareVectorStore(DirectoryLoader, JSONLoader):
 
         # Does the named vector store exist already?
         if not os.path.exists(self.faiss_db_root):
-            self.logger.info("Split full article JSONs into sections")
+            self.logger.info("Split full publication JSONs into sections")
             self._json_splitter()
             self.logger.info("Load section JSONs to memory")
             self._load_json_to_memory()
@@ -106,20 +106,20 @@ class PrepareVectorStore(DirectoryLoader, JSONLoader):
     def _json_splitter(self):
         """
         Splits scraped json to multiple json,
-        one for each article section
+        one for each publication section
         """
 
-        # create storage folder for split articles
+        # create storage folder for split publications
         isExist = os.path.exists(self.split_directory)
         if not isExist:
             os.makedirs(self.split_directory)
 
-        found_articles = glob.glob(f"{self.directory}/*.json")
-        self.logger.info(f"Found {len(found_articles)} articles for splitting")
+        found_publications = glob.glob(f"{self.directory}/*.json")
+        self.logger.info(f"Found {len(found_publications)} publications for splitting")
 
-        # extract metadata from each article section
+        # extract metadata from each publication section
         # and store as separate JSON
-        for filename in found_articles:
+        for filename in found_publications:
             try:
                 with open(filename) as file:
                     json_file = json.load(file)
@@ -146,7 +146,7 @@ class PrepareVectorStore(DirectoryLoader, JSONLoader):
 
     def _load_json_to_memory(self):
         """
-        Loads article section JSONs to memory
+        Loads publication section JSONs to memory
         """
 
         def metadata_func(record: dict, metadata: dict) -> dict:
@@ -188,7 +188,7 @@ class PrepareVectorStore(DirectoryLoader, JSONLoader):
         )
 
         self.docs = self.loader.load()
-        self.logger.info(f"{len(self.docs)} article sections loaded to memory")
+        self.logger.info(f"{len(self.docs)} publication sections loaded to memory")
         return None
 
     def _instantiate_embeddings(self):
@@ -214,7 +214,7 @@ class PrepareVectorStore(DirectoryLoader, JSONLoader):
             similarity_threshold=self.redundant_similarity_threshold,
         )
         self.docs = redundant_filter.transform_documents(self.docs)
-        self.logger.info(f"{len(self.docs)} article sections remain in memory")
+        self.logger.info(f"{len(self.docs)} publication sections remain in memory")
         self.logger.info([x.metadata["page_url"] for x in self.docs])
 
         return None

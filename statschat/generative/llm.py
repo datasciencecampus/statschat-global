@@ -105,12 +105,12 @@ class Inquirer:
         query
 
         Args:
-            query (str): Question for which most relevant articles will
+            query (str): Question for which most relevant publications will
             be returned
             return_dicts: if True, data returned as dictionary, key = rank
 
         Returns:
-            List[dict]: List of top k article chunks by relevance
+            List[dict]: List of top k publication chunks by relevance
         """
         self.logger.info("Retrieving most relevant text chunks")
         if latest_filter:
@@ -139,7 +139,7 @@ class Inquirer:
         to docs filtered in similarity_search
 
         Args:
-            query (str): Question for which most relevant articles will
+            query (str): Question for which most relevant publications will
             be returned
             docs (list[dict]): Documents closely related to query
 

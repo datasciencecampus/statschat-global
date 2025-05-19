@@ -25,7 +25,7 @@ from statschat.embedding.latest_updates import (
 
 class UpdateVectorStore(DirectoryLoader, JSONLoader):
     """
-    Leveraging Langchain classes to split pre-scraped article
+    Leveraging Langchain classes to split pre-scraped publication
     JSONs to section-level JSONs and loading to document
     store
     """
@@ -60,12 +60,12 @@ class UpdateVectorStore(DirectoryLoader, JSONLoader):
             self.logger = logger
 
         # Only if temp latest_directory exists i.e. new inbound
-        # articles have been webscraped and stored
+        # publications have been webscraped and stored
         if os.path.exists(self.latest_directory):
             if self.latest_only:
                 self.logger.info("Treating 'latest' flags")
                 self._treat_latest()
-            self.logger.info("Split full article JSONs into sections")
+            self.logger.info("Split full publication JSONs into sections")
             self._json_splitter()
             self.logger.info("Load section JSONs to memory")
             self._load_json_to_memory()
@@ -87,7 +87,7 @@ class UpdateVectorStore(DirectoryLoader, JSONLoader):
 
     def _treat_latest(self):
         """
-        Checks for inbound articles which are latest versions in a series.
+        Checks for inbound publications which are latest versions in a series.
         Revokes 'latest' flag to False for outdated versions.
         Locates all chunks related to these outdated versions and removes
         them from the vector store.
@@ -126,20 +126,20 @@ class UpdateVectorStore(DirectoryLoader, JSONLoader):
     def _json_splitter(self):
         """
         Splits scraped json to multiple json,
-        one for each article section
+        one for each publication section
         """
 
-        # create storage folder for split articles
+        # create storage folder for split publications
         isExist = os.path.exists(self.latest_split_directory)
         if not isExist:
             os.makedirs(self.latest_split_directory)
 
-        found_articles = glob.glob(f"{self.latest_directory}/*.json")
-        self.logger.info(f"Found {len(found_articles)} articles for splitting")
+        found_publications = glob.glob(f"{self.latest_directory}/*.json")
+        self.logger.info(f"Found {len(found_publications)} publications for splitting")
 
-        # extract metadata from each article section
+        # extract metadata from each publication section
         # and store as separate JSON
-        for filename in found_articles:
+        for filename in found_publications:
             try:
                 with open(filename) as file:
                     json_file = json.load(file)
@@ -167,7 +167,7 @@ class UpdateVectorStore(DirectoryLoader, JSONLoader):
 
     def _load_json_to_memory(self):
         """
-        Loads article section JSONs to memory
+        Loads publication section JSONs to memory
         """
 
         def metadata_func(record: dict, metadata: dict) -> dict:
@@ -209,7 +209,7 @@ class UpdateVectorStore(DirectoryLoader, JSONLoader):
         )
 
         self.docs = self.loader.load()
-        self.logger.info(f"{len(self.docs)} article sections loaded to memory")
+        self.logger.info(f"{len(self.docs)} publication sections loaded to memory")
         return None
 
     def _instantiate_embeddings(self):
@@ -236,7 +236,7 @@ class UpdateVectorStore(DirectoryLoader, JSONLoader):
             similarity_threshold=self.redundant_similarity_threshold,
         )
         self.docs = redundant_filter.transform_documents(self.docs)
-        self.logger.info(f"{len(self.docs)} article sections remain in memory")
+        self.logger.info(f"{len(self.docs)} publication sections remain in memory")
 
         return None
 
@@ -266,7 +266,7 @@ class UpdateVectorStore(DirectoryLoader, JSONLoader):
 
     def _merge_faiss_db(self):
         """
-        Merge temporary vector store for new articles into
+        Merge temporary vector store for new publications into
         existing permanent vector store
         """
         db = FAISS.load_local(
@@ -282,7 +282,7 @@ class UpdateVectorStore(DirectoryLoader, JSONLoader):
 
     def _cleaning_up(self):
         """
-        Move all articles and article sections from temporary
+        Move all publications and publication sections from temporary
         folders to permanent; remove temporary folders
         """
         path = f"{self.latest_directory}/*.json"
