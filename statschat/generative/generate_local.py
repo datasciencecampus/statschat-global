@@ -33,7 +33,7 @@ def similarity_search(
     query
 
     Args:
-        query (str): Question for which most relevant articles will
+        query (str): Question for which most relevant publications will
         be returned
         return_dicts: if True, data returned as dictionary, key = rank
 

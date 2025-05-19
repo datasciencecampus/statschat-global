@@ -60,7 +60,7 @@ class UpdateVectorStore(DirectoryLoader, JSONLoader):
             self.logger = logger
 
         # Only if temp latest_directory exists i.e. new inbound
-        # articles have been webscraped and stored
+        # publications have been webscraped and stored
         if os.path.exists(self.latest_directory):
             if self.latest_only:
                 self.logger.info("Treating 'latest' flags")
@@ -87,7 +87,7 @@ class UpdateVectorStore(DirectoryLoader, JSONLoader):
 
     def _treat_latest(self):
         """
-        Checks for inbound articles which are latest versions in a series.
+        Checks for inbound publications which are latest versions in a series.
         Revokes 'latest' flag to False for outdated versions.
         Locates all chunks related to these outdated versions and removes
         them from the vector store.
@@ -129,17 +129,17 @@ class UpdateVectorStore(DirectoryLoader, JSONLoader):
         one for each article section
         """
 
-        # create storage folder for split articles
+        # create storage folder for split publications
         isExist = os.path.exists(self.latest_split_directory)
         if not isExist:
             os.makedirs(self.latest_split_directory)
 
-        found_articles = glob.glob(f"{self.latest_directory}/*.json")
-        self.logger.info(f"Found {len(found_articles)} articles for splitting")
+        found_publications = glob.glob(f"{self.latest_directory}/*.json")
+        self.logger.info(f"Found {len(found_publications)} publications for splitting")
 
         # extract metadata from each article section
         # and store as separate JSON
-        for filename in found_articles:
+        for filename in found_publications:
             try:
                 with open(filename) as file:
                     json_file = json.load(file)
@@ -266,7 +266,7 @@ class UpdateVectorStore(DirectoryLoader, JSONLoader):
 
     def _merge_faiss_db(self):
         """
-        Merge temporary vector store for new articles into
+        Merge temporary vector store for new publications into
         existing permanent vector store
         """
         db = FAISS.load_local(
@@ -282,7 +282,7 @@ class UpdateVectorStore(DirectoryLoader, JSONLoader):
 
     def _cleaning_up(self):
         """
-        Move all articles and article sections from temporary
+        Move all publications and article sections from temporary
         folders to permanent; remove temporary folders
         """
         path = f"{self.latest_directory}/*.json"
