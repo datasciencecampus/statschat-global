@@ -1,6 +1,7 @@
 import logging
 import os
 from dotenv import load_dotenv
+from pathlib import Path
 from langchain_huggingface import HuggingFaceEndpoint
 from langchain_community.vectorstores import FAISS
 from langchain_huggingface.embeddings import HuggingFaceEmbeddings
@@ -27,7 +28,7 @@ class Inquirer:
         self,
         generative_model_name: str = "mistralai/Mistral-7B-Instruct-v0.3",
         faiss_db_root: str = "data/db_langchain",
-        faiss_db_root_latest: str = None,
+        faiss_db_root_latest: str = "data/db_langchain", # change to "data/db_langchain_latest" after "UPDATE"
         embedding_model_name: str = "sentence-transformers/all-MiniLM-L6-v2",
         k_docs: int = 10,
         k_contexts: int = 3,
