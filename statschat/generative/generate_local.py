@@ -139,7 +139,7 @@ if __name__ == "__main__":
 
     # For a question, retreive the most relevant text chunks
     #question = "What is the leading cause of death in Kenya in 2023?"
-    question = "What was inflation in Kenya in 2023?"
+    question = "What was inflation in Kenya in 2022?"
     #question = "How is inflation calculated?"
     
     # Get the most relevant text chunks
@@ -197,7 +197,7 @@ if __name__ == "__main__":
         print("Context from:", formatted_response["where_context_from"])
         print("Text:", formatted_response["context_reference"])
         
-        print("These answers are based on the following publications:")
+        print("These answers are based on the following:")
         print("RELEVANT PUBLICATIONS")
         print("(ONE)")
         print(f"Title: {key_title_1}")
@@ -221,7 +221,7 @@ if __name__ == "__main__":
         print("This comes from:", formatted_response["context_from"])
         print(formatted_response["context_from_text"])
         
-        print("These answers are based on the following publications:")
+        print("These answers are based on the following:")
         print("(RELEVANT PUBLICATIONS)")
         print("(ONE)")
         print(f"Title: {key_title_1}")
