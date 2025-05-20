@@ -194,8 +194,8 @@ if __name__ == "__main__":
     if formatted_response["answer_provided"] and result_score_1 or result_score_2 < 0.5: #check
         print(f"Question: {question}")
         print("Answer provided:", formatted_response["most_likely_answer"])
-        print("This comes from:", formatted_response["context_from"])
-        print(formatted_response["context_from_text"])
+        print("Context from:", formatted_response["where_context_from"])
+        print("Text:", formatted_response["context_reference"])
         
         print("These answers are based on the following publications:")
         print("RELEVANT PUBLICATIONS")

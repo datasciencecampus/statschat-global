@@ -48,8 +48,8 @@ The answer should be in the form of a JSON object with the following fields:
     "highlighting2": ["string"],
     "highlighting3": ["string"],
     "reasoning": "string",
-    "context_from": "string",
-    "context_from_text": "string",
+    "where_context_from": "string",
+    "context_reference": "string",
 }
 """
 

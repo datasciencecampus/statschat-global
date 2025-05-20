@@ -133,8 +133,8 @@ async def search(
         "content_type": content_type,
         "answer": formatted_response["most_likely_answer"],
         "references": relevant_texts[0]["page_url"],
-        "this_comes_from":formatted_response["context_from"],
-        "context":formatted_response["context_from_text"],
+        "context_from":formatted_response["where_context_from"],
+        "context_reference":formatted_response["context_reference"],
         "relevant_publication_one": relevant_texts[0]["title"],
         "relevant_publication_two": relevant_texts[1]["title"],
     }
