@@ -13,7 +13,7 @@
 > text by random chance or through malevolent prompts.
 
 - **Under development** / **Experimental**
-- **Tested on macOS only**
+- **Tested on macOS & windows only**
 - **Peer-reviewed**
 - **Depends on external API's**
 
@@ -29,9 +29,9 @@ Next, the relevant text is passed to a Large Language Model (LLM),
 which is prompted to write an answer to the original question, if it can,
 using only the information contained within the documents.
 
-For this prototype, relevant web pages are scraped and the data stored in `data/bulletins`,
-the docstore / embedding store that is created is likewise in local folders and files,
-and the LLM is either run in memory or accessed through VertexAI.
+For this prototype, relevant web pages with PDF's are scraped and the data stored in `data/pdf_downloads`,
+the docstore / embedding store that is created is likewise and stored in `data/db_langchain` and/or `data/db_langchain_latest`.
+The LLM is either run in locally with `generate_local.py`, in an API with `main_api_local.py` (both backend) or with a flask app (frontend).
 
 ## Step 1: Vector store
 > [!NOTE]
