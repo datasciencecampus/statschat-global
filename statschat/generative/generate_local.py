@@ -193,7 +193,13 @@ if __name__ == "__main__":
     
     if formatted_response["answer_provided"] and result_score_1 or result_score_2 < 0.5: #check
         print(f"Question: {question}")
-        print("Answer provided:", formatted_response["most_likely_answer"])
+        
+        # If no suitable answer
+        if formatted_response.get("most_likely_answer") is None:
+            print("Answer provided: No suitable answer found. However relevant information may be found in a PDF. Please check the link(s) provided.")
+        else:
+            print("Answer provided:", formatted_response["most_likely_answer"])
+            
         print("Context from:", formatted_response["where_context_from"])
         print("Text:", formatted_response["context_reference"])
         
@@ -242,3 +248,5 @@ if __name__ == "__main__":
         
     else:
         print("Answer not provided, and the context is not relevant.")
+
+#No suitable answer found.However relevant information may be found in a PDF.Please check the link(s) provided.
