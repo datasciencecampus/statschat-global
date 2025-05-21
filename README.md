@@ -30,8 +30,9 @@ which is prompted to write an answer to the original question, if it can,
 using only the information contained within the documents.
 
 For this prototype, relevant web pages with PDF's are scraped and the data stored in `data/pdf_downloads`,
-the docstore / embedding store that is created is likewise and stored in `data/db_langchain` and/or `data/db_langchain_latest`.
-The LLM is either run in locally with `generate_local.py`, in an API with `main_api_local.py` (both backend) or with a flask app (frontend).
+the docstore / embedding store that is created is likewise and stored in `data/db_langchain` after SETUP and then
+also in `data/db_langchain_latest` after UPDATE. The LLM is either run in locally with `generate_local.py`, in an 
+API with `main_api_local.py` (both backend) or with a flask app (frontend).
 
 ## Step 1: Vector store
 > [!NOTE]
