@@ -38,7 +38,8 @@ API with `main_api_local.py` (both backend) or with a flask app (frontend).
 > [!NOTE]
 > **Before setting up or updating the vector store ensure the [virtual or conda environment has been created.]("link for when on DSC github")**
 
-Before running `pdf_runner.py` ensure that the PDF_FILES_MODE (in `main.toml`) is set to the desired option.
+Before running pdf_runner.py in an integrated development environment (IDE) ensure that the PDF_FILES_MODE (in main.toml) 
+is set to the desired option. It can also be run in the command line as below.
 
     ```shell
     python statschat/pdf_runner.py
