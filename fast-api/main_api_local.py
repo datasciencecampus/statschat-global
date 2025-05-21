@@ -127,16 +127,32 @@ async def search(
 
     raw_response = generate_response(user_input, model, tokenizer)
     formatted_response = format_response(raw_response)
+    
+    # If no suitable answer
+    if formatted_response.get("most_likely_answer") is None:
         
-    results = {
-        "question": question,
-        "content_type": content_type,
-        "answer": formatted_response["most_likely_answer"],
-        "references": relevant_texts[0]["page_url"],
-        "context_from":formatted_response["where_context_from"],
-        "context_reference":formatted_response["context_reference"],
-        "relevant_publication_one": relevant_texts[0]["title"],
-        "relevant_publication_two": relevant_texts[1]["title"],
+        results = {
+            "question": question,
+            "content_type": content_type,
+            "answer": "No suitable answer found. However relevant information may be found in a PDF. Please check the link(s) provided.",
+            "references": relevant_texts[0]["page_url"],
+            "context_from":formatted_response["where_context_from"],
+            "context_reference":formatted_response["context_reference"],
+            "relevant_publication_one": relevant_texts[0]["title"],
+            "relevant_publication_two": relevant_texts[1]["title"],
+    }
+        
+    else:
+        
+        results = {
+            "question": question,
+            "content_type": content_type,
+            "answer": formatted_response["most_likely_answer"],
+            "references": relevant_texts[0]["page_url"],
+            "context_from":formatted_response["where_context_from"],
+            "context_reference":formatted_response["context_reference"],
+            "relevant_publication_one": relevant_texts[0]["title"],
+            "relevant_publication_two": relevant_texts[1]["title"],
     }
     
     logger.info(f"Sending following response: {results}")
