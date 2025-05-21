@@ -19,7 +19,7 @@
 
 ## Introduction
 
-This is an experimental application for semantic search of KNBS statistical publications.
+This is an experimental application for semantic search of KNBS [statistical publications](https://www.knbs.or.ke/all-reports/).
 It uses LangChain to implement a fairly simple Retriaval Augmented Generation (RAG) using embedding search
 and QA information retrieval process.
 
@@ -29,9 +29,10 @@ Next, the relevant text is passed to a Large Language Model (LLM),
 which is prompted to write an answer to the original question, if it can,
 using only the information contained within the documents.
 
-For this prototype, relevant web pages are scraped and the data stored in `data/bulletins`,
-the docstore / embedding store that is created is likewise in local folders and files,
-and the LLM is either run in memory or accessed through VertexAI.
+For this prototype, relevant web pages with PDF's are scraped and the data stored in `data/pdf_downloads`,
+the docstore / embedding store that is created is likewise and stored in `data/db_langchain` after SETUP and then
+also in `data/db_langchain_latest` after UPDATE. The LLM is either run in locally with `generate_local.py` or an 
+API with `main_api_local.py` (both backend).
 
 ## Step 1: Vector store
 > [!NOTE]
