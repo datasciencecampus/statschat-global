@@ -38,7 +38,8 @@ API with `main_api_local.py` (both backend).
 > [!NOTE]
 > **Before setting up or updating the vector store ensure the [virtual or conda environment has been created.](https://github.com/KNBS-StatsChat/statschat-ke/blob/readme_docs_update/docs/api/setup_guide.md)**
 
-Before running `pdf_runner.py` ensure that the PDF_FILES_MODE (in `main.toml`) is set to the desired option.
+Before running `pdf_runner.py` in an integrated development environment (IDE) ensure that the PDF_FILES_MODE (in `main.toml`) 
+is set to the desired option. It can also be run in the command line as below.
 
     ```shell
     python statschat/pdf_runner.py
