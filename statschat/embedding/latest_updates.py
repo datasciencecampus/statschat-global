@@ -4,7 +4,7 @@ from rapidfuzz import fuzz
 
 
 def find_latest(dir) -> list[str]:
-    """Find all 'latest' articles in document store
+    """Find all 'latest' publications in document store
     Args:
         dir(str): main bulletins directory
     Returns:
@@ -22,16 +22,16 @@ def find_latest(dir) -> list[str]:
 
 
 def compare_latest(dir, latest_filepaths) -> (list[str], list[str]):
-    """Compare inbound articles with those currently
+    """Compare inbound publications with those currently
     flagged as latest
     Args:
         dir(str): main bulletins directory
         latest_filepaths(list): list of paths to docs
         currently flagged as 'latest=True'
     Returns:
-        new_latest(list): names of inbound articles which
+        new_latest(list): names of inbound publications which
             are more recent than others in the series
-        former_latest(list): names of current articles
+        former_latest(list): names of current publications
             no longer the most recent in their series
     """
     new_latest = []
@@ -53,11 +53,11 @@ def compare_latest(dir, latest_filepaths) -> (list[str], list[str]):
 
 
 def unflag_former_latest(dir, former_latest) -> None:
-    """Updates latest flags to False for articles
+    """Updates latest flags to False for publications
     no longer the latest in their series
     Args:
         dir(str): main bulletins directory
-        former_latest(list): names of current articles
+        former_latest(list): names of current publications
             no longer the most recent in their series
     """
     for fl in former_latest:
@@ -73,11 +73,11 @@ def unflag_former_latest(dir, former_latest) -> None:
 
 
 def update_split_documents(split_dir, former_latest) -> None:
-    """Updates latest flags to False for SPLIT articles
+    """Updates latest flags to False for SPLIT publications
     no longer the latest in their series
     Args:
         dir(str): SPLIT bulletins directory
-        former_latest(list): names of current articles
+        former_latest(list): names of current publications
             no longer the most recent in their series
     """
     for fl in former_latest:

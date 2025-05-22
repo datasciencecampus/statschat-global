@@ -24,7 +24,6 @@ In essence the `page` variable in `pdf_downloader.py` determines the range of pa
 ```
 If `pdf_files_mode` = `UPDATE` then the `max_pages` variable will need to be changed along with the `page` variable
 if only wanting to have a finite number of PDFs. For example if wanting to `UPDATE` the vector store with KNBS PDFs
-from page 37 and 38 then `page = 37` and `max_pages = 38`.  
+from page 37 and 38 then `page = 37` and `max_pages = 38`.
 ```
 ![image](https://github.com/user-attachments/assets/b6179157-bf89-4be9-a6be-58356cb4f6b2)
-
