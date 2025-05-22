@@ -92,20 +92,19 @@ class PrepareVectorStore(DirectoryLoader, JSONLoader):
         Splits scraped json to multiple json,
         one for each article section
         """
-
         print("Splitting json conversions. Please wait...")
 
         # create storage folder for split articles
         isExist = os.path.exists(self.split_directory)
         if not isExist:
             os.makedirs(self.split_directory)
-        found_articles = glob.glob(f"{self.directory}/*.json")
-        self.logger.info(f"Found {len(found_articles)} articles for splitting")
-        print(f"Found {len(found_articles)} articles for splitting, please wait..")
+        found_publications = glob.glob(f"{self.directory}/*.json")
+        self.logger.info(f"Found {len(found_publications)} articles for splitting")
+        print(f"Found {len(found_publications)} articles for splitting, please wait..")
 
         # extract metadata from each article section
         # and store as separate JSON
-        for filename in found_articles:
+        for filename in found_publications:
             try:
                 with open(filename) as file:
                     json_file = json.load(file)

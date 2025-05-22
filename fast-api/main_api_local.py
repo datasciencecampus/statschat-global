@@ -4,13 +4,24 @@ from typing import Union, Optional
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import RedirectResponse
 import logging
+import torch
 from datetime import datetime
 from markupsafe import escape
+from transformers import AutoModelForCausalLM, AutoTokenizer
 
 from statschat import load_config
 from statschat.generative.llm import Inquirer
 from statschat.embedding.latest_flag_helpers import get_latest_flag
-
+from statschat.generative.generate_local import (
+    similarity_search,
+    generate_response,
+    format_response,
+)
+from statschat.generative.prompts_local import (
+    _extractive_prompt,
+    _core_prompt,
+    _format_instructions,
+)
 
 # Config file to load
 CONFIG = load_config(name="main")
@@ -27,8 +38,6 @@ logging.basicConfig(
     filemode="a",
 )
 
-# initiate Statschat AI and start the app
-inquirer = Inquirer(**CONFIG["db"], **CONFIG["search"], logger=logger)
 
 app = FastAPI(
     title="KNBS StatsChat API",
@@ -92,21 +101,60 @@ async def search(
     if content_type not in ["latest", "all"]:
         logger.warning('Unknown content type. Fallback to "latest".')
         content_type = "latest"
-    latest_weight = get_latest_flag({"q": question}, CONFIG["app"]["latest_max"])
+    
+    # Choose your model (e.g., Mistral-7B, DeepSeek, Llama-3, etc.)
+    MODEL_ID = "mistralai/Mistral-7B-Instruct-v0.3"  # Change this if needed
+    # Load model and tokenizer
+    print("Building the tokenizer...")
+    tokenizer = AutoTokenizer.from_pretrained(MODEL_ID)
 
-    docs, answer, response = inquirer.make_query(
-        question,
-        latest_filter=content_type == "latest",
-        latest_weight=latest_weight,
+    print("Loading the model...")
+    model = AutoModelForCausalLM.from_pretrained(
+        MODEL_ID,
+        torch_dtype=torch.float16,  # Use float16 for efficiency if using a GPU
+        device_map="auto",  # Automatically selects GPU if available
     )
-    results = {
-        "question": question,
-        "content_type": content_type,
-        "answer": answer,
-        "references": docs,
+    
+    # Get the most relevant text chunks
+    relevant_texts = similarity_search(question, latest_filter=True)
+    
+    specific_prompt = _extractive_prompt.format(
+        QuestionPlaceholder = question, 
+        ContextPlaceholder1 = relevant_texts[0]["page_content"], 
+        ContextPlaceholder2 = relevant_texts[1]["page_content"],
+    )
+    user_input = _core_prompt + specific_prompt + _format_instructions
+
+    raw_response = generate_response(user_input, model, tokenizer)
+    formatted_response = format_response(raw_response)
+    
+    # If no suitable answer
+    if formatted_response.get("most_likely_answer") is None:
+        
+        results = {
+            "question": question,
+            "content_type": content_type,
+            "answer": "No suitable answer found. However relevant information may be found in a PDF. Please check the link(s) provided.",
+            "references": relevant_texts[0]["page_url"],
+            "context_from":formatted_response["where_context_from"],
+            "context_reference":formatted_response["context_reference"],
+            "relevant_publication_one": relevant_texts[0]["title"],
+            "relevant_publication_two": relevant_texts[1]["title"],
     }
-    if debug:
-        results["debug_response"] = response.__dict__
+        
+    else:
+        
+        results = {
+            "question": question,
+            "content_type": content_type,
+            "answer": formatted_response["most_likely_answer"],
+            "references": relevant_texts[0]["page_url"],
+            "context_from":formatted_response["where_context_from"],
+            "context_reference":formatted_response["context_reference"],
+            "relevant_publication_one": relevant_texts[0]["title"],
+            "relevant_publication_two": relevant_texts[1]["title"],
+    }
+    
     logger.info(f"Sending following response: {results}")
     return results
 

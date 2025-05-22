@@ -131,4 +131,3 @@ This script will webscrape PDF documents from the KNBS website, convert them to 
 > [!NOTE]
 > YOU WILL ONLY NEED TO DO THE VECTORE STORE SETUP ONCE
 > AFTERWARDS IT WILL ONLY NEED TO BE UPDATED
-
