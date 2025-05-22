@@ -7,7 +7,7 @@ from rapidfuzz import fuzz
 from typing import Optional
 
 from statschat import load_config
-from statschat.generative.llm import Inquirer
+from statschat.generative.cloud_llm import Inquirer
 
 
 def get_test_responses(questions: list, make_query) -> list:

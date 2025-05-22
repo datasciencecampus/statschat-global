@@ -9,7 +9,7 @@ from langchain.docstore.document import Document
 from langchain.chains.qa_with_sources import load_qa_with_sources_chain
 from langchain.output_parsers import PydanticOutputParser
 from statschat.generative.response_model import LlmResponse
-from statschat.generative.prompts import (
+from statschat.generative.prompts_cloud import (
     EXTRACTIVE_PROMPT_PYDANTIC,
     STUFF_DOCUMENT_PROMPT,
 )

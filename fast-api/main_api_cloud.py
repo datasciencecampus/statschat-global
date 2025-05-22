@@ -8,7 +8,7 @@ from datetime import datetime
 from markupsafe import escape
 
 from statschat import load_config
-from statschat.generative.llm import Inquirer
+from statschat.generative.cloud_llm import Inquirer
 from statschat.embedding.latest_flag_helpers import get_latest_flag
 
 

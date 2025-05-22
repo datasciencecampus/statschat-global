@@ -10,9 +10,7 @@ from markupsafe import escape
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
 from statschat import load_config
-from statschat.generative.llm import Inquirer
-from statschat.embedding.latest_flag_helpers import get_latest_flag
-from statschat.generative.generate_local import (
+from statschat.generative.local_llm import (
     similarity_search,
     generate_response,
     format_response,

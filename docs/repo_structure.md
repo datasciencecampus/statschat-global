@@ -45,9 +45,9 @@ Successful running of the scripts assumes a certain structure in how where data 
  ┃ ┃ ┣📜preprocess_update_db.py
  ┃ ┃ ┗📜preprocess.py
  ┃ ┣ 📂generative
- ┃ ┃ ┣📜generate_local.py
- ┃ ┃ ┣📜llm.py
- ┃ ┃ ┣📜prompts.py
+ ┃ ┃ ┣📜cloud_llm.py
+ ┃ ┃ ┣📜local_llm.py
+ ┃ ┃ ┣📜prompts_cloud.py
  ┃ ┃ ┣📜prompts_local.py
  ┃ ┃ ┣📜response_model.py
  ┃ ┃ ┗📜utils.py

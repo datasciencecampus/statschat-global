@@ -31,7 +31,7 @@ using only the information contained within the documents.
 
 For this prototype, relevant web pages with PDF's are scraped and the data stored in `data/pdf_downloads`,
 the docstore / embedding store that is created is likewise and stored in `data/db_langchain` after SETUP and then
-also in `data/db_langchain_latest` after UPDATE. The LLM is either run in locally with `generate_local.py` or an 
+also in `data/db_langchain_latest` after UPDATE. The LLM is either run locally with `local_llm.py` or an 
 API with `main_api_local.py` (both backend).
 
 ## Step 1: Vector store
@@ -56,8 +56,9 @@ This script will webscrape PDF documents from the KNBS website, convert them to 
 #### Run the sample questions manually (backend)
 
 This assumes the [vector store](https://github.com/KNBS-StatsChat/statschat-ke/blob/readme_docs_update/docs/api/setup_guide.md) has already been created otherwise this will need to be done before.
-Make sure that you're terminal is running from **`statschat-ke`**. Then use the **`llm.py`** 
-script and change the **question** parameter with the desired question:
+Make sure that you're terminal is running from **`statschat-ke`**. Then use the **`cloud_llm.py`** 
+(requires huggingface api token) or **`local_llm.py`** script and change the **question** parameter 
+with the desired question:
 
 ![image](https://github.com/user-attachments/assets/83e2e4e8-1ecf-43e1-bcdc-e8f39e5d5e12)
 
