@@ -53,7 +53,7 @@ if __name__ == "__main__":
 
     # Load configuration
     config = load_config(name="main")
-    pdf_mode = config["runner"]["pdf_files_mode"].upper()
+    pdf_mode = config["preprocess"]["mode"].upper()
 
     # Define base directory for the script
     BASE_DIR = Path().cwd()
@@ -61,21 +61,19 @@ if __name__ == "__main__":
     EMBEDDING_DIR = BASE_DIR / "statschat" / "embedding"
 
     print(f"Pipeline mode: {pdf_mode}\n")
+    print(f"Executing full {pdf_mode} pipeline...\n")
 
     # Step 1: Download PDFs
     run_script(PDF_PROC_DIR / "pdf_downloader.py")
-
+    # Step 2: Convert PDFs to JSON
+    run_script(PDF_PROC_DIR / "pdf_to_json.py")
+    # Step 3: Preprocess JSONs and populate vector store
+    run_script(EMBEDDING_DIR / "preprocess.py")
     # Step 2: Execute pipeline based on mode
-    if pdf_mode == "SETUP":
-        print("Executing full setup pipeline...")
-        run_script(PDF_PROC_DIR / "pdf_to_json.py")
-        run_script(EMBEDDING_DIR / "preprocess.py")
-
-    elif pdf_mode == "UPDATE":
-        print("Executing update pipeline...")
-        run_script(PDF_PROC_DIR / "pdf_database_update.py")
-        run_script(EMBEDDING_DIR / "preprocess_update_db.py")
+    if pdf_mode == "UPDATE":
         run_script(PDF_PROC_DIR / "merge_database_files.py")
+    elif pdf_mode == "SETUP":
+        pass
 
     else:
         raise ValueError(f"Invalid pdf_files_mode in configuration: '{pdf_mode}'")

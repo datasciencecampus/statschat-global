@@ -16,7 +16,6 @@ LATEST_DATA_DIR = Path.cwd().joinpath("data/latest_pdf_downloads")
 
 # %%
 # Moves latest json conversions files 'json_conversions' folder
-
 for json_file in LATEST_JSON_DIR.glob("*.json"):
     source_file = json_file
 
@@ -49,7 +48,7 @@ for pdf_file in LATEST_DATA_DIR.glob("*.pdf"):
     source_file.rename(destination_file)
 
     print(f"{pdf_file.name} has been moved to {DATA_DIR}")
-
+    
 # %%
 # Update url_dict.json with new pdf files - removing the latest url_dict
 # Load original and latest URL dictionaries
