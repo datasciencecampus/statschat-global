@@ -32,13 +32,13 @@ pre-download to avoid any duplicate entries.
 ```
 When `pdf_files_mode` is set to "SETUP" the default behaviour is to scrape ALL pdf files, from the most recent page to the
 last. There is no need to change the max_pages as the script will automatically exist and continue with the pdf preprocessing
-once it runs out of valid pages to scrape. 
+once it runs out of valid pages to scrape.
 ```
 ![image](https://github.com/user-attachments/assets/bfe4bce4-2d38-4bab-b1ab-ccd6987c607b)
 
 ```
 If `pdf_files_mode` = `UPDATE` then the `max_pages` variable will need to be changed along with the `page` variable
 if only wanting to have a finite number of PDFs. For example if wanting to `UPDATE` the vector store with KNBS PDFs
-from page 37 and 38 then `page = 37` and `max_pages = 38`.  
+from page 37 and 38 then `page = 37` and `max_pages = 38`.
 ```
 ![image](https://github.com/user-attachments/assets/b6179157-bf89-4be9-a6be-58356cb4f6b2)

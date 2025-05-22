@@ -2,7 +2,7 @@
 
 ### For Server - run on a...basis (automatically done on KNBS server)
 
-Before running **`pdf_runner.py`** ensure that the PDF_FILES_MODE (in **`main.toml`**) is set to the desired option **"UPDATE"**. 
+Before running **`pdf_runner.py`** ensure that the PDF_FILES_MODE (in **`main.toml`**) is set to the desired option **"UPDATE"**.
 You can either run the python file in the IDE or use in the terminal as below.
 
     ```shell
@@ -11,7 +11,7 @@ You can either run the python file in the IDE or use in the terminal as below.
 
 This script will webscrape PDF documents from the KNBS website, convert them to JSON files and either append or replace the vector store - based on the PDF_FILES_MODE parameter.
 
-PDF_FILES_MODE = "UPDATE" -> Will only scrape the latest 5 pages of PDF files, compare existing PDF files in the vector store with 
+PDF_FILES_MODE = "UPDATE" -> Will only scrape the latest 5 pages of PDF files, compare existing PDF files in the vector store with
 those downloaded and only process new files - appending these to the database and "flushing" the latest data folders ready for a new run.
 
 ### For Development
@@ -31,7 +31,7 @@ For development/testing purposes this update can also be done by running these 3
 
 ```
 3) Run script 'merge_database_files.py' to move
-   new PDF, json conversions and splits to relevant folders after database update. 
+   new PDF, json conversions and splits to relevant folders after database update.
 ```
 
 - **Moves new PDF files to the from `latest_pdf_downloads` to `pdf_downloads` folder and then removes all files in the `latest_pdf_downloads`**
