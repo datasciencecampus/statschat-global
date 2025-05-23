@@ -45,6 +45,9 @@ is set to the desired option. It can also be run in the command line as below.
     python3 statschat/pdf_runner.py
     ```
 
+> [!NOTE]
+> If the above doesn't work then use `python statschat/pdf_runner.py`
+
 This script will webscrape PDF documents from the KNBS website, convert them to JSON files and either append or replace the vector store - based on the `PDF_FILES_MODE` parameter.
 
 `PDF_FILES_MODE = "SETUP"` -> Will scrape all pdf files from the KNBS website and reset the vector store, creating a new one from the PDF documents that are scraped and processed into JSON files. This will only need to be done `once` as afterwards it will just need updating. 
