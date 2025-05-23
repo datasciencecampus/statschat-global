@@ -42,7 +42,7 @@ Before running `pdf_runner.py` in an integrated development environment (IDE) en
 is set to the desired option. It can also be run in the command line as below.
 
     ```shell
-    python statschat/pdf_runner.py
+    python3 statschat/pdf_runner.py
     ```
 
 This script will webscrape PDF documents from the KNBS website, convert them to JSON files and either append or replace the vector store - based on the `PDF_FILES_MODE` parameter.
