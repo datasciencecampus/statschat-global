@@ -21,7 +21,7 @@ Each step is modular and run as an independent subprocess.
 
 import subprocess
 import sys
-from statschat import load_config
+from statschat.config import load_config
 from pathlib import Path
 
 
