@@ -1,6 +1,6 @@
 ### Search & response parameters
 
-There are some key parameters in `statschat/_config/main.toml` that we're
+There are some key parameters in `statschat/config/main.toml` that we're
 experimenting with to improve the search results, and the generated text
 answer.  The current values are initial guesses:
 

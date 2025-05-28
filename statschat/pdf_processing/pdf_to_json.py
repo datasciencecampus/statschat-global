@@ -269,7 +269,7 @@ def extract_pdf_text(pdf_file_path: Path, pdf_url: str) -> list:
     return pages_text
 
 
-def get_abstract_metadata(url: str) -> dict:
+def get_abstract_metadata(url: str) -> dict:  # noqa: C901
     """
     Extracts metadata from KNBS website for PDFs.
 
@@ -573,7 +573,7 @@ def process_pdfs(mode: str, config: dict):
 
 if __name__ == "__main__":
     # Load configuration
-    config_path = Path(__file__).resolve().parent.parent / "_config" / "main.toml"
+    config_path = Path(__file__).resolve().parent.parent / "config" / "main.toml"
     config = load_config(config_path)
 
     # Get mode from configuration

@@ -300,7 +300,7 @@ if __name__ == "__main__":
     )
     log = logging.getLogger(__name__)
     # load config file
-    config_path = Path(__file__).resolve().parent.parent / "_config" / "main.toml"
+    config_path = Path(__file__).resolve().parent.parent / "config" / "main.toml"
     config = toml.load(config_path)
 
     prepper = PrepareVectorStore(**config["db"], **config["preprocess"], logger=log)

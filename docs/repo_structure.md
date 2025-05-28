@@ -36,7 +36,7 @@ Successful running of the scripts assumes a certain structure in how where data 
  ```
 📦statschat-ke
  ┣ 📂statschat
- ┃ ┣ 📂_config
+ ┃ ┣ 📂config
  ┃ ┃ ┣📜main.toml
  ┃ ┃ ┗📜questions.toml
  ┃ ┣ 📂embedding
