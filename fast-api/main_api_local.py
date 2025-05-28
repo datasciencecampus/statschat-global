@@ -49,7 +49,7 @@ app = FastAPI(
     ),
     summary="""Experimental search of Kenya National Bureau of Statistics publications.
         Using retrieval augmented generation (RAG).""",
-    version="0.1.0",
+    version="0.1.1",
     contact={
         "name": "Kenya National Bureau of Statistics",
         "email": "test@knbs.com",
@@ -99,7 +99,7 @@ async def search(
     if content_type not in ["latest", "all"]:
         logger.warning('Unknown content type. Fallback to "latest".')
         content_type = "latest"
-    
+
     # Choose your model (e.g., Mistral-7B, DeepSeek, Llama-3, etc.)
     MODEL_ID = "mistralai/Mistral-7B-Instruct-v0.3"  # Change this if needed
     # Load model and tokenizer
@@ -112,47 +112,45 @@ async def search(
         torch_dtype=torch.float16,  # Use float16 for efficiency if using a GPU
         device_map="auto",  # Automatically selects GPU if available
     )
-    
+
     # Get the most relevant text chunks
     relevant_texts = similarity_search(question, latest_filter=True)
-    
+
     specific_prompt = _extractive_prompt.format(
-        QuestionPlaceholder = question, 
-        ContextPlaceholder1 = relevant_texts[0]["page_content"], 
-        ContextPlaceholder2 = relevant_texts[1]["page_content"],
+        QuestionPlaceholder=question,
+        ContextPlaceholder1=relevant_texts[0]["page_content"],
+        ContextPlaceholder2=relevant_texts[1]["page_content"],
     )
     user_input = _core_prompt + specific_prompt + _format_instructions
 
     raw_response = generate_response(user_input, model, tokenizer)
     formatted_response = format_response(raw_response)
-    
+
     # If no suitable answer
     if formatted_response.get("most_likely_answer") is None:
-        
         results = {
             "question": question,
             "content_type": content_type,
-            "answer": "No suitable answer found. However relevant information may be found in a PDF. Please check the link(s) provided.",
+            "answer": "No suitable answer, but relevant information may in a PDF.",
             "references": relevant_texts[0]["page_url"],
-            "context_from":formatted_response["where_context_from"],
-            "context_reference":formatted_response["context_reference"],
+            "context_from": formatted_response["where_context_from"],
+            "context_reference": formatted_response["context_reference"],
             "relevant_publication_one": relevant_texts[0]["title"],
             "relevant_publication_two": relevant_texts[1]["title"],
-    }
-        
+        }
+
     else:
-        
         results = {
             "question": question,
             "content_type": content_type,
             "answer": formatted_response["most_likely_answer"],
             "references": relevant_texts[0]["page_url"],
-            "context_from":formatted_response["where_context_from"],
-            "context_reference":formatted_response["context_reference"],
+            "context_from": formatted_response["where_context_from"],
+            "context_reference": formatted_response["context_reference"],
             "relevant_publication_one": relevant_texts[0]["title"],
             "relevant_publication_two": relevant_texts[1]["title"],
-    }
-    
+        }
+
     logger.info(f"Sending following response: {results}")
     return results
 

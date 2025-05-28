@@ -42,7 +42,7 @@ app = FastAPI(
     ),
     summary="""Experimental search of Kenya National Bureau of Statistics publications.
         Using retrieval augmented generation (RAG).""",
-    version="0.1.0",
+    version="0.1.1",
     contact={
         "name": "Kenya National Bureau of Statistics",
         "email": "test@knbs.com",
