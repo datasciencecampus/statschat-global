@@ -8,7 +8,7 @@ from datetime import datetime
 from markupsafe import escape
 
 from statschat import load_config
-from statschat.generative.llm import Inquirer
+from statschat.generative.cloud_llm import Inquirer
 from statschat.embedding.latest_flag_helpers import get_latest_flag
 
 
@@ -42,7 +42,7 @@ app = FastAPI(
     ),
     summary="""Experimental search of Statistics publications.
         Using retrieval augmented generation (RAG).""",
-    version="0.1.0",
+    version="0.1.1",
     contact={
         "name": "",
         "email": "Your organisation email",

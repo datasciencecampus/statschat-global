@@ -31,23 +31,22 @@ using only the information contained within the documents.
 
 For this prototype, relevant web pages with PDF's are scraped and the data stored in `data/pdf_downloads`,
 the docstore / embedding store that is created is likewise and stored in `data/db_langchain` after SETUP and then
-also in `data/db_langchain_latest` after UPDATE. The LLM is either run in locally with `generate_local.py`, in an 
+also in `data/db_langchain_latest` after UPDATE. The LLM is either run in locally with `generate_local.py`, in an
 API with `main_api_local.py` (both backend) or with a flask app (frontend).
 
 ## Step 1: Vector store
 > [!NOTE]
 > **Before setting up or updating the vector store ensure the [virtual or conda environment has been created.]("link for when on DSC github")**
 
-Before running pdf_runner.py in an integrated development environment (IDE) ensure that the PDF_FILES_MODE (in main.toml) 
-is set to the desired option. It can also be run in the command line as below.
+Before running `pdf_runner.py` in an integrated development environment (IDE) ensure that the PDF_FILES_MODE (in `main.toml`) is set to the desired option. It can also be run in the command line as below.
 
     ```shell
-    python statschat/pdf_runner.py
+    python3 statschat/pdf_runner.py
     ```
 
-This script will webscrape PDF documents from the a website, convert them to JSON files and either append or replace the vector store - based on the `PDF_FILES_MODE` parameter.
+This script will webscrape PDF documents from the website, convert them to JSON files and either append or replace the vector store - based on the `PDF_FILES_MODE` parameter.
 
-`PDF_FILES_MODE = "SETUP"` -> Will scrape all pdf files from a website and reset the vector store, creating a new one from the PDF documents that are scraped and processed into JSON files. This will only need to be done `once` as afterwards it will just need updating. 
+`PDF_FILES_MODE = "SETUP"` -> Will scrape all pdf files from a website and reset the vector store, creating a new one from the PDF documents that are scraped and processed into JSON files. This will only need to be done `once` as afterwards it will just need updating.
 
 `PDF_FILES_MODE = "UPDATE"` -> Will only scrape the latest 5 pages of PDF files from the website, compare existing PDF files in the vector store with those downloaded and only process new files - appending these to the database and "flushing" the latest data folders ready for a new run. This will need to be done as new PDFs are added to the website.
 
@@ -56,7 +55,7 @@ This script will webscrape PDF documents from the a website, convert them to JSO
 #### Run the sample questions manually (backend)
 
 This assumes the [vector store]("update link") has already been created otherwise this will need to be done before.
-Make sure that you're terminal is running from **`statschat-ke`**. Then use the **`llm.py`** 
+Make sure that you're terminal is running from **`statschat-ke`**. Then use the **`llm.py`**
 script and change the **question** parameter with the desired question:
 
 ![image](https://github.com/user-attachments/assets/83e2e4e8-1ecf-43e1-bcdc-e8f39e5d5e12)
@@ -74,7 +73,7 @@ In order to run the interactive Statschat API you will need to make sure you hav
 
 **`fastapi`**: This is a Python library to generate the API functionality
 
-To get these in your machine simply run: 
+To get these in your machine simply run:
 
 ```
 pip install fastapi uvicorn
@@ -84,7 +83,7 @@ Then you will need to make sure your terminal is on the **`statschat-ke`** folde
 From there, you can generate the synthetic "server" locally from your terminal:
 
 ```shell
-uvicorn fast-api.main_api:app --reload
+uvicorn fast-api.main_api_local:app --reload
 ```
 
 The fastapi is set to respond to http requests on a particular port.

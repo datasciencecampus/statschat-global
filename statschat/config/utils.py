@@ -32,7 +32,7 @@ def _load_default(name: str) -> dict:
             "Name is invalid. Must be one of `main`, `questions`, or `webscraping`."
         )
 
-    configs = resources.files("statschat._config")
+    configs = resources.files("statschat.config")
     with resources.as_file(configs.joinpath(f"{name}.toml")) as c:
         config = toml.load(c)
 

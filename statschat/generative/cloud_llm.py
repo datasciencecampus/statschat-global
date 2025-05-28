@@ -8,7 +8,7 @@ from langchain.docstore.document import Document
 from langchain.chains.qa_with_sources import load_qa_with_sources_chain
 from langchain.output_parsers import PydanticOutputParser
 from statschat.generative.response_model import LlmResponse
-from statschat.generative.prompts import (
+from statschat.generative.prompts_cloud import (
     EXTRACTIVE_PROMPT_PYDANTIC,
     STUFF_DOCUMENT_PROMPT,
 )
@@ -27,7 +27,8 @@ class Inquirer:
         self,
         generative_model_name: str = "mistralai/Mistral-7B-Instruct-v0.3",
         faiss_db_root: str = "data/db_langchain",
-        faiss_db_root_latest: str = None,
+        # change faiss_db_root_latest to "data/db_langchain_latest" after "UPDATE"
+        faiss_db_root_latest: str = "data/db_langchain",
         embedding_model_name: str = "sentence-transformers/all-MiniLM-L6-v2",
         k_docs: int = 10,
         k_contexts: int = 3,
@@ -282,27 +283,29 @@ class Inquirer:
                 + validated_response.most_likely_answer
                 + "</div> </h4>"
             )
-        
-        if docs[0]['score'] > self.answer_threshold:
-            answer_str = "No suitable answer found however relevant information may be found in a PDF. Please check the link(s) provided"
-            
+
+        if docs[0]["score"] > self.answer_threshold:
+            answer_str = (
+                "No suitable answer found."
+                + "However relevant information may be found in a PDF."
+                + "Please check the link(s) provided."
+            )
+
         else:
             answer_str = answer_str
-               
-        if docs[0]['score'] > self.document_threshold:
-            
+
+        if docs[0]["score"] > self.document_threshold:
             document_string = "No suitable PDFs found. Please refer to context"
-            
+
             context_string = "No context available. Please refer to response"
-            
+
             docs.clear()
-            
+
             docs.extend([document_string, context_string])
-            
+
         else:
             docs = docs
-        
-                 
+
         return docs, answer_str, validated_response
 
 
@@ -324,14 +327,14 @@ if __name__ == "__main__":
         question,
         latest_filter="off",
     )
-    
+
     test_thresholds = "NO"
-    
+
     print("-------------------- ANSWER --------------------")
-    
+
     if test_thresholds == "YES":
         print(answer)
-        
+
     elif test_thresholds == "NO":
         print(answer)
         page_url = docs[0]["page_url"]
@@ -345,7 +348,7 @@ if __name__ == "__main__":
     print("-------------------- DOCUMENT -------------------")
     if test_thresholds == "YES":
         print(docs[0])
-        
+
     elif test_thresholds == "NO":
         print(f"The document title is {document_title}.")
         print(f"The file name is {document_name}.")
@@ -354,9 +357,9 @@ if __name__ == "__main__":
     print("------------------ CONTEXT INFO ------------------")
     if test_thresholds == "YES":
         print(docs[1])
-        
+
     elif test_thresholds == "NO":
         print(docs)
-    
+
     print("------------------ FULL RESPONSE -----------------")
     print(response)

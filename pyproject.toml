@@ -62,4 +62,4 @@ include = ["statschat"]
 namespaces = false
 
 [tool.setuptools.package-data]
-statschat = ["_config/*.toml"]
+statschat = ["config/*.toml"]
