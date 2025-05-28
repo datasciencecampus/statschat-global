@@ -48,7 +48,7 @@ for pdf_file in LATEST_DATA_DIR.glob("*.pdf"):
     source_file.rename(destination_file)
 
     print(f"{pdf_file.name} has been moved to {DATA_DIR}")
-    
+
 # %%
 # Update url_dict.json with new pdf files - removing the latest url_dict
 # Load original and latest URL dictionaries
