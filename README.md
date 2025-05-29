@@ -98,7 +98,8 @@ You will see this in your terminal line, something like:
  Uvicorn running on http://127.0.0.1:8000
  ```
 
-**Your port might be slightly different to 127.0.0.1:8000**
+> [!NOTE]
+> **Your port might be slightly different to 127.0.0.1:8000**
 
 After a few seconds you should be able to go to your browser and ask questions.
 On the search bar type something like:
