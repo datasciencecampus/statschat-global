@@ -51,7 +51,7 @@ elif PDF_FILES == "UPDATE":
 
 page = 38  # Higher the number the older the publications
 # Set max pages for UPDATE mode
-max_pages = 37 if PDF_FILES == "SETUP" else 5  # Limit to 5 for updates
+max_pages = 100 if PDF_FILES == "SETUP" else 37  # Limit to 5 for updates
 
 # %% Scrape intermediate report pages and extract PDF links
 all_pdf_entries = {}  # {"pdf_url": "report_page", ...}
