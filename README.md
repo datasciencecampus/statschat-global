@@ -63,7 +63,7 @@ Make sure that you're terminal is running from **`statschat-ke`**. Then use the 
 (requires huggingface api token) or **`local_llm.py`** script and change the **question** parameter 
 with the desired question:
 
-![image](https://github.com/user-attachments/assets/83e2e4e8-1ecf-43e1-bcdc-e8f39e5d5e12)
+![image](https://github.com/user-attachments/assets/36ec03e4-2d6a-4814-9220-8cc478196e52)
 
 The answer, context and response will be output in the terminal.
 
