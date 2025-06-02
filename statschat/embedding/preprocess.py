@@ -34,11 +34,16 @@ class PrepareVectorStore(DirectoryLoader, JSONLoader):
         db=None,  # vector store
         logger: logging.Logger = None,
         latest_only: bool = False,
-        mode: str = "SETUP",
+        download_mode: str = "SETUP",
+        download_site: str = "",
     ):
-        self.directory = data_dir + ("latest_" if mode == "UPDATE" else "") + directory
+        self.directory = (
+            data_dir + ("latest_" if download_mode == "UPDATE" else "") + directory
+        )
         self.split_directory = (
-            data_dir + ("latest_" if mode == "UPDATE" else "") + split_directory
+            data_dir
+            + ("latest_" if download_mode == "UPDATE" else "")
+            + split_directory
         )
         self.download_dir = data_dir + download_dir
         self.split_length = split_length
@@ -46,13 +51,14 @@ class PrepareVectorStore(DirectoryLoader, JSONLoader):
         self.embedding_model_name = embedding_model_name
         self.redundant_similarity_threshold = redundant_similarity_threshold
         self.faiss_db_root = (
-            data_dir + faiss_db_root + ("_latest" if mode == "UPDATE" else "")
+            data_dir + faiss_db_root + ("_latest" if download_mode == "UPDATE" else "")
         )
         # Remove '_latest' from faiss_db_root if present
         self.original_faiss_db_root = (data_dir + faiss_db_root).replace("_latest", "")
         self.db = db
         self.latest_only = latest_only
-        self.mode = mode
+        self.download_mode = download_mode
+        self.download_site = download_site
 
         # Initialise logger
         if logger is None:
@@ -77,7 +83,7 @@ class PrepareVectorStore(DirectoryLoader, JSONLoader):
         # self._drop_redundant_documents()
         self.logger.info("Vectorise docs and commit to physical vector store")
         self._embed_documents()
-        if mode == "UPDATE":
+        if download_mode == "UPDATE":
             self.logger.info("Merging vector store with existing data")
             self._merge_faiss_db()
 
