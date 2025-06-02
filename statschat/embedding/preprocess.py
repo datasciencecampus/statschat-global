@@ -25,7 +25,7 @@ class PrepareVectorStore(DirectoryLoader, JSONLoader):
         data_dir: Path = "data/",
         directory: Path = "json_conversions",
         split_directory: Path = "json_split",
-        download_dir: Path = "pdf_downloads",
+        download_dir: Path = "pdf_store",
         split_length: int = 1000,
         split_overlap: int = 200,
         embedding_model_name: str = "sentence-transformers/all-mpnet-base-v2",

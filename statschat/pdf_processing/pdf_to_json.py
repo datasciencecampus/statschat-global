@@ -17,8 +17,8 @@ from datetime import datetime
 # Update for latest PDFs or setup when using for first time
 
 # Set relative paths
-DATA_DIR = Path.cwd().joinpath("data/pdf_downloads")
-LATEST_DATA_DIR = Path.cwd().joinpath("data/latest_pdf_downloads")
+DATA_DIR = Path.cwd().joinpath("data/pdf_store")
+LATEST_DATA_DIR = Path.cwd().joinpath("data/latest_pdf_store")
 JSON_DIR = Path.cwd().joinpath("data/json_conversions")
 LATEST_JSON_DIR = Path.cwd().joinpath("data/latest_json_conversions")
 
@@ -510,7 +510,7 @@ def process_pdfs(mode: str, config: dict):
         None
     """
     # Load directories from config
-    DATA_DIR = Path.cwd().joinpath("data/pdf_downloads")
+    DATA_DIR = Path.cwd().joinpath("data/pdf_store")
     JSON_DIR = Path.cwd().joinpath("data/json_conversions")
 
     if mode == "SETUP":

@@ -20,7 +20,7 @@ For development/testing purposes this update can also be done by running these 3
 1) Run script `pdf_downloader.py` and PDF_FILES_MODE (in main.toml) is set to the desired option "UPDATE".
 ```
 
-**Downloads newest PDF files into the `latest_pdf_downloads` folder. Informs how many new PDF files there are then converts them to json files in the `latest_json_conversions` folder**
+**Downloads newest PDF files into the `latest_pdf_store` folder. Informs how many new PDF files there are then converts them to json files in the `latest_json_conversions` folder**
 
 ```
 2) Run script 'preprocess.py'
@@ -32,7 +32,7 @@ For development/testing purposes this update can also be done by running these 3
 3) Run script 'merge_database_files.py' to move new PDF, json conversions and splits to relevant folders after database update.
 ```
 
-- **Moves new PDF files to the from `latest_pdf_downloads` to `pdf_downloads` folder and then removes all files in the `latest_pdf_downloads`**
+- **Moves new PDF files to the from `latest_pdf_store` to `pdf_store` folder and then removes all files in the `latest_pdf_store`**
 
 - **Moves new json conversions from `latest_json_conversions` to `json_conversions` folder and then removes all files in `latest_json_conversion`**
 

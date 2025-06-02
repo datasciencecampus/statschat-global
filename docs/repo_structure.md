@@ -25,10 +25,10 @@ Successful running of the scripts assumes a certain structure in how where data 
  ┃ ┣ 📂db_langchain_latest
  ┃ ┣ 📂json_conversions
  ┃ ┣ 📂json_split
- ┃ ┣ 📂latest_pdf_downloads
+ ┃ ┣ 📂latest_pdf_store
  ┃ ┣ 📂latest_json_conversions
  ┃ ┣ 📂latest_json_split
- ┗ ┗ 📂pdf_downloads
+ ┗ ┗ 📂pdf_store
 
 ```
 
