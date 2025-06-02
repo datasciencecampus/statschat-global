@@ -12,7 +12,7 @@ import re
 
 # Load configuration
 config = load_config(name="main")
-PDF_FILES = config["preprocess"]["mode"].upper()
+PDF_FILES = config["preprocess"]["download_mode"].upper()
 
 # Set directories
 BASE_DIR = Path.cwd().joinpath("data")

@@ -503,7 +503,7 @@ def process_pdfs(mode: str, config: dict):
     Process PDFs based on the mode (SETUP or UPDATE).
 
     Args:
-        mode (str): The mode of operation ('SETUP' or 'UPDATE').
+        mode (str): The download mode of operation ('SETUP' or 'UPDATE').
         config (dict): Configuration dictionary loaded from the config file.
 
     Returns:
@@ -577,7 +577,7 @@ if __name__ == "__main__":
     config = load_config(config_path)
 
     # Get mode from configuration
-    mode = config["preprocess"]["mode"].upper()
+    mode = config["preprocess"]["download_mode"].upper()
 
     # Process PDFs based on mode
     process_pdfs(mode, config)

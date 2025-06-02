@@ -44,18 +44,18 @@ Before running `pdf_runner.py` in an integrated development environment (IDE) en
     python3 statschat/pdf_runner.py
     ```
 
-This script will webscrape PDF documents from the website, convert them to JSON files and either append or replace the vector store - based on the `PDF_FILES_MODE` parameter.
+This script will webscrape PDF documents from the website, convert them to JSON files and either append or replace the vector store - based on the `download_mode` parameter.
 
-`PDF_FILES_MODE = "SETUP"` -> Will scrape all pdf files from a website and reset the vector store, creating a new one from the PDF documents that are scraped and processed into JSON files. This will only need to be done `once` as afterwards it will just need updating.
+`download_mode = "SETUP"` -> Will scrape all pdf files from a website and reset the vector store, creating a new one from the PDF documents that are scraped and processed into JSON files. This will only need to be done `once` as afterwards it will just need updating.
 
-`PDF_FILES_MODE = "UPDATE"` -> Will only scrape the latest 5 pages of PDF files from the website, compare existing PDF files in the vector store with those downloaded and only process new files - appending these to the database and "flushing" the latest data folders ready for a new run. This will need to be done as new PDFs are added to the website.
+`download_mode = "UPDATE"` -> Will only scrape the latest 5 pages of PDF files from the website, compare existing PDF files in the vector store with those downloaded and only process new files - appending these to the database and "flushing" the latest data folders ready for a new run. This will need to be done as new PDFs are added to the website.
 
 ## Step 2: Usage
 
 #### Run the sample questions manually (backend)
 
 This assumes the [vector store]("update link") has already been created otherwise this will need to be done before.
-Make sure that you're terminal is running from **`statschat-ke`**. Then use the **`llm.py`**
+Make sure that you're terminal is running from **`statschat`**. Then use the **`llm.py`**
 script and change the **question** parameter with the desired question:
 
 ![image](https://github.com/user-attachments/assets/83e2e4e8-1ecf-43e1-bcdc-e8f39e5d5e12)
