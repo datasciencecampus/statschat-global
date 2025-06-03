@@ -34,11 +34,11 @@ For development/testing purposes this update can also be done by running these 3
    new PDF, json conversions and splits to relevant folders after database update.
 ```
 
-- **Moves new PDF files to the from `latest_pdf_downloads` to `pdf_downloads` folder and then removes all files in the `latest_pdf_downloads`**
+- Moves new PDF files to the from **`latest_pdf_downloads`** to **`pdf_downloads`** folder and then removes all files in the **`latest_pdf_downloads`**
 
-- **Moves new json conversions from `latest_json_conversions` to `json_conversions` folder and then removes all files in `latest_json_conversion`**
+- Moves new json conversions from **`latest_json_conversions`** to **`json_conversions`** folder and then removes all files in **`latest_json_conversion`**
 
-- **Moves new json splits from `latest_json_splits` to `json_splits` folder and then removes all files in `latest_json_splits`**
+- Moves new json splits from **`latest_json_splits`** to **`json_splits`** folder and then removes all files in **`latest_json_splits`**
 
 ```
 Repeat process each time new KNBS PDF files are published to
