@@ -18,7 +18,7 @@ python -m pip install .
 > python -m pip install -e ".[dev]"
 > ```
 
-## Installation on Windows (WIP)
+## Installation on Windows
 
 The project requires specific versions of some packages so it is recommended to
 set up a virtual environment.
