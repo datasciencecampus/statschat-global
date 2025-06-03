@@ -7,7 +7,6 @@ Successful running of the scripts assumes a certain structure in how where data 
  ┣ 📂data
  ┣ 📂docs
  ┣ 📂fast-api
- ┣ 📂flask-app
  ┣ 📂log
  ┣ 📂notebooks
  ┣ 📂statschat
@@ -42,7 +41,6 @@ Successful running of the scripts assumes a certain structure in how where data 
  ┃ ┣ 📂embedding
  ┃ ┃ ┣📜latest_flag_helpers.py
  ┃ ┃ ┣📜latest_updates.py
- ┃ ┃ ┣📜preprocess_update_db.py
  ┃ ┃ ┗📜preprocess.py
  ┃ ┣ 📂generative
  ┃ ┃ ┣📜cloud_llm.py
