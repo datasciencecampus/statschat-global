@@ -31,8 +31,6 @@ uvicorn fast-api.main_api_local:app --host 0.0.0.0 --port 8000
 ```
 curl http://102.220.23.39:8000/search?q=what+was+inflation
 ```
-Sends a test HTTP GET request to the FastAPI /search endpoint.
-Tests if the deployed server is:
-
-Running and reachable
-Accepting and responding to queries (like a question about inflation)
+Sends a test HTTP GET request to the FastAPI /search endpoint. Tests if the deployed server is: 
+- running and reachable
+- accepting and responding to queries (like a question about inflation)
