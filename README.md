@@ -2,7 +2,6 @@
 
 [![Stability](https://img.shields.io/badge/stability-experimental-orange.svg)](https://github.com/mkenney/software-guides/blob/master/STABILITY-BADGES.md#experimental)
 [![Shared under the MIT License](https://img.shields.io/badge/license-MIT-green)](https://github.com/datasciencecampus/Statschat/blob/main/LICENSE)
-[![Mac-OS compatible](https://shields.io/badge/MacOS--9cf?logo=Apple&style=social)]()
 
 ## Code state
 
