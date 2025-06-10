@@ -1,11 +1,18 @@
 [db]
-faiss_db_root = "db_langchain"
-embedding_model_name = "sentence-transformers/all-MiniLM-L6-v2" #all-mpnet-base-v2" #all-MiniLM-L6-v2" #"sentence-transformers/all-mpnet-base-v2"  # "textembedding-gecko@001" "sentence-transformers/paraphrase-MiniLM-L3-v2"
+faiss_db_root = "data/db_langchain"
+embedding_model_name = "sentence-transformers/all-MiniLM-L6-v2"
+# Alternatives for the embedding model include:
+# - all-mpnet-base-v2
+# - all-MiniLM-L6-v2
+# - sentence-transformers/all-mpnet-base-v2
+# - textembedding-gecko@001
+# -sentence-transformers/paraphrase-MiniLM-L3-v2
 
 [preprocess]
-mode = "SETUP" # or "UPDATE"
+download_mode = "SETUP" # or "UPDATE"
+download_site = "" # Leave empty if PDFS are placed manually in the data/pdf_store folder.
 data_dir = "data/"
-download_dir = "pdf_downloads"
+download_dir = "pdf_store"
 directory = "json_conversions"
 split_directory = "json_split"
 split_length = 2000
@@ -13,7 +20,14 @@ split_overlap = 200
 latest_only = true
 
 [search]
-generative_model_name = "mistralai/Mistral-7B-Instruct-v0.3"  # "text-unicorn" "text-bison@001" "google/flan-t5-large" "lmsys/fastchat-t5-3b-v1.0" "google/flan-t5-large" "google/flan-ul2"
+generative_model_name = "mistralai/Mistral-7B-Instruct-v0.3"
+# Alternatives for the generative LLM include:
+# - text-unicorn
+# - text-bison@001
+# - google/flan-t5-large
+# - lmsys/fastchat-t5-3b-v1.0
+# - google/flan-t5-large
+# - google/flan-ul2
 k_docs = 2
 k_contexts = 5
 similarity_threshold = 2.0     # Threshold score below which a document is returned in a search

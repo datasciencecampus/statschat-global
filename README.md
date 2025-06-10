@@ -1,8 +1,7 @@
 # `StatsChat`
 
 [![Stability](https://img.shields.io/badge/stability-experimental-orange.svg)](https://github.com/mkenney/software-guides/blob/master/STABILITY-BADGES.md#experimental)
-[![Shared under the MIT License](https://img.shields.io/badge/license-MIT-green)](https://github.com/datasciencecampus/Statschat/blob/main/LICENSE)
-[![Mac-OS compatible](https://shields.io/badge/MacOS--9cf?logo=Apple&style=social)]()
+[![Shared under the MIT License](https://img.shields.io/badge/license-MIT-green)](https://github.com/datasciencecampus/statschat-global/blob/main/LICENSE)
 
 ## Code state
 
@@ -20,8 +19,8 @@
 ## Introduction
 
 This is an experimental application for semantic search of statistical publications.
-It uses LangChain to implement a fairly simple Retriaval Augmented Generation (RAG) using embedding search
-and QA information retrieval process.
+It uses LangChain and HuggingFace to implement a fairly simple
+Retriaval Augmented Generation (RAG) using embedding search and QA information retrieval process.
 
 Upon receiving a query, documents are returned as search results
 using embedding similarity to score relevance.
@@ -29,33 +28,46 @@ Next, the relevant text is passed to a Large Language Model (LLM),
 which is prompted to write an answer to the original question, if it can,
 using only the information contained within the documents.
 
-For this prototype, relevant web pages with PDF's are scraped and the data stored in `data/pdf_downloads`,
+For this prototype, relevant web pages with PDF's are scraped and the data stored in `data/pdf_store`,
 the docstore / embedding store that is created is likewise and stored in `data/db_langchain` after SETUP and then
 also in `data/db_langchain_latest` after UPDATE. The LLM is either run in locally with `generate_local.py`, in an
 API with `main_api_local.py` (both backend) or with a flask app (frontend).
 
-## Step 1: Vector store
 > [!NOTE]
-> **Before setting up or updating the vector store ensure the [virtual or conda environment has been created.]("link for when on DSC github")**
+> **Before setting up or updating the vector store ensure the [virtual or conda environment has been created.](docs/setup_guide.md)**
 
-Before running `pdf_runner.py` in an integrated development environment (IDE) ensure that the PDF_FILES_MODE (in `main.toml`) is set to the desired option. It can also be run in the command line as below.
+## Step 1: Vector store
+
+The vector store can be set up running `pdf_runner.py` in an integrated development environment (IDE).
+You can also run it from the command line as below:
 
     ```shell
     python3 statschat/pdf_runner.py
     ```
 
-This script will webscrape PDF documents from the website, convert them to JSON files and either append or replace the vector store - based on the `PDF_FILES_MODE` parameter.
+Before running `pdf_runner.py`  ensure that the key variables in `statschat/config/main.toml`
+are set to the desired options.
 
-`PDF_FILES_MODE = "SETUP"` -> Will scrape all pdf files from a website and reset the vector store, creating a new one from the PDF documents that are scraped and processed into JSON files. This will only need to be done `once` as afterwards it will just need updating.
+The `download_site` variable will determine what website is used as an endpoint to scrape
+PDF files from. If left empty, the system will look for PDFs placed in the `data/local_pdfs` folder.
 
-`PDF_FILES_MODE = "UPDATE"` -> Will only scrape the latest 5 pages of PDF files from the website, compare existing PDF files in the vector store with those downloaded and only process new files - appending these to the database and "flushing" the latest data folders ready for a new run. This will need to be done as new PDFs are added to the website.
+The `pdf_runner.py` script will webscrape PDF documents from the website, or take the ones locally stored.
+It will then convert them to JSON files and either append or replace the existing vector store.
+This will be based on the `download_mode` parameter.
+
+`download_mode = "SETUP"` -> Will scrape all pdf files and reset the vector store,
+creating a new one from the PDF documents that are scraped and processed into JSON files.
+This will only need to be done `once` as afterwards it will just need updating.
+
+`download_mode = "UPDATE"` -> Will only scrape the latest PDF files.
+If on website mode from the website, compare existing PDF files in the vector store with those downloaded and only process new files - appending these to the database and "flushing" the latest data folders ready for a new run. This will need to be done as new PDFs are added to the relevant websites website.
 
 ## Step 2: Usage
 
 #### Run the sample questions manually (backend)
 
 This assumes the [vector store]("update link") has already been created otherwise this will need to be done before.
-Make sure that you're terminal is running from **`statschat-ke`**. Then use the **`llm.py`**
+Make sure that you're terminal is running from **`statschat`**. Then use the **`llm.py`**
 script and change the **question** parameter with the desired question:
 
 ![image](https://github.com/user-attachments/assets/83e2e4e8-1ecf-43e1-bcdc-e8f39e5d5e12)

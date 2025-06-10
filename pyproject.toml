@@ -1,7 +1,7 @@
 [project]
 name = "statschat"
 description = "An app for RAG-based search of statistical publications"
-authors = [{name = "Your organisation", email = "Your organisation email address"}]
+authors = [{name = "Data Science Campus", email = "datacampus@ons.gov.uk"}]
 readme = "README.md"
 license = {file = "LICENSE"}
 requires-python = ">=3.10"
