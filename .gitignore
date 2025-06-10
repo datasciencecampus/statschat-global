@@ -17,6 +17,9 @@ __pycache__/
 *.parquet
 *.bin
 *.faiss
+data/db_langchain/*
+data/json_split/*
+data/pdf_store/*
 
 
 # Distribution / packaging
