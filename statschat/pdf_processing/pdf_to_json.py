@@ -271,15 +271,15 @@ def extract_pdf_text(pdf_file_path: Path, pdf_url: str) -> list:
 
 def get_abstract_metadata(url: str) -> dict:  # noqa: C901
     """
-    Extracts metadata from KNBS website for PDFs.
+    Extracts metadata from website for PDFs.
 
     Args:
-        url (str): URL of the chosen KNBS PDF.
+        url (str): URL of the chosen PDF.
 
     Returns:
         dict: Dictionary of abstract metadata.
     """
-    # Scrape PDF links from KNBS website
+    # Scrape PDF links from website
     req = Request(url, headers={"User-Agent": "Mozilla/5.0"})
     web_byte = urlopen(req).read()
 
@@ -436,15 +436,24 @@ def build_json(
     # Extract Metadata & Pre-Process
     file_name, pdf_metadata = extract_pdf_metadata(pdf_file_path)
 
-    # Construct the document's URL
-    pdf_url = pdf_website_url
-    # Obtain additional metadata from pdf report page
-    pdf_add_metadata = get_abstract_metadata(report_page)
     try:
+        # Construct the document's URL
+        pdf_url = pdf_website_url
+        # Obtain additional metadata from pdf report page
+        pdf_add_metadata = get_abstract_metadata(report_page)
         pdf_creation_date = convert_to_date(pdf_add_metadata["date"])
+        pdf_overview = pdf_add_metadata["overview"]
+        pdf_theme = pdf_add_metadata["publication_theme"]
+        pdf_release_type = pdf_add_metadata["publication_type"]
     except Exception:
         # Fallback: extract from PDF metadata or filename
         pdf_creation_date, _ = extract_pdf_creation_date(pdf_metadata, file_name, 0)
+        pdf_overview = pdf_metadata.get("/Subject", "No Overview Available")
+        pdf_theme = pdf_metadata.get("/Keywords", "No Theme Available")
+        pdf_release_type = (
+            file_name.split("-")[0] if "-" in file_name else "Unknown Type"
+        )
+        pdf_url = pdf_website_url or "Unknown URL"
         print("Defaulting to PDF metadata or filename for creation date.")
 
     # Construct Ordered Metadata Dictionary
@@ -456,9 +465,9 @@ def build_json(
         "modification_date": extract_pdf_modification_date(
             pdf_metadata, pdf_creation_date
         ),
-        "overview": pdf_add_metadata["overview"],  # Overview of the document
-        "theme": pdf_add_metadata["publication_theme"],  # Publication theme
-        "release_type": pdf_add_metadata["publication_type"],  # Report, Survey, etc.
+        "overview": pdf_overview,  # Overview of the document
+        "theme": pdf_theme,  # Publication theme
+        "release_type": pdf_release_type,  # Report, Survey, etc.
         "url": pdf_url,  # URL for document access
         "latest": True,  # Boolean flag for latest version
         "url_keywords": extract_url_keywords_from_filename(

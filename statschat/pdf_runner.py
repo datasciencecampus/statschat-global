@@ -54,6 +54,7 @@ if __name__ == "__main__":
     # Load configuration
     config = load_config(name="main")
     pdf_down_mode = config["preprocess"]["download_mode"].upper()
+    base_url = config["preprocess"]["download_site"].upper()
 
     # Define base directory for the script
     BASE_DIR = Path().cwd()
@@ -64,7 +65,12 @@ if __name__ == "__main__":
     print(f"Executing full {pdf_down_mode} pipeline...\n")
 
     # Step 1: Download PDFs
-    run_script(PDF_PROC_DIR / "pdf_downloader.py")
+    if base_url == "":
+        print("No base URL provided, using local PDFs.")
+        run_script(PDF_PROC_DIR / "pdf_local_load.py")
+    else:
+        print(f"PDF site: {base_url}")
+        run_script(PDF_PROC_DIR / "pdf_downloader.py")
     # Step 2: Convert PDFs to JSON
     run_script(PDF_PROC_DIR / "pdf_to_json.py")
     # Step 3: Preprocess JSONs and populate vector store

@@ -15,25 +15,26 @@ DATA_DIR = BASE_DIR.joinpath(
 DATA_DIR.mkdir(parents=True, exist_ok=True)
 url_dict = {}
 
-if base_url == "":
-    pdf_files = glob(str(BASE_DIR / "local_pdfs" / "*.pdf"))
-    print(f"Found {len(pdf_files)} PDFs in data/local_pdfs.")
+pdf_files = glob(str(BASE_DIR / "local_pdfs" / "*.pdf"))
+print(f"Found {len(pdf_files)} PDFs in data/local_pdfs.")
 
-for pdf, report_page in tqdm(
-    pdf_files.items(),
+for pdf in tqdm(
+    pdf_files,
     desc="HANDLING LOCAL PDF FILES:",
     bar_format=format,
     colour="yellow",
     total=len(pdf_files),
     dynamic_ncols=True,
 ):
-    pdf_name = pdf
-    file_path = DATA_DIR / pdf_name
+    pdf_path = Path(pdf)
+    pdf_name = pdf_path.name
+    dest_path = DATA_DIR / pdf_name
 
-    with open(file_path, "wb") as file:
-        file.write(pdf.content)
+    # Copy the PDF file to DATA_DIR
+    if not dest_path.exists():
+        dest_path.write_bytes(pdf_path.read_bytes())
 
-    url_dict[pdf_name] = {"pdf_url": pdf_name, "report_page": file_path}
+    url_dict[pdf_name] = {"pdf_url": pdf_name, "report_page": str(dest_path)}
 
 OUTPUT_URL_DIR = BASE_DIR.joinpath(
     "pdf_store" if PDF_FILES == "SETUP" else "latest_pdf_store"
@@ -46,7 +47,7 @@ with open(url_dict_path, "w") as json_file:
 
 
 if PDF_FILES == "UPDATE":
-    print("Finished downloading new PDF files.")
+    print("Finished processing new PDF files.")
 
 if PDF_FILES == "SETUP":
-    print("Finished downloading all PDF files.")
+    print("Finished processing all PDF files.")
