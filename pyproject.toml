@@ -1,12 +1,13 @@
 [project]
 name = "statschat"
 description = "An app for RAG-based search of statistical publications"
-authors = [{name = "Your organisation", email = "Your organisation email address"}]
+authors = [{name = "Data Science Campus", email = "datacampus@ons.gov.uk"}]
 readme = "README.md"
 license = {file = "LICENSE"}
 requires-python = ">=3.10"
 dynamic = ["version"]
 dependencies = [
+    "accelerate==1.7.0",
     "bs4==0.0.1",
     "faiss-cpu==1.9.0.post1",
     "google-cloud-aiplatform==1.38.1",
@@ -22,6 +23,7 @@ dependencies = [
     "rapidfuzz==3.1.1",
     "requests==2.31.0",
     "sentence_transformers==3.3.1",
+    "sentencepiece==0.2.0",
     "toml==0.10.2",
     "typing==3.7.4.3",
 ]

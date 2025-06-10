@@ -5,14 +5,14 @@ import json
 
 # %%
 # Database directories
-DATA_DIR = Path.cwd().joinpath("data/pdf_downloads")
+DATA_DIR = Path.cwd().joinpath("data/pdf_store")
 JSON_DIR = Path.cwd().joinpath("data/json_conversions")
 JSON_SPLIT_DIR = Path.cwd().joinpath("data/json_split")
 
 # Latest directories
 LATEST_JSON_SPLIT_DIR = Path.cwd().joinpath("data/latest_json_split")
 LATEST_JSON_DIR = Path.cwd().joinpath("data/latest_json_conversions")
-LATEST_DATA_DIR = Path.cwd().joinpath("data/latest_pdf_downloads")
+LATEST_DATA_DIR = Path.cwd().joinpath("data/latest_pdf_store")
 
 # %%
 # Moves latest json conversions files 'json_conversions' folder
@@ -38,7 +38,7 @@ for json_split_file in LATEST_JSON_SPLIT_DIR.glob("*.json"):
 print(f"json_splits have been moved to {JSON_SPLIT_DIR}")
 
 # %%
-# Moves latest PDF file downloads to 'pdf_downloads' folder
+# Moves latest PDF file downloads to 'pdf_store' folder
 
 for pdf_file in LATEST_DATA_DIR.glob("*.pdf"):
     source_file = pdf_file
@@ -48,7 +48,7 @@ for pdf_file in LATEST_DATA_DIR.glob("*.pdf"):
     source_file.rename(destination_file)
 
     print(f"{pdf_file.name} has been moved to {DATA_DIR}")
-    
+
 # %%
 # Update url_dict.json with new pdf files - removing the latest url_dict
 # Load original and latest URL dictionaries

@@ -320,7 +320,7 @@ if __name__ == "__main__":
 
     # question = "Where can I find the registered births by age of mother and county?"
     # question = "What is the sample size of the Real Estate Survey?"
-    question = "How is core inflation calculated?"
+    question = "What was inflation in the UK?"
     # question = "What was inflation in December 2021?"
 
     docs, answer, response = inquirer.make_query(
