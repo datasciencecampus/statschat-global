@@ -139,9 +139,7 @@ if __name__ == "__main__":
     verbose = False
 
     # For a question, retreive the most relevant text chunks
-    # question = "What is the leading cause of death in Kenya in 2023?"
     question = "What was inflation in the UK recently?"
-    # question = "How is inflation calculated?"
 
     # Get the most relevant text chunks
     relevant_texts = similarity_search(question, latest_filter=True)
