@@ -1,7 +1,7 @@
 # `StatsChat`
 
 [![Stability](https://img.shields.io/badge/stability-experimental-orange.svg)](https://github.com/mkenney/software-guides/blob/master/STABILITY-BADGES.md#experimental)
-[![Shared under the MIT License](https://img.shields.io/badge/license-MIT-green)](https://github.com/datasciencecampus/Statschat/blob/main/LICENSE)
+[![Shared under the MIT License](https://img.shields.io/badge/license-MIT-green)](https://github.com/datasciencecampus/statschat-global/blob/main/LICENSE)
 
 ## Code state
 
@@ -19,8 +19,8 @@
 ## Introduction
 
 This is an experimental application for semantic search of statistical publications.
-It uses LangChain to implement a fairly simple Retriaval Augmented Generation (RAG) using embedding search
-and QA information retrieval process.
+It uses LangChain and HuggingFace to implement a fairly simple
+Retriaval Augmented Generation (RAG) using embedding search and QA information retrieval process.
 
 Upon receiving a query, documents are returned as search results
 using embedding similarity to score relevance.
@@ -33,21 +33,34 @@ the docstore / embedding store that is created is likewise and stored in `data/d
 also in `data/db_langchain_latest` after UPDATE. The LLM is either run in locally with `generate_local.py`, in an
 API with `main_api_local.py` (both backend) or with a flask app (frontend).
 
-## Step 1: Vector store
 > [!NOTE]
-> **Before setting up or updating the vector store ensure the [virtual or conda environment has been created.]("link for when on DSC github")**
+> **Before setting up or updating the vector store ensure the [virtual or conda environment has been created.](docs/setup_guide.md)**
 
-Before running `pdf_runner.py` in an integrated development environment (IDE) ensure that the PDF_FILES_MODE (in `main.toml`) is set to the desired option. It can also be run in the command line as below.
+## Step 1: Vector store
+
+The vector store can be set up running `pdf_runner.py` in an integrated development environment (IDE).
+You can also run it from the command line as below:
 
     ```shell
     python3 statschat/pdf_runner.py
     ```
 
-This script will webscrape PDF documents from the website, convert them to JSON files and either append or replace the vector store - based on the `download_mode` parameter.
+Before running `pdf_runner.py`  ensure that the key variables in `statschat/config/main.toml`
+are set to the desired options.
 
-`download_mode = "SETUP"` -> Will scrape all pdf files from a website and reset the vector store, creating a new one from the PDF documents that are scraped and processed into JSON files. This will only need to be done `once` as afterwards it will just need updating.
+The `download_site` variable will determine what website is used as an endpoint to scrape
+PDF files from. If left empty, the system will look for PDFs placed in the `data/local_pdfs` folder.
 
-`download_mode = "UPDATE"` -> Will only scrape the latest 5 pages of PDF files from the website, compare existing PDF files in the vector store with those downloaded and only process new files - appending these to the database and "flushing" the latest data folders ready for a new run. This will need to be done as new PDFs are added to the website.
+The `pdf_runner.py` script will webscrape PDF documents from the website, or take the ones locally stored.
+It will then convert them to JSON files and either append or replace the existing vector store.
+This will be based on the `download_mode` parameter.
+
+`download_mode = "SETUP"` -> Will scrape all pdf files and reset the vector store,
+creating a new one from the PDF documents that are scraped and processed into JSON files.
+This will only need to be done `once` as afterwards it will just need updating.
+
+`download_mode = "UPDATE"` -> Will only scrape the latest PDF files.
+If on website mode from the website, compare existing PDF files in the vector store with those downloaded and only process new files - appending these to the database and "flushing" the latest data folders ready for a new run. This will need to be done as new PDFs are added to the relevant websites website.
 
 ## Step 2: Usage
 

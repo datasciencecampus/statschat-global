@@ -15,10 +15,6 @@ config = load_config(name="main")
 PDF_FILES = config["preprocess"]["download_mode"].upper()
 base_url = config["preprocess"]["download_site"].upper()
 
-# Exit process if no site is specified
-if base_url == "":
-    exit()
-
 # Set directories
 BASE_DIR = Path.cwd().joinpath("data")
 DATA_DIR = BASE_DIR.joinpath(
