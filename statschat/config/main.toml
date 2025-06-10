@@ -1,6 +1,6 @@
 [db]
 faiss_db_root = "data/db_langchain"
-embedding_model_name = "sentence-transformers/all-MiniLM-L6-v2"
+embedding_model_name = "sentence-transformers/all-mpnet-base-v2"
 # Alternatives for the embedding model include:
 # - all-mpnet-base-v2
 # - all-MiniLM-L6-v2

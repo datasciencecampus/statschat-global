@@ -7,7 +7,6 @@ Successful running of the scripts assumes a certain structure in how where data 
  ┣ 📂data
  ┣ 📂docs
  ┣ 📂fast-api
- ┣ 📂flask-app
  ┣ 📂log
  ┣ 📂notebooks
  ┣ 📂statschat
@@ -37,11 +36,12 @@ Successful running of the scripts assumes a certain structure in how where data 
 📦statschat-ke
  ┣ 📂statschat
  ┃ ┣ 📂config
- ┃ ┃ ┗📜main.toml
+ ┃ ┃ ┣📜main.toml
+ ┃ ┃ ┣📜questions.toml
+ ┃ ┃ ┗📜utils.toml
  ┃ ┣ 📂embedding
  ┃ ┃ ┣📜latest_flag_helpers.py
  ┃ ┃ ┣📜latest_updates.py
- ┃ ┃ ┣📜preprocess_update_db.py
  ┃ ┃ ┗📜preprocess.py
  ┃ ┣ 📂generative
  ┃ ┃ ┣📜generate_local.py

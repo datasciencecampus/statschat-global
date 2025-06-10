@@ -70,7 +70,7 @@ This assumes the [vector store]("update link") has already been created otherwis
 Make sure that you're terminal is running from **`statschat`**. Then use the **`llm.py`**
 script and change the **question** parameter with the desired question:
 
-![image](https://github.com/user-attachments/assets/83e2e4e8-1ecf-43e1-bcdc-e8f39e5d5e12)
+![image](https://github.com/user-attachments/assets/36ec03e4-2d6a-4814-9220-8cc478196e52)
 
 The answer, context and response will be output in the terminal.
 
@@ -105,7 +105,8 @@ You will see this in your terminal line, something like:
  Uvicorn running on http://127.0.0.1:8000
  ```
 
-Your port might be slightly different to 127.0.0.1:8000
+> [!NOTE]
+> **Your port might be slightly different to 127.0.0.1:8000**
 
 After a few seconds you should be able to go to your browser and ask questions.
 On the search bar type something like:
