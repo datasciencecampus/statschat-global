@@ -1,4 +1,4 @@
-"""StatsChat: Semantic search of KNBS statistical publications."""
+"""StatsChat: Semantic search of statistical publications."""
 
 __version__ = "0.1.1"
 

@@ -24,10 +24,10 @@ Successful running of the scripts assumes a certain structure in how where data 
  ┃ ┣ 📂db_langchain_latest
  ┃ ┣ 📂json_conversions
  ┃ ┣ 📂json_split
- ┃ ┣ 📂latest_pdf_downloads
+ ┃ ┣ 📂latest_pdf_store
  ┃ ┣ 📂latest_json_conversions
  ┃ ┣ 📂latest_json_split
- ┗ ┗ 📂pdf_downloads
+ ┗ ┗ 📂pdf_store
 
 ```
 
@@ -44,9 +44,9 @@ Successful running of the scripts assumes a certain structure in how where data 
  ┃ ┃ ┣📜latest_updates.py
  ┃ ┃ ┗📜preprocess.py
  ┃ ┣ 📂generative
- ┃ ┃ ┣📜cloud_llm.py
- ┃ ┃ ┣📜local_llm.py
- ┃ ┃ ┣📜prompts_cloud.py
+ ┃ ┃ ┣📜generate_local.py
+ ┃ ┃ ┣📜llm.py
+ ┃ ┃ ┣📜prompts.py
  ┃ ┃ ┣📜prompts_local.py
  ┃ ┃ ┣📜response_model.py
  ┃ ┃ ┗📜utils.py

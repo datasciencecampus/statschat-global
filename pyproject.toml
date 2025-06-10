@@ -1,7 +1,7 @@
 [project]
 name = "statschat"
-description = "An app for RAG-based search of KNBS statistical publications"
-authors = [{name = "Kenya National Bureau of Statistics", email = "info@knbs.or.ke"}]
+description = "An app for RAG-based search of statistical publications"
+authors = [{name = "Data Science Campus", email = "datacampus@ons.gov.uk"}]
 readme = "README.md"
 license = {file = "LICENSE"}
 requires-python = ">=3.10"
@@ -48,7 +48,7 @@ dev = [
 ]
 
 [project.urls]
-homepage = "https://github.com/KNBS-StatsChat/statschat-ke"
+homepage = "Your organisation github"
 
 [build-system]
 requires = ["setuptools>=62"]

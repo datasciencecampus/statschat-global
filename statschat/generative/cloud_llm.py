@@ -1,7 +1,6 @@
 import logging
 import os
 from dotenv import load_dotenv
-from pathlib import Path
 from langchain_huggingface import HuggingFaceEndpoint
 from langchain_community.vectorstores import FAISS
 from langchain_huggingface.embeddings import HuggingFaceEmbeddings
@@ -28,7 +27,8 @@ class Inquirer:
         self,
         generative_model_name: str = "mistralai/Mistral-7B-Instruct-v0.3",
         faiss_db_root: str = "data/db_langchain",
-        faiss_db_root_latest: str = "data/db_langchain", # change to "data/db_langchain_latest" after "UPDATE"
+        # change faiss_db_root_latest to "data/db_langchain_latest" after "UPDATE"
+        faiss_db_root_latest: str = "data/db_langchain",
         embedding_model_name: str = "sentence-transformers/all-MiniLM-L6-v2",
         k_docs: int = 10,
         k_contexts: int = 3,
@@ -111,7 +111,7 @@ class Inquirer:
             return_dicts: if True, data returned as dictionary, key = rank
 
         Returns:
-            List[dict]: List of top k article chunks by relevance
+            List[dict]: List of top k publication chunks by relevance
         """
         self.logger.info("Retrieving most relevant text chunks")
         if latest_filter:
@@ -318,11 +318,10 @@ if __name__ == "__main__":
     # initiate Statschat AI and start the app
     inquirer = Inquirer(**CONFIG["db"], **CONFIG["search"], logger=logger)
 
-    question = "Where can I find the registered births by age of mother and county?"
+    # question = "Where can I find the registered births by age of mother and county?"
     # question = "What is the sample size of the Real Estate Survey?"
-    # question = "How is core inflation calculated?"
-    question = "What was inflation in Kenya in December 2021?"
-    # question = "What is football?"
+    question = "What was inflation in the UK?"
+    # question = "What was inflation in December 2021?"
 
     docs, answer, response = inquirer.make_query(
         question,

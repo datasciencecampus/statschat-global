@@ -15,7 +15,7 @@ from langchain_community.document_transformers import EmbeddingsRedundantFilter
 
 class PrepareVectorStore(DirectoryLoader, JSONLoader):
     """
-    Leveraging Langchain classes to split pre-scraped article
+    Leveraging Langchain classes to split pre-scraped publication
     JSONs to section-level JSONs and loading to document
     store
     """
@@ -25,7 +25,7 @@ class PrepareVectorStore(DirectoryLoader, JSONLoader):
         data_dir: Path = "data/",
         directory: Path = "json_conversions",
         split_directory: Path = "json_split",
-        download_dir: Path = "pdf_downloads",
+        download_dir: Path = "pdf_store",
         split_length: int = 1000,
         split_overlap: int = 200,
         embedding_model_name: str = "sentence-transformers/all-mpnet-base-v2",
@@ -34,11 +34,16 @@ class PrepareVectorStore(DirectoryLoader, JSONLoader):
         db=None,  # vector store
         logger: logging.Logger = None,
         latest_only: bool = False,
-        mode: str = "SETUP",
+        download_mode: str = "SETUP",
+        download_site: str = "",
     ):
-        self.directory = data_dir + ("latest_" if mode == "UPDATE" else "") + directory
+        self.directory = (
+            data_dir + ("latest_" if download_mode == "UPDATE" else "") + directory
+        )
         self.split_directory = (
-            data_dir + ("latest_" if mode == "UPDATE" else "") + split_directory
+            data_dir
+            + ("latest_" if download_mode == "UPDATE" else "")
+            + split_directory
         )
         self.download_dir = data_dir + download_dir
         self.split_length = split_length
@@ -46,13 +51,14 @@ class PrepareVectorStore(DirectoryLoader, JSONLoader):
         self.embedding_model_name = embedding_model_name
         self.redundant_similarity_threshold = redundant_similarity_threshold
         self.faiss_db_root = (
-            data_dir + faiss_db_root + ("_latest" if mode == "UPDATE" else "")
+            data_dir + faiss_db_root + ("_latest" if download_mode == "UPDATE" else "")
         )
         # Remove '_latest' from faiss_db_root if present
         self.original_faiss_db_root = (data_dir + faiss_db_root).replace("_latest", "")
         self.db = db
         self.latest_only = latest_only
-        self.mode = mode
+        self.download_mode = download_mode
+        self.download_site = download_site
 
         # Initialise logger
         if logger is None:
@@ -77,7 +83,7 @@ class PrepareVectorStore(DirectoryLoader, JSONLoader):
         # self._drop_redundant_documents()
         self.logger.info("Vectorise docs and commit to physical vector store")
         self._embed_documents()
-        if mode == "UPDATE":
+        if download_mode == "UPDATE":
             self.logger.info("Merging vector store with existing data")
             self._merge_faiss_db()
 
@@ -90,19 +96,18 @@ class PrepareVectorStore(DirectoryLoader, JSONLoader):
     def _json_splitter(self):
         """
         Splits scraped json to multiple json,
-        one for each article section
+        one for each publication section
         """
         print("Splitting json conversions. Please wait...")
 
-        # create storage folder for split articles
+        # create storage folder for split publications
         isExist = os.path.exists(self.split_directory)
         if not isExist:
             os.makedirs(self.split_directory)
         found_publications = glob.glob(f"{self.directory}/*.json")
-        self.logger.info(f"Found {len(found_publications)} articles for splitting")
-        print(f"Found {len(found_publications)} articles for splitting, please wait..")
+        self.logger.info(f"Found {len(found_publications)} publications for splitting")
 
-        # extract metadata from each article section
+        # extract metadata from each publication section
         # and store as separate JSON
         for filename in found_publications:
             try:
@@ -131,7 +136,7 @@ class PrepareVectorStore(DirectoryLoader, JSONLoader):
 
     def _load_json_to_memory(self):
         """
-        Loads article section JSONs to memory
+        Loads publication section JSONs to memory
         """
 
         print("Loading to memory. Please wait...")
@@ -175,7 +180,7 @@ class PrepareVectorStore(DirectoryLoader, JSONLoader):
         )
 
         self.docs = self.loader.load()
-        self.logger.info(f"{len(self.docs)} article sections loaded to memory")
+        self.logger.info(f"{len(self.docs)} publication sections loaded to memory")
         return None
 
     def _instantiate_embeddings(self):
@@ -204,7 +209,7 @@ class PrepareVectorStore(DirectoryLoader, JSONLoader):
             similarity_threshold=self.redundant_similarity_threshold,
         )
         self.docs = redundant_filter.transform_documents(self.docs)
-        self.logger.info(f"{len(self.docs)} article sections remain in memory")
+        self.logger.info(f"{len(self.docs)} publication sections remain in memory")
         self.logger.info([x.metadata["page_url"] for x in self.docs])
 
         return None

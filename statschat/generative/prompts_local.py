@@ -28,8 +28,8 @@ separately as exact quotes (using the exact verbatim text and punctuation). If a
 is in the question try and find a publication with a similar date.
 Explain your reasoning.
 
-Please show where the context is from also and provide exact text passage 
-from pdf of where context has been gotten from. 
+Please show where the context is from also and provide exact text passage
+from pdf of where context has been gotten from.
 
 
 Question: {QuestionPlaceholder}

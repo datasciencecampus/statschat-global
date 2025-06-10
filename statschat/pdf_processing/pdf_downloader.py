@@ -12,17 +12,18 @@ import re
 
 # Load configuration
 config = load_config(name="main")
-PDF_FILES = config["preprocess"]["mode"].upper()
+PDF_FILES = config["preprocess"]["download_mode"].upper()
+base_url = config["preprocess"]["download_site"].upper()
 
 # Set directories
 BASE_DIR = Path.cwd().joinpath("data")
 DATA_DIR = BASE_DIR.joinpath(
-    "pdf_downloads" if PDF_FILES == "SETUP" else "latest_pdf_downloads"
+    "pdf_store" if PDF_FILES == "SETUP" else "latest_pdf_store"
 )
 OUTPUT_URL_DIR = BASE_DIR.joinpath(
-    "pdf_downloads" if PDF_FILES == "SETUP" else "latest_pdf_downloads"
+    "pdf_store" if PDF_FILES == "SETUP" else "latest_pdf_store"
 )
-ORIGINAL_URL_DICT_PATH = BASE_DIR.joinpath("pdf_downloads/url_dict.json")
+ORIGINAL_URL_DICT_PATH = BASE_DIR.joinpath("pdf_store/url_dict.json")
 
 # Ensure directories exist
 DATA_DIR.mkdir(parents=True, exist_ok=True)
@@ -43,7 +44,7 @@ elif PDF_FILES == "UPDATE":
             original_url_dict = json.load(json_file)
             print(f"Loaded existing url_dict.json from {ORIGINAL_URL_DICT_PATH}")
     else:
-        print("No existing url_dict.json found in pdf_downloads. Exiting update mode.")
+        print("No existing url_dict.json found in pdf_store. Exiting update mode.")
         exit()  # Nothing to update if there's no record
 
     url_dict = {}  # This will store only new entries
@@ -57,8 +58,9 @@ max_pages = 100 if PDF_FILES == "SETUP" else 37  # Limit to 5 for updates
 all_pdf_entries = {}  # {"pdf_url": "report_page", ...}
 visited_report_pages = set()
 
-# Set base URL for KNBS reports
-base_url = "https://www.knbs.or.ke/all-reports/page"
+# %% Scrape PDF links from website
+all_pdf_links = []  # List to store all PDF URLs
+page = 1
 
 print("IN PROGRESS.")
 while True:
