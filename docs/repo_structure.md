@@ -1,7 +1,7 @@
 # Project structure tree
 Successful running of the scripts assumes a certain structure in how where data and other auxiliary inputs need to be located. The below tree demonstrates where each file/folder needs to be for successful execution or where files will be located following execution.
 
-### Overview
+## Overview
 ```
 📦statschat-ke
  ┣ 📂data

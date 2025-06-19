@@ -66,27 +66,36 @@ def search():
                 docs = response.json()["references"]
                 logger.info(
                     f"""QAPAIR: {
-                    {"question": session["question"],
-            "content_type": session["content_type"],
-            "response": response.json()}}"""
+                        {
+                            "question": session["question"],
+                            "content_type": session["content_type"],
+                            "response": response.json()
+                        }
+                    }"""
                 )
             else:
                 session["answer"] = f"Connection to API failed: {response.status_code}"
                 docs = []
                 logger.warning(
                     f"""API-FAIL: {
-                    {"question": session["question"],
-            "content_type": session["content_type"],
-            "response": response.status_code}}"""
+                        {
+                            "question": session["question"],
+                            "content_type": session["content_type"],
+                            "response": response.status_code
+                        }
+                    }"""
                 )
         except requests.exceptions.RequestException as e:
             session["answer"] = f"Connection to API failed: {e}"
             docs = []
             logger.warning(
                 f"""API-FAIL: {
-                {"question": session["question"],
-                 "content_type": session["content_type"],
-                 "response": e}}"""
+                    {
+                        "question": session["question"],
+                        "content_type": session["content_type"],
+                        "response": e
+                    }
+                }"""
             )
         results = {"answer": session["answer"], "references": docs}
 
