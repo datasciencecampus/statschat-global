@@ -4,8 +4,9 @@ Tips to help with future codebase adaptation and organisational setup.
 
 ## Adapting codebase for organisation
 
-There will most likely be differences for each organisations website in relation to setup/layout. Therefore changes may need
-to be made to the codebase to get the Statschat package to work for your organisation. This is due to:
+There will most likely be differences for each organisations website in relation to setup/layout. 
+Therefore changes may need to be made to the codebase to get the Statschat package to work for 
+your organisation in relation to downloading PDF's. This is due to:
 
 **- The organisations website that PDF's are downloaded from**
 
