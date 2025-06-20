@@ -37,8 +37,22 @@ Read the documentation below in the given order to get started.
 
 To get started with the project, please refer to the following documentation in the `docs` folder:
 
+- [Repository Structure](docs/repo_structure.md)
 - [Setup Guide](docs/setup_guide.md)
 - [Running Statschat](docs/running_statschat.md)
+- [Configuration Guide](docs/config_guide.md)
+- [Search Configuration Guide](docs/search_config_parameters.md)
+
+The tool can be interacted with in several ways, and the following guides will help you get started:
+
+- [API Guide](docs/running_api.md)
+- [Web Application Guide](docs/running_app.md)
+
+In order to tailor the tool to your use case and deploying it effectively,
+the following documentation is also available:
+
+- [Tailoring the tool](docs/developing_and_testing.md)
+- [Server Deployment](docs/server_deployment.md)
 
 ## License
 
