@@ -29,7 +29,7 @@
 </div>
 </div>
 </div>
-<div id="pagePath" class="hide">/search?latest_filter={{latest_filter}}?q=</div>
+<div id="pagePath" class="hide">/search?q=</div>
 <div class="wrapper">
 <div class="header col-wrap">
 <div class="col col--lg-one-third col--md-one-third">
@@ -58,7 +58,6 @@ href="https://datasciencecampus.ons.gov.uk/using-large-language-models-llms-to-i
 
         </label>
         <input type="search" autocomplete="off" class="search__input col col--md-21 col--lg-300" id="nav-search" name="q">
-        <input type="hidden" name="latest_filter" value={{latest_filter}}>
         <button type="submit" class="search__button col--md-3 col--lg-3" id="nav-search-submit">
         <span class="visuallyhidden">Search</span>
         <span class="icon icon-search--light">
@@ -72,33 +71,6 @@ href="https://datasciencecampus.ons.gov.uk/using-large-language-models-llms-to-i
         </div>
     </div>
     </form>
-    <div class="primary-nav print--hide">
-        <nav aria-label="Site navigation">
-        <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
-        <script src="{{ url_for('static',filename='tabs.js') }}"></script>
-        <ul class="wrapper  primary-nav__list" id="nav-primary" aria-expanded="true">
-        {% if latest_filter == "on" %}
-        <li class="primary-nav__item  js-nav  old-ie--display-block primary-nav__item--active" aria-expanded="true">
-            <a class="primary-nav__link"  id = "link-one">Latest Bulletins</a>
-        </li>
-        <li class="primary-nav__item  js-nav  old-ie--display-block">
-            <a class="primary-nav__link" href="/search?q={{question}}&latest_filter=off"  id = "link-two">All publications</a>
-        </li>
-        {% else %}
-        <li class="primary-nav__item  js-nav  old-ie--display-block" aria-expanded="true">
-            <a class="primary-nav__link" href="/search?q={{question}}&latest_filter=on"  id = "link-one">Latest Bulletins</a>
-        </li>
-        <li class="primary-nav__item  js-nav  old-ie--display-block primary-nav__item--active">
-            <a class="primary-nav__link"  id = "link-two">All publications</a>
-        </li>
-        {% endif %}
-        <li class="primary-nav__item  js-nav  old-ie--display-block">
-            <a class="primary-nav__link"></a>
-        </li>
-        </ul>
-        </nav>
-    </div>
-
     </header>
 
 

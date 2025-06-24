@@ -30,26 +30,14 @@ app.config["SECRET_KEY"] = "secret!"
 
 @app.route("/")
 def home():
-    if "latest_filter" in request.args:
-        session["latest_filter"] = request.args.get("latest_filter")
-    else:
-        session["latest_filter"] = "on"
-    return render_template(
-        "statschat.html", latest_filter=session["latest_filter"], question=""
-    )
+    return render_template("statschat.html", latest_filter="on", question="")
 
 
 @app.route("/search", methods=["GET", "POST"])
 def search():
     session["question"] = escape(request.args.get("q")).strip()
-    if "latest_filter" in request.args:
-        session["latest_filter"] = request.args.get("latest_filter")
-    else:
-        session["latest_filter"] = "on"
-    if session["latest_filter"] in ["on", "On", "True", "true", True, "latest"]:
-        session["content_type"] = "latest"
-    else:
-        session["content_type"] = "all"
+    session["latest_filter"] = "on"
+    session["content_type"] = "all"
 
     if session["question"]:
         try:
@@ -104,7 +92,7 @@ def search():
 
     return render_template(
         "statschat.html",
-        latest_filter=session["latest_filter"],
+        latest_filter="latest",
         question=session["question"],
         results=results,
     )

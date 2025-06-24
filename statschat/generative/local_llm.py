@@ -134,6 +134,67 @@ def format_response(raw_response: str) -> dict:
     return validated_answer
 
 
+def clean_response(formatted_response, relevant_texts, question):
+    """Clean the response by removing unwanted characters."""
+
+    # Extract the most relevant text chunk data
+    key_context_1 = relevant_texts[0]["page_content"]
+    page_number = str(relevant_texts[0]["page_number"])
+    page_number_1 = f"Page {page_number}"
+    key_title_1 = relevant_texts[0]["title"]
+    key_url_1 = relevant_texts[0]["page_url"]
+    key_date_1 = relevant_texts[0]["date"]
+    result_score_1 = relevant_texts[0]["score"]
+
+    key_context_2 = relevant_texts[1]["page_content"]
+    page_number = str(relevant_texts[0]["page_number"])
+    page_number_2 = f"Page {page_number}"
+    key_title_2 = relevant_texts[1]["title"]
+    key_url_2 = relevant_texts[1]["page_url"]
+    key_date_2 = relevant_texts[1]["date"]
+    result_score_2 = relevant_texts[1]["score"]
+
+    references = [
+        {
+            "date": key_date_1,
+            "section_url": key_url_1,
+            "section": page_number_1,
+            "url": key_url_1,
+            "title": key_title_1,
+            "score": round(result_score_1, 2),
+            "page_content": key_context_1,
+            "figures": [],
+        },
+        {
+            "date": key_date_2,
+            "section_url": key_url_2,
+            "section": page_number_2,
+            "url": key_url_2,
+            "title": key_title_2,
+            "score": round(result_score_2, 2),
+            "page_content": key_context_2,
+            "figures": [],
+        },
+    ]
+
+    if result_score_1 < 0.8:
+        final_answer = formatted_response["reasoning"]
+    elif result_score_1 < 1:
+        final_answer = "No exact answer found, but here are relevant documents."
+    else:
+        final_answer = "Answer not provided, context not found within documents."
+        references = []
+
+    results = {
+        "question": question,
+        "content_type": "Publication",
+        "answer": final_answer,
+        "references": references,
+    }
+
+    return results
+
+
 # Example usage
 if __name__ == "__main__":
     verbose = False
@@ -188,66 +249,9 @@ if __name__ == "__main__":
     raw_response = generate_response(user_input, model, tokenizer)
     formatted_response = format_response(raw_response)
 
-    if (
-        formatted_response["answer_provided"] and result_score_1 or result_score_2 < 0.5
-    ):  # check
-        print(f"Question: {question}")
+    results = clean_response(formatted_response, relevant_texts, question)
 
-        # If no suitable answer
-        if formatted_response.get("most_likely_answer") is None:
-            print(
-                "Answer provided: No suitable answer found.\n"
-                "However relevant information may be found in a PDF.\n"
-                "Please check the link(s) provided."
-            )
-        else:
-            print("Answer provided:", formatted_response["most_likely_answer"])
-
-        print("Context from:", formatted_response["where_context_from"])
-        print("Text:", formatted_response["context_reference"])
-
-        print("These answers are based on the following:")
-        print("RELEVANT PUBLICATIONS")
-        print("(ONE)")
-        print(f"Title: {key_title_1}")
-        print(f"Date: {key_date_1}")
-        print(f"URL: {key_url_1}")
-        print(f"Score: {round(result_score_1, 2)}")
-
-        print("(TWO)")
-        print(f"Title: {key_title_2}")
-        print(f"Date: {key_date_2}")
-        print(f"URL: {key_url_2}")
-        print(f"Score: {round(result_score_2, 2)}")
-
-        print("(RESPONSE)")
-        print(f"{formatted_response['reasoning']}")
-
-    elif result_score_1 < 0.5:
-        print(f"Question: {question}")
-        print("Answer not provided, as the context found wasn't easily quotable.")
-        print("There may be relevant information in the following publication:")
-        print("This comes from:", formatted_response["context_from"])
-        print(formatted_response["context_from_text"])
-
-        print("These answers are based on the following:")
-        print("(RELEVANT PUBLICATIONS)")
-        print("(ONE)")
-        print(f"Title: {key_title_1}")
-        print(f"Date: {key_date_1}")
-        print(f"URL: {key_url_1}")
-        print(f"Score: {round(result_score_1, 2)}")
-        print(f"This comes from: {key_context_1}")
-
-        print("(TWO)")
-        print(f"Title: {key_title_2}")
-        print(f"Date: {key_date_2}")
-        print(f"URL: {key_url_2}")
-        print(f"Score: {round(result_score_2, 2)}")
-        print(f"This comes from: {key_context_2}")
-
-        print("(RESPONSE)")
-        print(f"{formatted_response['reasoning']}")
-
-    else:
-        print("Answer not provided, and the context is not relevant.")
+    print("Question:")
+    print(question)
+    print("Generated response:")
+    print(results)
