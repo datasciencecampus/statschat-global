@@ -1,5 +1,7 @@
 import logging
 import os
+import json
+from pathlib import Path
 from dotenv import load_dotenv
 from langchain_huggingface import HuggingFaceEndpoint
 from langchain_community.vectorstores import FAISS
@@ -54,6 +56,19 @@ class Inquirer:
 
         else:
             self.logger = logger
+        self.logger.info("Retrieving most relevant text chunks")
+        faiss_db_root = "data/db_langchain"
+
+        # Check directories exist in "SETUP" MODE to avoid error
+        BASE_DIR = Path.cwd().joinpath("data")
+        DB_LANGCHAIN_DIR = BASE_DIR.joinpath("db_langchain")
+        DB_LANGCHAIN_UPDATE_DIR = BASE_DIR.joinpath("db_langchain_update")
+
+        if DB_LANGCHAIN_UPDATE_DIR.exists():
+            faiss_db_root_latest = "data/db_langchain_latest"
+
+        elif DB_LANGCHAIN_DIR.exists():
+            faiss_db_root_latest = "data/db_langchain"
 
         self.k_docs = k_docs
         self.k_contexts = k_contexts
@@ -189,16 +204,28 @@ class Inquirer:
         parser = PydanticOutputParser(pydantic_object=LlmResponse)
         try:
             if "output_text" in response:
-                validated_answer = parser.parse(response["output_text"])
+                response["output_text"] = (
+                    response["output_text"].replace("`", "").replace("\n", "")
+                )
+                json_answer = json.loads(response["output_text"])
+                validated_answer = LlmResponse(
+                    answer_provided=json_answer.get("answer_provided", False),
+                    most_likely_answer=json_answer.get("most_likely_answer", ""),
+                    highlighting1=json_answer.get("highlighting1", []),
+                    highlighting2=json_answer.get("highlighting2", []),
+                    highlighting3=json_answer.get("highlighting3", []),
+                    reasoning=json_answer.get("reasoning", ""),
+                )
             elif "properties" in response:
-                validated_answer = parser.parse(response["properties"])
+                validated_answer = parser.model_validate(response["properties"])
             else:
-                validated_answer = parser.parse(response)
+                validated_answer = parser.model_validate(response)
         except Exception as e:
-            self.logger.error(f"Cannot parse response: {e}")
-            self.logger.error(f"response: {response}")
+            self.logger.warning(f"Cannot parse response: {e}")
+            self.logger.warning(f"response: {response}")
             return LlmResponse(
                 answer_provided=False,
+                most_likely_answer="",
                 highlighting1=[],
                 highlighting2=[],
                 highlighting3=[],
@@ -274,7 +301,7 @@ class Inquirer:
             )
         self.logger.info(f"QASOURCE - Docs: {docs}")
 
-        if validated_response.answer_provided is False:
+        if validated_response.most_likely_answer is None:
             answer_str = ""
         else:
             answer_str = (
