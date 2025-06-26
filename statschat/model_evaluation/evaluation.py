@@ -1,4 +1,5 @@
 import json
+import os
 import numpy as np
 from time import time
 from datetime import datetime
@@ -53,14 +54,25 @@ def _get_response_components(
         selected response components (answer, confidence,
         section_url, answer_provided)
     """
-    response_components = {
-        "answer_provided": response["answer_provided"],
-        "answer": response["most_likely_answer"],
-        "section_url": docs[0]["section_url"] if docs else "",
-        "all_urls": [x["section_url"] for x in docs],
-        "page_content": docs[0]["page_content"] if docs else "",
-        "seconds_to_run": run_time_seconds,
-    }
+    if docs[0] == "No suitable PDFs found. Please refer to context":
+        response_components = {
+            "answer_provided": False,
+            "answer": "None",
+            "section_url": "",
+            "all_urls": "",
+            "page_content": "",
+            "seconds_to_run": run_time_seconds,
+        }
+    else:
+        response_components = {
+            "answer_provided": response["answer_provided"],
+            "answer": response["most_likely_answer"],
+            "section_url": docs[0]["url"] if docs else "",
+            "all_urls": [x["url"] for x in docs],
+            "page_content": docs[0]["page_content"] if docs else "",
+            "seconds_to_run": run_time_seconds,
+        }
+
     return response_components
 
 
@@ -303,6 +315,9 @@ def pipeline(
         "app_config",
     ]
     stamp = datetime.now()
+
+    # Ensure the output directory exists
+    os.makedirs("data/test_outcomes", exist_ok=True)
 
     # Save the detailed responses
     question_info[col_order].to_csv(
