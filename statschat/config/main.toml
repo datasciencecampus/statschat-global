@@ -9,7 +9,7 @@ embedding_model_name = "sentence-transformers/all-mpnet-base-v2"
 # -sentence-transformers/paraphrase-MiniLM-L3-v2
 
 [preprocess]
-download_mode = "SETUP" # or "UPDATE"
+download_mode = "SETUP" # Either "SETUP" or "UPDATE"
 download_site = "" # Leave empty if PDFS are placed manually in the data/pdf_store folder.
 data_dir = "data/"
 download_dir = "pdf_store"
