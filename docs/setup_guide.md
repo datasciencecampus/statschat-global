@@ -137,13 +137,29 @@ helping to maintain a clean and consistent codebase.
 > [!NOTE]
 > Pre-commit hooks execute Python, so it expects a working Python build.
 
-## Step 5: Running the Tool
+## Step 5: Set-Up Environment Variables
+
+At this point, you will need to set up the environment variables required for the StatChat project.
+This will likely include API keys, for interaction with the HuggingFace endpoints.
+In order to do this, you will need to create a `.env` file in the root of the project directory.
+This file should contain the following variables:
+
+```plaintext
+HF_TOKEN = "your_huggingface_token"
+HOME_PATH = "/path/to/your/project/directory"
+```
+
+In order to get your HuggingFace token, you will need to create an account on [HuggingFace](https://huggingface.co/).
+Once you have created an account, you can generate a token by going to your account settings and
+clicking on "Access Tokens".
+
+## Step 6: Running the Tool
 
 You are now ready to run the StatChat tool.
 You can run the tool using the command line interface (CLI), through the API or the Flask web interface.
 For more information on how to run the tool, please refer to the [Running StatChat](docs/running_statschat.md) documentation.
 
-## Step 6: Additional Configuration
+## Step 7: Additional Configuration
 
 You may need to configure additional settings for the StatChat project.
 This can include setting up environment variables, configuring the API keys, or adjusting the project settings.
