@@ -28,102 +28,33 @@ Next, the relevant text is passed to a Large Language Model (LLM),
 which is prompted to write an answer to the original question, if it can,
 using only the information contained within the documents.
 
-For this prototype, relevant web pages with PDF's are scraped and the data stored in `data/pdf_store`,
-the docstore / embedding store that is created is likewise and stored in `data/db_langchain` after SETUP and then
-also in `data/db_langchain_latest` after UPDATE. The LLM is either run in locally with `generate_local.py`, in an
-API with `main_api_local.py` (both backend) or with a flask app (frontend).
+To use this application, you will need to set up a vector store
+with the relevant documents, which can be done by scraping the relevant websites
+and processing the PDF documents into JSON files.
+Read the documentation below in the given order to get started.
 
-> [!NOTE]
-> **Before setting up or updating the vector store ensure the [virtual or conda environment has been created.](docs/setup_guide.md)**
+## Table of Key Documentation
 
-## Step 1: Vector store
+To get started with the project, please refer to the following documentation in the `docs` folder:
 
-The vector store can be set up running `pdf_runner.py` in an integrated development environment (IDE).
-You can also run it from the command line as below:
+- [Repository Structure](docs/repo_structure.md)
+- [Setup Guide](docs/setup_guide.md)
+- [Running Statschat](docs/running_statschat.md)
+- [Configuration Guide](docs/config_guide.md)
+- [Search Configuration Guide](docs/search_config_parameters.md)
 
-    ```shell
-    python3 statschat/pdf_runner.py
-    ```
+The tool can be interacted with in several ways, and the following guides will help you get started:
 
-Before running `pdf_runner.py`  ensure that the key variables in `statschat/config/main.toml`
-are set to the desired options.
+- [API Guide](docs/running_api.md)
+- [Web Application Guide](docs/running_app.md)
 
-The `download_site` variable will determine what website is used as an endpoint to scrape
-PDF files from. If left empty, the system will look for PDFs placed in the `data/local_pdfs` folder.
+In order to tailor the tool to your use case and deploying it effectively,
+the following documentation is also available:
 
-The `pdf_runner.py` script will webscrape PDF documents from the website, or take the ones locally stored.
-It will then convert them to JSON files and either append or replace the existing vector store.
-This will be based on the `download_mode` parameter.
+- [Tailoring the tool](docs/developing_and_testing.md)
+- [Server Deployment](docs/server_deployment.md)
 
-`download_mode = "SETUP"` -> Will scrape all pdf files and reset the vector store,
-creating a new one from the PDF documents that are scraped and processed into JSON files.
-This will only need to be done `once` as afterwards it will just need updating.
-
-`download_mode = "UPDATE"` -> Will only scrape the latest PDF files.
-If on website mode from the website, compare existing PDF files in the vector store with those downloaded and only process new files - appending these to the database and "flushing" the latest data folders ready for a new run. This will need to be done as new PDFs are added to the relevant websites website.
-
-## Step 2: Usage
-
-#### Run the sample questions manually (backend)
-
-This assumes the [vector store]("update link") has already been created otherwise this will need to be done before.
-Make sure that you're terminal is running from **`statschat`**. Then use the **`llm.py`**
-script and change the **question** parameter with the desired question:
-
-![image](https://github.com/user-attachments/assets/36ec03e4-2d6a-4814-9220-8cc478196e52)
-
-The answer, context and response will be output in the terminal.
-
-#### Run interactive Statschat API
-This main module statschat can be either called directly or deployed as an API (using fastapi).
-A lightweight flask front end is implemented separately in a subfolder and relies on the API running.
-
-
-In order to run the interactive Statschat API you will need to make sure you have:
-
-**`uvicorn`**: This is a bit of software to locally replicate a server
-
-**`fastapi`**: This is a Python library to generate the API functionality
-
-To get these in your machine simply run:
-
-```
-pip install fastapi uvicorn
-```
-
-Then you will need to make sure your terminal is on the **`statschat-ke`** folder.
-From there, you can generate the synthetic "server" locally from your terminal:
-
-```shell
-uvicorn fast-api.main_api_local:app --reload
-```
-
-The fastapi is set to respond to http requests on a particular port.
-You will see this in your terminal line, something like:
-
- ```shell
- Uvicorn running on http://127.0.0.1:8000
- ```
-
-> [!NOTE]
-> **Your port might be slightly different to 127.0.0.1:8000**
-
-After a few seconds you should be able to go to your browser and ask questions.
-On the search bar type something like:
-
-```
-http://127.0.0.1:8000/search?q=what+was+inflation+in+december+2023
-```
-
-This should produce a response text that is displayed on your browser.
-
-The generic formula to ask a question is:
-
-```
-<API_URL>/search?q=<your_question>
-```
-
-# License
+## License
 
 <!-- Unless stated otherwise, the codebase is released under [the MIT Licence][mit]. -->
 

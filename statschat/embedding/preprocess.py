@@ -238,6 +238,11 @@ class PrepareVectorStore(DirectoryLoader, JSONLoader):
         persisting in local memory for efficiency of reproducibility
         """
 
+        if not self.chunks:
+            self.logger.error("No document chunks to embed. Exiting.")
+            print("No document chunks to embed. Exiting.")
+            exit()
+
         print("Embedding documents chunks. Please wait...")
 
         self.logger.info("Starting embedding of document chunks")
