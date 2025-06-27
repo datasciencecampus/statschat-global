@@ -94,7 +94,7 @@ you will then need to run:
 > package locally as editable with our optional `dev` dependencies:
 >
 > ```shell
-> pip install -e .
+> pip install -e ".[dev]"
 > ```
 
 ## Step 4: Set-Up Pre-commit Actions
@@ -157,10 +157,10 @@ clicking on "Access Tokens".
 
 You are now ready to run the StatChat tool.
 You can run the tool using the command line interface (CLI), through the API or the Flask web interface.
-For more information on how to run the tool, please refer to the [Running StatChat](docs/running_statschat.md) documentation.
+For more information on how to run the tool, please refer to the [Running StatChat](./running_statschat.md) documentation.
 
 ## Step 7: Additional Configuration
 
 You may need to configure additional settings for the StatChat project.
 This can include setting up environment variables, configuring the API keys, or adjusting the project settings.
-For more information on how to configure the project, please refer to the [Configuration Guide](docs/config_guide.md).
+For more information on how to configure the project, please refer to the [Configuration Guide](./config_guide.md).

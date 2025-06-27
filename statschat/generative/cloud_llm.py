@@ -86,6 +86,7 @@ class Inquirer:
         # Load LLM with text2text-generation specifications
         self.llm = HuggingFaceEndpoint(
             repo_id=generative_model_name,
+            task="text-generation",
             model_kwargs={
                 "max_length": 512,
             },

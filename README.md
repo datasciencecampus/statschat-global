@@ -51,6 +51,7 @@ The tool can be interacted with in several ways, and the following guides will h
 In order to tailor the tool to your use case and deploying it effectively,
 the following documentation is also available:
 
+- [Implementing StatsChat](docs/implementation.md)
 - [Tailoring the tool](docs/developing_and_testing.md)
 - [Server Deployment](docs/server_deployment.md)
 
