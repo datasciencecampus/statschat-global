@@ -356,7 +356,7 @@ if __name__ == "__main__":
         latest_filter="off",
     )
 
-    test_thresholds = "NO"
+    test_thresholds = "YES"
 
     print("-------------------- ANSWER --------------------")
 
