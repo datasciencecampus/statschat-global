@@ -28,6 +28,13 @@ This will only need to be done `once` as afterwards it will just need updating.
 `download_mode = "UPDATE"` -> Will only scrape the latest PDF files.
 If on website mode from the website, compare existing PDF files in the vector store with those downloaded and only process new files - appending these to the database and "flushing" the latest data folders ready for a new run. This will need to be done as new PDFs are added to the relevant websites website.
 
+> [!NOTE]
+> **You might get an error after running `pdf_runner.py` related to SSL: certification.**
+![image](https://github.com/user-attachments/assets/2d408392-fe66-438e-83b1-550943f14751)
+> **If so then run:**
+```
+pip install pip_system_certs
+```
 ## Step 2: Usage
 
 ### Option A: Run Questions Manually (backend)
