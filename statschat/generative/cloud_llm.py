@@ -3,7 +3,7 @@ import os
 import json
 from pathlib import Path
 from dotenv import load_dotenv
-from langchain_huggingface import HuggingFaceEndpoint
+#from langchain_huggingface import HuggingFaceEndpoint
 from langchain_community.vectorstores import FAISS
 from langchain_huggingface.embeddings import HuggingFaceEmbeddings
 from langchain.docstore.document import Document
@@ -15,7 +15,6 @@ from statschat.generative.prompts_cloud import (
     EXTRACTIVE_PROMPT_PYDANTIC,
     STUFF_DOCUMENT_PROMPT,
 )
-from transformers import pipeline
 from functools import lru_cache
 from statschat.generative.utils import deduplicator, highlighter
 from statschat.embedding.latest_flag_helpers import time_decay
@@ -29,7 +28,7 @@ class Inquirer:
 
     def __init__(
         self,
-        generative_model_name: str = "google/flan-t5-large",
+        generative_model_name: str = "google/bigbird-pegasus-large-arxiv",
         faiss_db_root: str = "data/db_langchain",
         # change faiss_db_root_latest to "data/db_langchain_latest" after "UPDATE"
         faiss_db_root_latest: str = "data/db_langchain",
@@ -82,6 +81,7 @@ class Inquirer:
         self.stuff_document_prompt = STUFF_DOCUMENT_PROMPT
 
         # Load the token for Hugging Face
+        # Only needed if using HuggingFaceEndpoint
         load_dotenv()
         sec_key = os.getenv("HF_TOKEN")
 
