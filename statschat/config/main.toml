@@ -20,7 +20,7 @@ split_overlap = 200
 latest_only = true
 
 [search]
-generative_model_name = "mistralai/Mistral-7B-Instruct-v0.3"
+generative_model_name = ""mistralai/Mistral-Nemo-Base-2407""
 # Alternatives for the generative LLM include:
 # - text-unicorn
 # - text-bison@001

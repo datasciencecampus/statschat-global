@@ -9,11 +9,13 @@ from langchain_huggingface.embeddings import HuggingFaceEmbeddings
 from langchain.docstore.document import Document
 from langchain.chains.qa_with_sources import load_qa_with_sources_chain
 from langchain.output_parsers import PydanticOutputParser
+from langchain_community.llms.huggingface_pipeline import HuggingFacePipeline
 from statschat.generative.response_model import LlmResponse
 from statschat.generative.prompts_cloud import (
     EXTRACTIVE_PROMPT_PYDANTIC,
     STUFF_DOCUMENT_PROMPT,
 )
+from transformers import pipeline
 from functools import lru_cache
 from statschat.generative.utils import deduplicator, highlighter
 from statschat.embedding.latest_flag_helpers import time_decay
@@ -27,7 +29,7 @@ class Inquirer:
 
     def __init__(
         self,
-        generative_model_name: str = "mistralai/Mistral-7B-Instruct-v0.3",
+        generative_model_name: str = "google/flan-t5-large",
         faiss_db_root: str = "data/db_langchain",
         # change faiss_db_root_latest to "data/db_langchain_latest" after "UPDATE"
         faiss_db_root_latest: str = "data/db_langchain",
@@ -84,15 +86,14 @@ class Inquirer:
         sec_key = os.getenv("HF_TOKEN")
 
         # Load LLM with text2text-generation specifications
-        self.llm = HuggingFaceEndpoint(
-            repo_id=generative_model_name,
-            task="text-generation",
-            model_kwargs={
-                "max_length": 512,
-            },
-            temperature=0.1,
-            token=sec_key,
-        )
+        self.llm = HuggingFacePipeline.from_model_id(
+                model_id=generative_model_name,
+                task="text2text-generation",
+                model_kwargs={
+                    "temperature": llm_temperature,
+                    "max_length": llm_max_tokens,
+                },
+            )
 
         # Embeddings
         embeddings = HuggingFaceEmbeddings(model_name=embedding_model_name)
@@ -356,7 +357,7 @@ if __name__ == "__main__":
         latest_filter="off",
     )
 
-    test_thresholds = "NO"
+    test_thresholds = "YES"
 
     print("-------------------- ANSWER --------------------")
 
