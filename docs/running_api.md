@@ -23,8 +23,12 @@ This repository includes a FastAPI application that serves as the backend API fo
 1. **Startup:**
      Run the API with:
      ```bash
-     uvicorn app.main:app --reload
+     uvicorn fast-api.main_api_local:app --reload
      ```
+     or
+    ```bash
+    uvicorn fast-api.main_api_cloud:app --reload
+    ```
 2. **Endpoints:**
      Access endpoints at `http://localhost:8000`.
      Example:
