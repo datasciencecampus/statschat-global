@@ -34,7 +34,7 @@
             <p class="search__results__meta font-size--16">
             <b>Released on:</b> {{row['date']}}  &nbsp;  | &nbsp;
             <b>Section: </b> <a href="{{row['section_url']}}"> {{ row['section'] }}</a>  &nbsp;  | &nbsp;
-            <b>Semantic distance: </b> {{row['score']}}
+            <b>Match Score: </b> {{row['score']}}
             </p>
             <p class="search__results__summary font-size--16">
             <b>Context:</b>  {{row['page_content']|safe }}
