@@ -9,7 +9,8 @@ from langchain_huggingface.embeddings import HuggingFaceEmbeddings
 from langchain.docstore.document import Document
 from langchain.chains.qa_with_sources import load_qa_with_sources_chain
 from langchain.output_parsers import PydanticOutputParser
-from langchain_community.llms.huggingface_pipeline import HuggingFacePipeline
+#from langchain_community.llms.huggingface_pipeline import HuggingFacePipeline
+from langchain_huggingface import HuggingFaceEndpoint
 from statschat.generative.response_model import LlmResponse
 from statschat.generative.prompts_cloud import (
     EXTRACTIVE_PROMPT_PYDANTIC,
@@ -28,7 +29,7 @@ class Inquirer:
 
     def __init__(
         self,
-        generative_model_name: str = "google/bigbird-pegasus-large-arxiv",
+        generative_model_name: str = "mistralai/Mistral-7B-Instruct-v0.3",
         faiss_db_root: str = "data/db_langchain",
         # change faiss_db_root_latest to "data/db_langchain_latest" after "UPDATE"
         faiss_db_root_latest: str = "data/db_langchain",
@@ -86,14 +87,14 @@ class Inquirer:
         sec_key = os.getenv("HF_TOKEN")
 
         # Load LLM with text2text-generation specifications
-        self.llm = HuggingFacePipeline.from_model_id(
-                model_id=generative_model_name,
-                task="text2text-generation",
-                model_kwargs={
-                    "temperature": llm_temperature,
-                    "max_length": llm_max_tokens,
-                },
-            )
+        self.llm = HuggingFaceEndpoint(
+            repo_id=generative_model_name,
+            provider="transformers",
+            task="text2text-generation",
+            max_new_tokens=llm_max_tokens,
+            do_sample=False,
+            huggingfacehub_api_token=sec_key,
+        )
 
         # Embeddings
         embeddings = HuggingFaceEmbeddings(model_name=embedding_model_name)
