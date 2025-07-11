@@ -3,12 +3,14 @@ import os
 import json
 from pathlib import Path
 from dotenv import load_dotenv
-from langchain_huggingface import HuggingFaceEndpoint
+#from langchain_huggingface import HuggingFaceEndpoint
 from langchain_community.vectorstores import FAISS
 from langchain_huggingface.embeddings import HuggingFaceEmbeddings
 from langchain.docstore.document import Document
 from langchain.chains.qa_with_sources import load_qa_with_sources_chain
 from langchain.output_parsers import PydanticOutputParser
+#from langchain_community.llms.huggingface_pipeline import HuggingFacePipeline
+from langchain_huggingface import HuggingFaceEndpoint
 from statschat.generative.response_model import LlmResponse
 from statschat.generative.prompts_cloud import (
     EXTRACTIVE_PROMPT_PYDANTIC,
@@ -80,18 +82,18 @@ class Inquirer:
         self.stuff_document_prompt = STUFF_DOCUMENT_PROMPT
 
         # Load the token for Hugging Face
+        # Only needed if using HuggingFaceEndpoint
         load_dotenv()
         sec_key = os.getenv("HF_TOKEN")
 
         # Load LLM with text2text-generation specifications
         self.llm = HuggingFaceEndpoint(
             repo_id=generative_model_name,
-            task="text-generation",
-            model_kwargs={
-                "max_length": 512,
-            },
-            temperature=0.1,
-            token=sec_key,
+            provider="transformers",
+            task="text2text-generation",
+            max_new_tokens=llm_max_tokens,
+            do_sample=False,
+            huggingfacehub_api_token=sec_key,
         )
 
         # Embeddings

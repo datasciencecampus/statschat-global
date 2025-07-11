@@ -20,14 +20,15 @@ split_overlap = 200
 latest_only = true
 
 [search]
-generative_model_name = "mistralai/Mistral-7B-Instruct-v0.3"
+generative_model_name = "mistralai/Mistral-7B-Instruct-v0.3" # "facebook/bart-large"
 # Alternatives for the generative LLM include:
 # - text-unicorn
 # - text-bison@001
-# - google/flan-t5-large
 # - lmsys/fastchat-t5-3b-v1.0
 # - google/flan-t5-large
 # - google/flan-ul2
+# - google/bigbird-pegasus-large-arxiv # can handle more input tokens
+
 k_docs = 2
 k_contexts = 5
 similarity_threshold = 2.0     # Threshold score below which a document is returned in a search

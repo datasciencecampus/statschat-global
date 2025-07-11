@@ -14,6 +14,9 @@
         <script src="{{ url_for('static',filename='js/rating.js') }}"></script>
         </div>
     <div aria-live="polite">
+        <b>Please note:</b> the lower the <b>Score</b>, the more relevant the publication is to your question.
+        <br> <br>
+    <div aria-live="polite">
         Your question:
     <h4 class="ons-u-fs-xxl">  {{question}} </h4>
 </div>
@@ -34,7 +37,7 @@
             <p class="search__results__meta font-size--16">
             <b>Released on:</b> {{row['date']}}  &nbsp;  | &nbsp;
             <b>Section: </b> <a href="{{row['section_url']}}"> {{ row['section'] }}</a>  &nbsp;  | &nbsp;
-            <b>Semantic distance: </b> {{row['score']}}
+            <b>Score: </b> {{row['score']}}
             </p>
             <p class="search__results__summary font-size--16">
             <b>Context:</b>  {{row['page_content']|safe }}
