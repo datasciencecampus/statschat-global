@@ -10,7 +10,6 @@ from langchain.docstore.document import Document
 from langchain.chains.qa_with_sources import load_qa_with_sources_chain
 from langchain.output_parsers import PydanticOutputParser
 from langchain.chat_models import ChatOpenAI
-#from langchain_community.llms.huggingface_pipeline import HuggingFacePipeline
 from langchain_huggingface import HuggingFaceEndpoint
 from statschat.generative.response_model import LlmResponse
 from statschat.generative.prompts_cloud import (
@@ -84,19 +83,9 @@ class Inquirer:
         # Load the token for Hugging Face
         # Only needed if using HuggingFaceEndpoint
         load_dotenv()
-        sec_key = os.getenv("HF_TOKEN")
-        api_key = os.getenv("OPENAI_API_KEY")
-        
-        #client.chat.completions.create
-        #client.responses.create
-        
-        #self.llm = client.chat.completions.create(
-         #   model=generative_model_name,
-          #  store=True,
-           # messages=[
-            #    {"role": "user", "content": "answer the question"}
-             #   ],
-        #)
+        sec_key = os.getenv("HF_TOKEN") # for HuggingFaceEndpoint
+        api_key = os.getenv("OPENAI_API_KEY") # for OpenAI
+
         self.llm = ChatOpenAI(
             model_name=generative_model_name, 
             temperature = llm_temperature, 
