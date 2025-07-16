@@ -16,7 +16,7 @@
 - **Peer-reviewed**
 - **Depends on external API's**
 
-## A tool designed for the semantic search of statistical publications from PDF's 
+## A tool designed for the semantic search of statistical publications with PDF's 
 This repository is a development to the code included in the Python package **[statschat](https://github.com/datasciencecampus/statschat-app)**, with the original codebase by Iva Spakulova and Martin Wood.
 
 This version of `statschat` adds functionality to webscrape **PDF documents** from websites with **[pdf_downloader.py](https://github.com/datasciencecampus/statschat-global/blob/main/statschat/pdf_processing/pdf_downloader.py)** and then converts these into jsons with **[pdf_to_json.py](https://github.com/datasciencecampus/statschat-global/blob/main/statschat/pdf_processing/pdf_to_json.py)** to create a vector store for semantic search.
