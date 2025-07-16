@@ -9,6 +9,7 @@ from langchain_huggingface.embeddings import HuggingFaceEmbeddings
 from langchain.docstore.document import Document
 from langchain.chains.qa_with_sources import load_qa_with_sources_chain
 from langchain.output_parsers import PydanticOutputParser
+from langchain.chat_models import ChatOpenAI
 #from langchain_community.llms.huggingface_pipeline import HuggingFacePipeline
 from langchain_huggingface import HuggingFaceEndpoint
 from statschat.generative.response_model import LlmResponse
@@ -20,7 +21,6 @@ from functools import lru_cache
 from statschat.generative.utils import deduplicator, highlighter
 from statschat.embedding.latest_flag_helpers import time_decay
 
-
 class Inquirer:
     """
     Wraps the logic for using an LLM to synthesise a written answer from
@@ -29,7 +29,7 @@ class Inquirer:
 
     def __init__(
         self,
-        generative_model_name: str = "mistralai/Mistral-7B-Instruct-v0.3",
+        generative_model_name: str = "gpt-4o-mini",
         faiss_db_root: str = "data/db_langchain",
         # change faiss_db_root_latest to "data/db_langchain_latest" after "UPDATE"
         faiss_db_root_latest: str = "data/db_langchain",
@@ -85,17 +85,25 @@ class Inquirer:
         # Only needed if using HuggingFaceEndpoint
         load_dotenv()
         sec_key = os.getenv("HF_TOKEN")
-
-        # Load LLM with text2text-generation specifications
-        self.llm = HuggingFaceEndpoint(
-            repo_id=generative_model_name,
-            provider="transformers",
-            task="text2text-generation",
-            max_new_tokens=llm_max_tokens,
-            do_sample=False,
-            huggingfacehub_api_token=sec_key,
+        api_key = os.getenv("OPENAI_API_KEY")
+        
+        #client.chat.completions.create
+        #client.responses.create
+        
+        #self.llm = client.chat.completions.create(
+         #   model=generative_model_name,
+          #  store=True,
+           # messages=[
+            #    {"role": "user", "content": "answer the question"}
+             #   ],
+        #)
+        self.llm = ChatOpenAI(
+            model_name=generative_model_name, 
+            temperature = llm_temperature, 
+            max_tokens = llm_max_tokens,
+            openai_api_key=api_key
         )
-
+        
         # Embeddings
         embeddings = HuggingFaceEmbeddings(model_name=embedding_model_name)
 
@@ -188,7 +196,8 @@ class Inquirer:
             if text["score"] <= 1.5 * docs[0]["score"]
         ]
         self.logger.info(f"Passing top {len(top_matches)} results for QA")
-
+    
+        
         # stuff all above documents to the model
         chain = load_qa_with_sources_chain(
             self.llm,
@@ -350,7 +359,7 @@ if __name__ == "__main__":
 
     # question = "Where can I find the registered births by age of mother and county?"
     # question = "What is the sample size of the Real Estate Survey?"
-    question = "What was inflation in the UK?"
+    question = "How is inflation calculated?"
     # question = "What was inflation in December 2021?"
 
     docs, answer, response = inquirer.make_query(

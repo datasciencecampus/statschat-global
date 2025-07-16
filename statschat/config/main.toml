@@ -20,7 +20,7 @@ split_overlap = 200
 latest_only = true
 
 [search]
-generative_model_name = "mistralai/Mistral-7B-Instruct-v0.3" # "facebook/bart-large"
+generative_model_name = "gpt-4o-mini" # "facebook/bart-large"
 # Alternatives for the generative LLM include:
 # - text-unicorn
 # - text-bison@001
