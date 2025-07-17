@@ -6,15 +6,29 @@
 ## Code state
 
 > [!WARNING]
-> Please be aware that for development purposes, these experiments use
-> experimental Large Language Models (LLM's) not intended for production. They
-> can present inaccurate information, hallucinated statements and offensive
-> text by random chance or through malevolent prompts.
+> **Please be aware that for development purposes, these experiments use**
+> **experimental Large Language Models (LLM's) not intended for production. They**
+> **can present inaccurate information, hallucinated statements and offensive**
+> **text by random chance or through malevolent prompts.**
 
 - **Under development** / **Experimental**
 - **Tested on macOS & windows only**
 - **Peer-reviewed**
 - **Depends on external API's**
+
+## Disclaimer
+The code contained within this repository is provided 'as is'. We stress that:
+
+- Any use of this code is entirely at the risk of the user, and users are fully responsible for checking whether the codebase is suitable for their use case, as well as the quality and accuracy of any outputs generated.
+- [Cloud based implementation](https://github.com/datasciencecampus/statschat-global/blob/main/statschat/generative/cloud_llm.py)([also via FASTApi](https://github.com/datasciencecampus/statschat-global/blob/main/fast-api/main_api_cloud.py)) is a quick way to test without having to download the LLM itself but there are potential security issues so please be aware of this. **The ONS advises a [local based model](https://github.com/datasciencecampus/statschat-global/blob/main/statschat/generative/local_llm.py) for querying**. However this choice is entirely up to the user or the organisation.
+- (Co) authors of this codebase at the Office for National Statistics Data Science Campus do not commit to responding to requests for additional features or long-term maintenance of the codebase
+
+## A tool designed for the semantic search of statistical publications with PDF's 
+This repository is a development to the code included in the Python package **[statschat](https://github.com/datasciencecampus/statschat-app)**, with the original codebase by Iva Spakulova and Martin Wood.
+
+This version of `statschat` adds functionality to webscrape **PDF documents** from websites with **[pdf_downloader.py](https://github.com/datasciencecampus/statschat-global/blob/main/statschat/pdf_processing/pdf_downloader.py)** and then converts these into jsons with **[pdf_to_json.py](https://github.com/datasciencecampus/statschat-global/blob/main/statschat/pdf_processing/pdf_to_json.py)** to create a vector store for semantic search.
+
+We cannot guarantee the effectiveness of this method with your organisations website due to its layout/setup. Alternatively you can manually add PDF documents to the [local_pdfs](https://github.com/datasciencecampus/statschat-global/tree/main/data/local_pdfs) folder.
 
 ## Introduction
 
