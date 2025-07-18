@@ -13,7 +13,7 @@ import re
 # Load configuration
 config = load_config(name="main")
 PDF_FILES = config["preprocess"]["download_mode"].upper()
-base_url = config["preprocess"]["download_site"].upper()
+base_url = config["preprocess"]["download_site"]
 
 # Set directories
 BASE_DIR = Path.cwd().joinpath("data")
@@ -49,10 +49,11 @@ elif PDF_FILES == "UPDATE":
 
     url_dict = {}  # This will store only new entries
 
+page = page_start = config["app"]["page_start"]
+page_end = config["app"]["page_end"]
 
-page = 38  # Higher the number the older the publications
 # Set max pages for UPDATE mode
-max_pages = 100 if PDF_FILES == "SETUP" else 37  # Limit to 5 for updates
+max_pages = 100 if PDF_FILES == "SETUP" else page_end  # Limit to 5 for updates
 
 # %% Scrape intermediate report pages and extract PDF links
 all_pdf_entries = {}  # {"pdf_url": "report_page", ...}
@@ -63,7 +64,7 @@ all_pdf_links = []  # List to store all PDF URLs
 page = 1
 
 print("IN PROGRESS.")
-while True:
+while page <= page_end:
     # Trigger page limit for UPDATE mode
     if max_pages and page > max_pages:
         print(f"Reached page limit ({max_pages}) for UPDATE mode. Stopping search.")

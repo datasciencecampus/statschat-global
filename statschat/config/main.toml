@@ -10,7 +10,7 @@ embedding_model_name = "sentence-transformers/all-mpnet-base-v2"
 
 [preprocess]
 download_mode = "SETUP" # Either "SETUP" or "UPDATE"
-download_site = "" # Leave empty if PDFS are placed manually in the data/pdf_store folder.
+download_site = "https://www.knbs.or.ke/all-reports/page/" # Leave empty if PDFS are placed manually in the data/pdf_store folder.
 data_dir = "data/"
 download_dir = "pdf_store"
 directory = "json_conversions"
@@ -38,3 +38,5 @@ document_threshold = 0.9 # Threshold score below which a document is returned in
 
 [app]
 latest_max = 2    # Takes value int >= 0, commonly 0, 1 or 2
+page_start = 1    # Sets where to start looking for downloads. Higher the number the older the publications.
+page_end = 2      # Sets where to stop looking for downloads. Higher the number the older the publications
