@@ -91,7 +91,7 @@ def get_name_and_meta(pdf_file_path):
     file_name = pdf_file_path.name
     pdf_metadata = PyPDF2.PdfReader(pdf_file_path)
     pdf_metadata = pdf_metadata.metadata
-
+    
     return (file_name, pdf_metadata)
 
 
@@ -213,6 +213,7 @@ def extract_pdf_modification_date(metadata, pdf_creation_date: str) -> str:
         return pdf_modification_date
     except (AttributeError, ValueError):
         # Fallback to creation date if modification date is unavailable or invalid
+        
         return pdf_creation_date
 
 
@@ -387,11 +388,15 @@ def get_abstract_metadata(url: str) -> dict:  # noqa: C901
         
     ##########
     elif ".pdf" in url:
-        print("This PDF has been manually added to 'pdf_store' directory. Will be unable to get abstract metadata from as no URL.")
-    
+        #print("This PDF has been manually added to 'pdf_store' directory. Will be unable to get abstract metadata from as no URL.")
+        
+        # Generate current date if PDF file has no metadata
+        todays_date = datetime.now().strftime("%Y-%m-%d")
+        current_year = todays_date[0:4]
+        
         # Create dictionary for metadata
         url_dict_abstract = {
-            "date": "2025", # need to get this from metadata if available
+            "date": current_year, # need to get this from metadata if available if not current year
             "overview": "No Overview Available",
             "publication_type": " ",
             "publication_theme": " ",
@@ -451,16 +456,12 @@ def build_json(
 
     # Extract Metadata & Pre-Process
     file_name, pdf_metadata = extract_pdf_metadata(pdf_file_path)
-    
-    print(f"Report Page: {report_page}")
 
     try:
         # Construct the document's URL
         pdf_url = pdf_website_url
         # Obtain additional metadata from pdf report page
         pdf_add_metadata = get_abstract_metadata(report_page)
-        print(f"PDF ADD Metadata: {pdf_add_metadata}")
-        print(pdf_add_metadata)
         pdf_creation_date = convert_to_date(pdf_add_metadata["date"])
         pdf_overview = pdf_add_metadata["overview"]
         pdf_theme = pdf_add_metadata["publication_theme"]
