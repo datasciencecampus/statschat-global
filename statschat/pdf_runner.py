@@ -54,7 +54,7 @@ if __name__ == "__main__":
     # Load configuration
     config = load_config(name="main")
     pdf_down_mode = config["preprocess"]["download_mode"].upper()
-    base_url = config["preprocess"]["download_site"].upper()
+    base_url = config["preprocess"]["download_site"]
 
     # Define base directory for the script
     BASE_DIR = Path().cwd()
