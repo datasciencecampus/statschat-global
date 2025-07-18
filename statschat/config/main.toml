@@ -10,7 +10,7 @@ embedding_model_name = "sentence-transformers/all-mpnet-base-v2"
 
 [preprocess]
 download_mode = "SETUP" # Either "SETUP" or "UPDATE"
-download_site = " " # Leave empty if PDFS are placed manually in the data/pdf_store folder.
+download_site = "" # Leave empty if PDFS are placed manually in the data/pdf_store folder.
 data_dir = "data/"
 download_dir = "pdf_store"
 directory = "json_conversions"
@@ -24,6 +24,7 @@ generative_model_name = "mistralai/Mistral-7B-Instruct-v0.3" # "facebook/bart-la
 # Alternatives for the generative LLM include:
 # - text-unicorn
 # - text-bison@001
+
 # - lmsys/fastchat-t5-3b-v1.0
 # - google/flan-t5-large
 # - google/flan-ul2
