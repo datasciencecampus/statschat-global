@@ -279,108 +279,124 @@ def get_abstract_metadata(url: str) -> dict:  # noqa: C901
     Returns:
         dict: Dictionary of abstract metadata.
     """
-    # Scrape PDF links from website
-    req = Request(url, headers={"User-Agent": "Mozilla/5.0"})
-    web_byte = urlopen(req).read()
+    if ".pdf" not in url:
+        print(f"URL: {url}")
+        
+        # Scrape PDF links from website
+        req = Request(url, headers={"User-Agent": "Mozilla/5.0"})
+        web_byte = urlopen(req).read()
 
-    soup = BeautifulSoup(web_byte, features="html.parser")
+        soup = BeautifulSoup(web_byte, features="html.parser")
 
-    # Kill all script and style elements
-    for script in soup(["script", "style"]):
-        script.extract()
+        # Kill all script and style elements
+        for script in soup(["script", "style"]):
+            script.extract()
 
-    # Get text
-    text = soup.body.get_text(separator=" ")
+        # Get text
+        text = soup.body.get_text(separator=" ")
 
-    # Extract the substring containing the relevant metadata
-    start = "About Report "
-    end = "Share This Page"
-    index_1 = text.find(start)
-    index_2 = text.find(end, index_1 + len(start))
-
-    if index_1 != -1 and index_2 != -1:
-        pdf_substring = text[index_1 + len(start) : index_2]
-        pdf_substring = "About-Report " + pdf_substring + " Overview-End"
-    else:
-        pdf_substring = ""  # Default to an empty string if delimiters are not found
-
-    # Extract publication info
-    start = "About-Report"
-    end = " Overview"
-    index_1 = pdf_substring.find(start)
-    index_2 = pdf_substring.find(end, index_1 + len(start))
-
-    if index_1 != -1 and index_2 != -1:
-        publication_info = pdf_substring[index_1 + len(start) : index_2]
-    else:
-        publication_info = ""  # Default to an empty string if delimiters are not found
-
-    # Extract overview info
-    start = "Overview "
-    end = " Overview-End"
-    index_1 = pdf_substring.find(start)
-    index_2 = pdf_substring.find(end, index_1 + len(start))
-
-    if index_1 != -1 and index_2 != -1:
-        overview_info = pdf_substring[index_1 + len(start) : index_2]
-    else:
-        overview_info = ""  # Default to an empty string if delimiters are not found
-
-    # Split publication info into components
-    publication_info_split = publication_info.split()
-
-    # Extract publication date
-    publication_date = (
-        " ".join(publication_info_split[-2:])
-        if len(publication_info_split) >= 2
-        else "Unknown"
-    )
-
-    # if page layout different as per "https://www.knbs.or.ke/reports/kdhs-2014/"
-    # will catch error and resolve
-    if publication_date == "Unknown":
-        # Extract text containing the relevant metadata with different start/end point
-        start = "Main Report"
-        end = "Visit the KNBS"
+        # Extract the substring containing the relevant metadata
+        start = "About Report "
+        end = "Share This Page"
         index_1 = text.find(start)
         index_2 = text.find(end, index_1 + len(start))
 
         if index_1 != -1 and index_2 != -1:
-            pdf_substring_new = text[index_1 + len(start) : index_2]
+            pdf_substring = text[index_1 + len(start) : index_2]
+            pdf_substring = "About-Report " + pdf_substring + " Overview-End"
+        else:
+            pdf_substring = ""  # Default to an empty string if delimiters are not found
 
-            # range of publication years should be between this range (adjustable)
-            for year in range(1954, 2050):
-                if str(year) in pdf_substring_new:
-                    publication_date = str(year)
-    # Extract publication theme
-    publication_theme = (
-        " ".join(publication_info_split[1:-2])
-        if len(publication_info_split) > 2
-        else "Unknown"
-    )
-    # Extract publication type
-    publication_type = (
-        publication_info_split[0] if len(publication_info_split) > 0 else "Unknown"
-    )
+        # Extract publication info
+        start = "About-Report"
+        end = " Overview"
+        index_1 = pdf_substring.find(start)
+        index_2 = pdf_substring.find(end, index_1 + len(start))
 
-    # Extract the PDF link
-    pdf_link = None
-    for link in soup.find_all("a", href=True):
-        if link["href"].endswith(".pdf"):
-            pdf_link = link["href"]
-            break
+        if index_1 != -1 and index_2 != -1:
+            publication_info = pdf_substring[index_1 + len(start) : index_2]
+        else:
+            publication_info = ""  # Default to an empty string if delimiters are not found
 
-    if not pdf_link:
-        pdf_link = "No PDF link found"
+        # Extract overview info
+        start = "Overview "
+        end = " Overview-End"
+        index_1 = pdf_substring.find(start)
+        index_2 = pdf_substring.find(end, index_1 + len(start))
 
-    # Create dictionary for metadata
-    url_dict_abstract = {
-        "date": publication_date if publication_date != "Unknown" else "Unknown",
-        "overview": overview_info,
-        "publication_type": publication_type,
-        "publication_theme": publication_theme,
-        "pdf_abstract_url": pdf_link,
-    }
+        if index_1 != -1 and index_2 != -1:
+            overview_info = pdf_substring[index_1 + len(start) : index_2]
+        else:
+            overview_info = ""  # Default to an empty string if delimiters are not found
+
+        # Split publication info into components
+        publication_info_split = publication_info.split()
+
+        # Extract publication date
+        publication_date = (
+            " ".join(publication_info_split[-2:])
+            if len(publication_info_split) >= 2
+            else "Unknown"
+        )
+
+        # if page layout different as per "https://www.knbs.or.ke/reports/kdhs-2014/"
+        # will catch error and resolve
+        if publication_date == "Unknown":
+            # Extract text containing the relevant metadata with different start/end point
+            start = "Main Report"
+            end = "Visit the KNBS"
+            index_1 = text.find(start)
+            index_2 = text.find(end, index_1 + len(start))
+
+            if index_1 != -1 and index_2 != -1:
+                pdf_substring_new = text[index_1 + len(start) : index_2]
+
+                # range of publication years should be between this range (adjustable)
+                for year in range(1954, 2050):
+                    if str(year) in pdf_substring_new:
+                        publication_date = str(year)
+        # Extract publication theme
+        publication_theme = (
+            " ".join(publication_info_split[1:-2])
+            if len(publication_info_split) > 2
+            else "Unknown"
+        )
+        # Extract publication type
+        publication_type = (
+            publication_info_split[0] if len(publication_info_split) > 0 else "Unknown"
+        )
+
+        # Extract the PDF link
+        pdf_link = None
+        for link in soup.find_all("a", href=True):
+            if link["href"].endswith(".pdf"):
+                pdf_link = link["href"]
+                break
+
+        if not pdf_link:
+            pdf_link = "No PDF link found"
+
+        # Create dictionary for metadata
+        url_dict_abstract = {
+            "date": publication_date if publication_date != "Unknown" else "Unknown",
+            "overview": overview_info,
+            "publication_type": publication_type,
+            "publication_theme": publication_theme,
+            "pdf_abstract_url": pdf_link,
+        }
+        
+    ##########
+    elif ".pdf" in url:
+        print("This PDF has been manually added to 'pdf_store' directory. Will be unable to get abstract metadata from as no URL.")
+    
+        # Create dictionary for metadata
+        url_dict_abstract = {
+            "date": "2025", # need to get this from metadata if available
+            "overview": "No Overview Available",
+            "publication_type": " ",
+            "publication_theme": " ",
+        }
+    ##########
 
     return url_dict_abstract
 
@@ -435,12 +451,16 @@ def build_json(
 
     # Extract Metadata & Pre-Process
     file_name, pdf_metadata = extract_pdf_metadata(pdf_file_path)
+    
+    print(f"Report Page: {report_page}")
 
     try:
         # Construct the document's URL
         pdf_url = pdf_website_url
         # Obtain additional metadata from pdf report page
         pdf_add_metadata = get_abstract_metadata(report_page)
+        print(f"PDF ADD Metadata: {pdf_add_metadata}")
+        print(pdf_add_metadata)
         pdf_creation_date = convert_to_date(pdf_add_metadata["date"])
         pdf_overview = pdf_add_metadata["overview"]
         pdf_theme = pdf_add_metadata["publication_theme"]
