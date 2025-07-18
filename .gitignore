@@ -21,6 +21,7 @@ data/db_langchain/*
 data/json_split/*
 data/pdf_store/*
 data/latest_pdf_store/*
+data/local_pdfs/*
 
 
 # Distribution / packaging
