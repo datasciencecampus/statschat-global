@@ -32,5 +32,7 @@ Below is an explanation of each configuration parameter found in the TOML file:
 ## [app]
 
 - **latest_max**: Maximum number of latest documents to consider. Common values are 0, 1, or 2.
+- **page_start**: Sets where to start looking for downloads. Higher the number the older the publications.
+- **page_end**: Sets where to stop looking for downloads. Higher the number the older the publications.
 
 ---
