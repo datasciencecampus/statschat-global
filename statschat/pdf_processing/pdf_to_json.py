@@ -453,22 +453,23 @@ def build_json(
 
     # Notify which file is being processed
     # print(f"Processing: {pdf_file_path.name}")
-
+    
     # Extract Metadata & Pre-Process
     file_name, pdf_metadata = extract_pdf_metadata(pdf_file_path)
-
+    print(f"File Name: {file_name}")
+    
     try:
         # Construct the document's URL
         pdf_url = pdf_website_url
         # Obtain additional metadata from pdf report page
         pdf_add_metadata = get_abstract_metadata(report_page)
-        pdf_creation_date = convert_to_date(pdf_add_metadata["date"])
+        #pdf_creation_date = convert_to_date(pdf_add_metadata["date"])
         pdf_overview = pdf_add_metadata["overview"]
         pdf_theme = pdf_add_metadata["publication_theme"]
         pdf_release_type = pdf_add_metadata["publication_type"]
     except Exception:
         # Fallback: extract from PDF metadata or filename
-        pdf_creation_date, _ = extract_pdf_creation_date(pdf_metadata, file_name, 0)
+        #pdf_creation_date, _ = extract_pdf_creation_date(pdf_metadata, file_name, 0)
         pdf_overview = pdf_metadata.get("/Subject", "No Overview Available")
         pdf_theme = pdf_metadata.get("/Keywords", "No Theme Available")
         pdf_release_type = (
@@ -476,6 +477,17 @@ def build_json(
         )
         pdf_url = pdf_website_url or "Unknown URL"
         print("Defaulting to PDF metadata or filename for creation date.")
+    
+    # This is to avoid issues when no abstract metadata is available from URL when using local PDFs
+    # If PDF Metadata present for creation date then use that
+    if pdf_metadata is not None: # maybe remove -01-01
+        actual_pdf_creation_date, _ = extract_pdf_creation_date(pdf_metadata, file_name, 0)
+        pdf_creation_date = actual_pdf_creation_date
+        print(f"Actual PDF Creation Date: {actual_pdf_creation_date}")
+
+    # If PDF Metadata not present then use default date
+    else:
+        pdf_creation_date = convert_to_date(pdf_add_metadata["date"])
 
     # Construct Ordered Metadata Dictionary
     pdf_info = {
