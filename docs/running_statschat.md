@@ -15,7 +15,9 @@ Before running `pdf_runner.py`  ensure that the key variables in `statschat/conf
 are set to the desired options.
 
 The `download_site` variable will determine what website is used as an endpoint to scrape
-PDF files from. If left empty, the system will look for PDFs placed in the `data/local_pdfs` folder.
+PDF files from. Ensure the `download_site` variable matches the website, `page/` may need 
+to be added but this depends on the `url`. If left empty, the system will look for PDFs 
+placed in the `data/local_pdfs` folder.
 
 The `pdf_runner.py` script will webscrape PDF documents from the website, or take the ones locally stored.
 It will then convert them to JSON files and either append or replace the existing vector store.
