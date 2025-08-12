@@ -258,6 +258,15 @@ def extract_pdf_text(pdf_file_path: Path, pdf_url: str) -> list:
                 text = text.replace("\n", "")
 
             page_link = f"{pdf_url}#page={page_num}"
+            
+            # For Manual PDF upload
+            if "https://www." not in page_link:
+                page_link = "http://localhost:8000/" + page_link
+            
+            # Stay the same
+            else:
+                page_link = page_link
+                
             pages_text.append(
                 {
                     "page_number": page_num,
