@@ -38,10 +38,12 @@ If on website mode from the website, compare existing PDF files in the vector st
 pip install pip_system_certs
 ```
 ## Step 2: Usage
+> [!NOTE]
+> **Please see [here]() if an offline upload of PDF's was done via adding PDFs to `data/local_pdfs`. Then all options below will work.**
 
 ### Option A: Run Questions Manually (backend)
 
-This assumes the [vector store]("update link") has already been created otherwise this will need to be done before.
+This assumes the [vector store](https://github.com/datasciencecampus/statschat-global/blob/main/docs/setup_guide.md) has already been created otherwise this will need to be done before.
 Make sure that you're terminal is running from **`statschat`**. Then use the **`llm.py`**
 script and change the **question** parameter with the desired question:
 
