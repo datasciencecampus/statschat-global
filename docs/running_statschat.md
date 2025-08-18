@@ -39,12 +39,12 @@ pip install pip_system_certs
 ```
 ## Step 2: Usage
 > [!NOTE]
-> **Please see [here]() if an offline upload of PDF's was done via adding PDFs to `data/local_pdfs`. Then all options below will work.**
+> **Please see [here](https://github.com/datasciencecampus/statschat-global/blob/development/docs/offline_pdf_upload.md) if an offline upload of PDF's was done via adding PDFs to `data/local_pdfs`. This must be done before using the below options. If PDF's were webscraped this is not needed**
 
 ### Option A: Run Questions Manually (backend)
 
 This assumes the [vector store](https://github.com/datasciencecampus/statschat-global/blob/main/docs/setup_guide.md) has already been created otherwise this will need to be done before.
-Make sure that you're terminal is running from **`statschat`**. Then use the **`llm.py`**
+Make sure that you're terminal is running from **`statschat`**. Then use the **`local_llm.py`** or **`cloud_llm.py`**
 script and change the **question** parameter with the desired question:
 
 ![image](https://github.com/user-attachments/assets/36ec03e4-2d6a-4814-9220-8cc478196e52)
