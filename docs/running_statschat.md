@@ -39,7 +39,7 @@ pip install pip_system_certs
 ```
 ## Step 2: Usage
 > [!NOTE]
-> **Please see [here]() if an offline upload of PDF's was done via adding PDFs to `data/local_pdfs`. Then all options below will work.**
+> **Please see [here](https://github.com/datasciencecampus/statschat-global/blob/development/docs/offline_pdf_upload.md) if an offline upload of PDF's was done via adding PDFs to `data/local_pdfs`. Then all options below will work.**
 
 ### Option A: Run Questions Manually (backend)
 
