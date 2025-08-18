@@ -44,7 +44,7 @@ pip install pip_system_certs
 ### Option A: Run Questions Manually (backend)
 
 This assumes the [vector store](https://github.com/datasciencecampus/statschat-global/blob/main/docs/setup_guide.md) has already been created otherwise this will need to be done before.
-Make sure that you're terminal is running from **`statschat`**. Then use the **`llm.py`**
+Make sure that you're terminal is running from **`statschat`**. Then use the **`local_llm.py`** or **`cloud_llm.py`**
 script and change the **question** parameter with the desired question:
 
 ![image](https://github.com/user-attachments/assets/36ec03e4-2d6a-4814-9220-8cc478196e52)
