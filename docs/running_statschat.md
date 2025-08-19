@@ -34,9 +34,10 @@ If on website mode from the website, compare existing PDF files in the vector st
 > **You might get an error after running `pdf_runner.py` related to SSL: certification.**
 ![image](https://github.com/user-attachments/assets/2d408392-fe66-438e-83b1-550943f14751)
 > **If so then run:**
-```
-pip install pip_system_certs
-```
+> 
+    ```shell
+    pip install pip_system_certs
+    ```
 ## Step 2: Usage
 > [!NOTE]
 > **Please see [here](https://github.com/datasciencecampus/statschat-global/blob/development/docs/offline_pdf_upload.md) if an offline upload of PDF's was done via adding PDFs to `data/local_pdfs`. This must be done before using the below options. If PDF's were webscraped this is not needed**
